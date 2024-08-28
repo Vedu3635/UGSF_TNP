@@ -2,6 +2,7 @@ import React from 'react';
 import { Bar } from 'react-chartjs-2';
 import 'chart.js/auto';
 
+
 function App() {
   const chartData1 = {
     labels: ['2019', '2020', '2021', '2022', '2023'],
@@ -33,23 +34,34 @@ function App() {
       <div className="flex-1 container mx-auto p-4">
         {/* Header */}
         <div className="flex justify-around bg-white p-4 rounded shadow">
-          <div className="text-center">
-            <h2 className="text-xl font-bold text-red-500">Students</h2>
-            <p className="text-3xl font-bold">1000</p>
-          </div>
-          <div className="text-center">
+          <div className="text-center flex ">
+            <img src="src\student.jpg" alt="hi" className="h-16 rounded-3xl"/>
+            <div>
+              <h2 className="text-xl font-bold text-red-500">Students</h2>
+              <p className="text-3xl font-bold">1000</p></div>
+            </div>
+          <div className="text-center flex">
+          <img src="src\higherstudies.jpg" alt="hi" className="h-16 rounded-3xl"/>
+          <div>
             <h2 className="text-xl font-bold text-red-500">Higher Studies</h2>
             <p className="text-3xl font-bold">1000</p>
           </div>
-          <div className="text-center">
-            <h2 className="text-xl font-bold text-red-500">Companies</h2>
-            <p className="text-3xl font-bold">150</p>
+            
+          </div>
+          <div className="text-center flex">
+          <img src="src\packages.jpg" alt="hi" className="h-16 rounded-3xl"/>
+          <div>
+          <h2 className="text-xl font-bold text-red-500">Companies</h2>
+          <p className="text-3xl font-bold">150</p>
+          </div>
+            
           </div>
         </div>
 
-        {/* Company Cards */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 my-4">
-          <div className="bg-white p-4 rounded shadow">
+{/* company slider */}
+
+        <div className="flex overflow-x-scroll space-x-4 my-4 snap-x">
+          <div className="bg-white p-4 rounded shadow min-w-[487px] snap-center">
             <h3 className="text-xl font-bold">Tata Consultancy Service</h3>
             <p className="text-sm">Full Stack Developer</p>
             <div className="flex justify-between mt-2">
@@ -58,7 +70,25 @@ function App() {
               <span className="font-bold text-red-500">10 LPA</span>
             </div>
           </div>
-          <div className="bg-white p-4 rounded shadow">
+          <div className="bg-white p-4 rounded shadow min-w-[487px] snap-center">
+            <h3 className="text-xl font-bold">Tata Consultancy Service</h3>
+            <p className="text-sm">Full Stack Developer</p>
+            <div className="flex justify-between mt-2">
+              <span>2 Positions</span>
+              <span>Full Time</span>
+              <span className="font-bold text-red-500">10 LPA</span>
+            </div>
+          </div>
+          <div className="bg-white p-4 rounded shadow min-w-[487px] snap-center">
+            <h3 className="text-xl font-bold">Tata Consultancy Service</h3>
+            <p className="text-sm">Full Stack Developer</p>
+            <div className="flex justify-between mt-2">
+              <span>2 Positions</span>
+              <span>Full Time</span>
+              <span className="font-bold text-red-500">10 LPA</span>
+            </div>
+          </div>
+          <div className="bg-white p-4 rounded shadow min-w-[487px] snap-center">
             <h3 className="text-xl font-bold">Tatva Soft Company</h3>
             <p className="text-sm">Full Stack Developer</p>
             <div className="flex justify-between mt-2">
@@ -67,7 +97,7 @@ function App() {
               <span className="font-bold text-red-500">10 LPA</span>
             </div>
           </div>
-          <div className="bg-white p-4 rounded shadow">
+          <div className="bg-white p-4 rounded shadow min-w-[487px] snap-center">
             <h3 className="text-xl font-bold">Tata Consultancy Service</h3>
             <p className="text-sm">Machine Learning</p>
             <div className="flex justify-between mt-2">
@@ -77,6 +107,7 @@ function App() {
             </div>
           </div>
         </div>
+
 
         {/* Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 my-4">
