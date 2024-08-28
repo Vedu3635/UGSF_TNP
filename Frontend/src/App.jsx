@@ -34,22 +34,25 @@ function App() {
       <div className="flex-1 container mx-auto p-4">
         {/* Header */}
         <div className="flex justify-around bg-white p-4 rounded shadow">
-          <div className="text-center flex ">
-            <img src="src\student.jpg" alt="hi" className="h-16 rounded-3xl"/>
-            <div>
+          <div className="text-center flex gap-3">
+            <img src="src\student.jpg" alt="hi" className="h-16 rounded-3xl "/>
+            <div className='border-r-4 text border-red-700 m-0.5' ></div>
+            <div >
               <h2 className="text-xl font-bold text-red-500">Students</h2>
               <p className="text-3xl font-bold">1000</p></div>
             </div>
-          <div className="text-center flex">
+          <div className="text-center flex flex gap-3">
           <img src="src\higherstudies.jpg" alt="hi" className="h-16 rounded-3xl"/>
+          <div className='border-r-4 text border-red-700 m-0.5' ></div>
           <div>
             <h2 className="text-xl font-bold text-red-500">Higher Studies</h2>
             <p className="text-3xl font-bold">1000</p>
           </div>
             
           </div>
-          <div className="text-center flex">
+          <div className="text-center flex flex gap-3">
           <img src="src\packages.jpg" alt="hi" className="h-16 rounded-3xl"/>
+          <div className='border-r-4 text border-red-700 m-0.5' ></div>
           <div>
           <h2 className="text-xl font-bold text-red-500">Companies</h2>
           <p className="text-3xl font-bold">150</p>
