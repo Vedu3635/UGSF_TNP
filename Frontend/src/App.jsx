@@ -1,7 +1,7 @@
 import React from 'react';
 import { Bar } from 'react-chartjs-2';
 import 'chart.js/auto';
-
+import Header from "./components/Header";
 
 function App() {
   const chartData1 = {
@@ -23,14 +23,16 @@ function App() {
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen flex">
+    
+    <div className="bg-gray-100 min-h-screen flex ">
       {/* Left Sidebar */}
-      <div className="w-1/6 bg-gray-200 p-4">
+      <div className="w-1/6 bg-gray-200 p-4 ">
         <h3 className="text-xl font-bold mb-4">Left Sidebar</h3>
         {/* Add your sidebar content here */}
       </div>
 
       {/* Main Content */}
+      <Header/>
       <div className="flex-1 container mx-auto p-4">
         {/* Header */}
         <div className="flex justify-around bg-white p-4 rounded shadow">
