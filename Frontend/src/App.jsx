@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 
 import Header from "./components/Header";
 import CompanySlider from "./components/CompanySlider";
@@ -7,8 +8,9 @@ import Charts from "./components/Charts";
 import StudentList from "./components/StudentList";
 import LeftSlider from "./components/LeftSlider";
 import RightSlider from "./components/RightSlider";
+import Login from "./components/Login";
 
-function App() {
+function Dashboard() {
   return (
     <div className="bg-gray-100 min-h-screen flex">
       {/* Left Sidebar */}
@@ -25,10 +27,32 @@ function App() {
         {/* Additional Containers */}
         <StudentList />
       </div>
-
       {/* Right Sidebar */}
       <RightSlider />
     </div>
+  );
+}
+
+function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  const handleLogin = () => {
+    setIsAuthenticated(true);
+  };
+
+  return (
+    <Router>
+      <Routes>
+        <Route
+          path="/"
+          element={isAuthenticated ? <Navigate to="/dashboard" /> : <Login onLogin={handleLogin} />}
+        />
+        <Route
+          path="/dashboard"
+          element={isAuthenticated ? <Dashboard /> : <Navigate to="/" />}
+        />
+      </Routes>
+    </Router>
   );
 }
 
