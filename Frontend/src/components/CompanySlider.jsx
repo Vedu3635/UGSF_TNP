@@ -1,56 +1,68 @@
 import React from "react";
+// import { ChevronRight } from "lucide-react";
 
 const CompanySlider = () => {
-  return (
-    <div className="flex overflow-x-scroll space-x-4 my-4 snap-x pb-2">
-      <div className="bg-white p-4 shadow min-w-[487px] snap-center rounded-3xl">
-        <div className="flex-col">
-          <img src="image_4.png" />
-          <h3 className="text-xl font-bold">Tata Consultancy Service</h3>
-        </div>
+  const cardsData = [
+    {
+      logo: "https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.png",
+      title: "Notion",
+      plan: "Pro Plan",
+      status: "Expires",
+      timeLeft: "In 2 Days",
+      price: "45",
+      isExpiring: true,
+    },
+    {
+      logo: "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg",
+      title: "Amazon Web Services",
+      plan: "Business Plan",
+      status: "Auto-Renews",
+      timeLeft: "In 15 Days",
+      price: "45",
+      isExpiring: false,
+    },
+    // You can add more cards here if needed
+  ];
 
-        <p className="text-sm">Full Stack Developer</p>
-        <div className="flex justify-between mt-2">
-          <span className="text-[#030082] font-semibold ">2 Positions</span>
-          <span className="text-[#030082] font-semibold">Full Time</span>
-          <span className="font-bold text-red-500">10 LPA</span>
-        </div>
-      </div>
-      <div className="bg-white p-4 rounded shadow min-w-[487px] snap-center">
-        <h3 className="text-xl font-bold">Tata Consultancy Service</h3>
-        <p className="text-sm">Full Stack Developer</p>
-        <div className="flex justify-between mt-2">
-          <span className="text-[#030082] font-semibold ">2 Positions</span>
-          <span className="text-[#030082] font-semibold ">Full Time</span>
-          <span className="font-bold text-red-500">10 LPA</span>
-        </div>
-      </div>
-      <div className="bg-white p-4 rounded shadow min-w-[487px] snap-center">
-        <h3 className="text-xl font-bold">Tata Consultancy Service</h3>
-        <p className="text-sm">Full Stack Developer</p>
-        <div className="flex justify-between mt-2">
-          <span className="text-blue-900">2 Positions</span>
-          <span className="text-[#030082] font-semibold ">Full Time</span>
-          <span className="font-bold text-red-500">10 LPA</span>
-        </div>
-      </div>
-      <div className="bg-white p-4 rounded shadow min-w-[487px] snap-center">
-        <h3 className="text-xl font-bold">Tatva Soft Company</h3>
-        <p className="text-sm">Full Stack Developer</p>
-        <div className="flex justify-between mt-2">
-          <span className="text-[#030082] font-semibold ">2 Positions</span>
-          <span className="text-[#030082] font-semibold ">Full Time</span>
-          <span className="font-bold text-red-500">10 LPA</span>
-        </div>
-      </div>
-      <div className="bg-white p-4 rounded shadow min-w-[487px] snap-center">
-        <h3 className="text-xl font-bold">Tata Consultancy Service</h3>
-        <p className="text-sm">Machine Learning</p>
-        <div className="flex justify-between mt-2">
-          <span className="text-[#030082] font-semibold ">2 Positions</span>
-          <span className="text-[#030082] font-semibold ">Full Time</span>
-          <span className="font-bold text-red-500">10 LPA</span>
-        </div>
+  return (
+    <div className="bg-white rounded-lg shadow-md p-4 w-full">
+      <div className="flex flex-wrap justify-start gap-4">
+        {cardsData.map((card, index) => (
+          <div
+            key={index}
+            className="w-full sm:w-[calc(50%-1rem)] md:w-[calc(33.333%-1rem)] max-w-[300px] p-4 border border-gray-300 rounded-lg shadow-md bg-white"
+          >
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center">
+                <img
+                  src={card.logo}
+                  alt={`${card.title} logo`}
+                  className="w-8 h-8 mr-2"
+                />
+                <div>
+                  <h3 className="font-semibold text-sm">{card.title}</h3>
+                  <p className="text-xs text-gray-500">{card.plan}</p>
+                </div>
+              </div>
+              {/* <ChevronRight className="w-5 h-5 text-gray-400" /> */}
+            </div>
+            <div className="flex justify-between items-center">
+              <div>
+                <p
+                  className={`text-xs ${
+                    card.isExpiring ? "text-red-500" : "text-green-500"
+                  } mb-1`}
+                >
+                  {card.status}
+                </p>
+                <p className="text-sm font-semibold">{card.timeLeft}</p>
+              </div>
+              <button className="bg-blue-500 text-white text-sm px-4 py-1 rounded">
+                Pay ${card.price}
+              </button>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
