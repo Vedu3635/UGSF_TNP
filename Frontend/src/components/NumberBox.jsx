@@ -26,7 +26,7 @@ const NumberBox = () => {
   };
 
   return (
-    <div className="flex justify-around p-4 rounded shadow bg-gray-100 ">
+    <div className="flex justify-around p-4 rounded shadow bg-gray-100 mb-3">
       {[
         { icon: PiStudentFill, title: "Students", count: 1000, color: "blue" },
         {
