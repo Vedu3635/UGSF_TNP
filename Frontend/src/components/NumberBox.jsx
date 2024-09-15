@@ -2,10 +2,8 @@ import React from "react";
 import { PiStudentFill, PiBuildingOfficeFill } from "react-icons/pi";
 import { GiBookmarklet } from "react-icons/gi";
 import { FaUserTie } from "react-icons/fa";
-// import { text } from "body-parser";
 
 const NumberBox = () => {
-  // Predefined colors for each item
   const colorClasses = {
     blue: {
       bg: "bg-blue-500",
@@ -25,47 +23,47 @@ const NumberBox = () => {
     },
   };
 
+  const items = [
+    { icon: PiStudentFill, title: "Students", count: 1000, color: "blue" },
+    {
+      icon: GiBookmarklet,
+      title: "Higher Studies",
+      count: 1000,
+      color: "green",
+    },
+    {
+      icon: PiBuildingOfficeFill,
+      title: "Companies",
+      count: 150,
+      color: "purple",
+    },
+    { icon: FaUserTie, title: "Placed Students", count: 200, color: "pink" },
+  ];
+
   return (
-    <div className="flex justify-around p-4 rounded shadow bg-gray-100 mb-3">
-      {[
-        { icon: PiStudentFill, title: "Students", count: 1000, color: "blue" },
-        {
-          icon: GiBookmarklet,
-          title: "Higher Studies",
-          count: 1000,
-          color: "green",
-        },
-        {
-          icon: PiBuildingOfficeFill,
-          title: "Companies",
-          count: 150,
-          color: "purple",
-        },
-        {
-          icon: FaUserTie,
-          title: "Placed Students",
-          count: 200,
-          color: "pink",
-        },
-      ].map((item, index) => (
+    <div className="flex flex-wrap justify-between p-4 rounded shadow bg-gray-100 mb-3">
+      {items.map((item, index) => (
         <div
           key={index}
-          className="flex items-center bg-white p-4 rounded-2xl shadow-md w-full sm:w-64"
+          className="flex items-center bg-white p-3 rounded-2xl shadow-md m-2 flex-grow flex-shrink-0 basis-full sm:basis-[calc(50%-1rem)] lg:basis-[calc(25%-1rem)]"
         >
-          {/* Render the icon with the correct color classes */}
           {React.createElement(item.icon, {
-            className: `h-12 w-12 ${
+            className: `h-10 w-10 sm:h-12 sm:w-12 ${
               colorClasses[item.color].bg
-            } text-white rounded-2xl p-2 mr-4`,
+            } text-white rounded-2xl p-2 mr-3`,
           })}
-          <div className="border-r-2 border-red-800 m-0.5"></div>
-          <div>
+          <div className="border-r-2 border-gray-200 h-12 mx-2"></div>
+          <div className="flex flex-col min-w-0">
             <h2
-              className={`text-lg font-bold ${colorClasses[item.color].text}`}
+              className={`text-sm sm:text-base font-bold ${
+                colorClasses[item.color].text
+              } truncate`}
             >
               {item.title}
             </h2>
-            <p className="text-2xl font-bold text-gray-800">{item.count}</p>
+            <p className="text-xl sm:text-2xl font-bold text-gray-800">
+              {item.count}
+            </p>
           </div>
         </div>
       ))}
