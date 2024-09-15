@@ -10,6 +10,7 @@ import LeftSlider from "./components/LeftSlider";
 import RightSlider from "./components/RightSlider";
 import NumberBox from "./components/NumberBox";
 import CompanySlider from "./components/CompanySlider";
+import CompanySlider1 from "./components/CompanySlider1";
 import Charts from "./components/Charts";
 import StudentList from "./components/StudentList";
 import Login from "./components/Login";
@@ -24,6 +25,7 @@ function Dashboard() {
           <div className="max-w-7xl mx-auto">
             <NumberBox />
             <CompanySlider />
+            <CompanySlider1/>
             <Charts />
             <StudentList />
           </div>

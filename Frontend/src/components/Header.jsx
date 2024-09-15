@@ -1,15 +1,9 @@
 import React, { useState } from "react";
+import { NavLink } from "react-router-dom";
 import { BookOpenIcon, Bars3BottomRightIcon, XMarkIcon } from "@heroicons/react/24/solid";
 
 const Header = () => {
   const [open, setOpen] = useState(false);
-  const Links = [
-    { name: "HOME", link: "/" },
-    { name: "SERVICE", link: "/" },
-    { name: "ABOUT", link: "/" },
-    { name: "CONTACT", link: "/" },
-  ];
-
   return (
     <div className="shadow-md w-full sticky top-0 left-0 z-50 bg-white">
       <div className="md:flex items-center justify-between py-4 md:px-10 px-7">
@@ -21,12 +15,45 @@ const Header = () => {
           {open ? <XMarkIcon /> : <Bars3BottomRightIcon />}
         </div>
         <ul className={`md:flex md:items-center md:pb-0 pb-12 absolute md:static bg-white md:z-auto z-[-1] left-0 w-full md:w-auto md:pl-0 pl-9 transition-all duration-500 ease-in ${open ? "top-20 opacity-100" : "top-[-490px] md:opacity-100 opacity-0"}`}>
-          {Links.map((link, index) => (
-            <li key={index} className="md:ml-8 md:my-0 my-7 font-semibold">
-              <a href={link.link} className="text-gray-800 hover:text-blue-400 duration-500">{link.name}</a>
-            </li>
-          ))}
-          <button className="btn bg-blue-600 text-white md:ml-8 font-semibold px-3 py-1 rounded duration-500 md:static">LOGIN</button>
+          <li className="md:ml-8 md:my-0 my-7 font-semibold">
+            <NavLink 
+              to="/" 
+              className="text-gray-800 hover:text-blue-400 duration-500"
+              activeClassName="text-blue-600"
+            >
+              HOME
+            </NavLink>
+          </li>
+          <li className="md:ml-8 md:my-0 my-7 font-semibold">
+            <NavLink 
+              to="/service" 
+              className="text-gray-800 hover:text-blue-400 duration-500"
+              activeClassName="text-blue-600"
+            >
+              SERVICE
+            </NavLink>
+          </li>
+          <li className="md:ml-8 md:my-0 my-7 font-semibold">
+            <NavLink 
+              to="/about" 
+              className="text-gray-800 hover:text-blue-400 duration-500"
+              activeClassName="text-blue-600"
+            >
+              ABOUT
+            </NavLink>
+          </li>
+          <li className="md:ml-8 md:my-0 my-7 font-semibold">
+            <NavLink 
+              to="/contact" 
+              className="text-gray-800 hover:text-blue-400 duration-500"
+              activeClassName="text-blue-600"
+            >
+              CONTACT
+            </NavLink>
+          </li>
+          <button className="btn bg-blue-600 text-white md:ml-8 font-semibold px-3 py-1 rounded duration-500 md:static">
+            Log Out
+          </button>
         </ul>
       </div>
     </div>

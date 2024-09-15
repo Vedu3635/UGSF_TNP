@@ -1,7 +1,7 @@
 import React from "react";
 // import { ChevronRight } from "lucide-react";
 
-const CompanySlider = () => {
+const CompanySlider1 = () => {
   const cardsData = [
     {
       logo: "https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.png",
@@ -25,8 +25,8 @@ const CompanySlider = () => {
   ];
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-4 w-full">
-      <b>Recent Companies</b>
+    <div className="bg-white rounded-lg shadow-md p-4 mt-3 w-full">
+      <b>Upcoming Companies</b> 
       <div className="flex flex-wrap justify-start gap-4">
         {cardsData.map((card, index) => (
           <div
@@ -65,8 +65,8 @@ const CompanySlider = () => {
           </div>
         ))}
       </div>
-    </>
+    </div>
   );
 };
 
-export default CompanySlider;
+export default CompanySlider1;
