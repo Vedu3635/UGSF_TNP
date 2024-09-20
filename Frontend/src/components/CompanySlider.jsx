@@ -66,8 +66,8 @@ const CompanySlider = () => {
           </div>
         ))}
       </div>
-      </div>
     </div>
+    
   );
 };
 

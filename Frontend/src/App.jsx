@@ -13,7 +13,7 @@ import CompanySlider from "./components/CompanySlider";
 import CompanySlider1 from "./components/CompanySlider1";
 import Charts from "./components/Charts";
 import StudentList from "./components/StudentList";
-import Login from "./components/Login";
+import Login from "./pages/Login";
 
 function Dashboard() {
   return (
