@@ -1,66 +1,67 @@
-import React from "react";
-// import { ChevronRight } from "lucide-react";
+import React from 'react';
+import { ChevronRight } from 'lucide-react';
 
 const CompanySlider1 = () => {
-  const cardsData = [
+  const companies = [
     {
-      logo: "https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.png",
-      title: "Notion",
-      plan: "Pro Plan",
-      status: "Expires",
-      timeLeft: "In 2 Days",
-      price: "45",
-      isExpiring: true,
+      logo: "TCS",
+      name: "Tata Consultancy Service",
+      role: "Full stack developer",
+      positions: 2,
+      type: "Full Time",
+      lpa: 10
     },
     {
-      logo: "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg",
-      title: "Amazon Web Services",
-      plan: "Business Plan",
-      status: "Auto-Renews",
-      timeLeft: "In 15 Days",
-      price: "45",
-      isExpiring: false,
+      logo: "TCS",
+      name: "Tata Consultancy Service",
+      role: "Full stack developer",
+      positions: 2,
+      type: "Full Time",
+      lpa: 10
     },
-    // You can add more cards here if needed
+    {
+      logo: "TCS",
+      name: "Tata Consultancy Service",
+      role: "Full stack developer",
+      positions: 2,
+      type: "Full Time",
+      lpa: 10
+    },
+    {
+      logo: "TCS",
+      name: "Tata Consultancy Service",
+      role: "Full stack developer",
+      positions: 2,
+      type: "Full Time",
+      lpa: 10
+    },
+    
+    // Add more companies here if needed
   ];
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-4 mt-3 w-full">
-      <b>Upcoming Companies</b> 
-      <div className="flex flex-wrap justify-start gap-4">
-        {cardsData.map((card, index) => (
-          <div
-            key={index}
-            className="w-full sm:w-[calc(50%-1rem)] md:w-[calc(33.333%-1rem)] max-w-[300px] p-4 border border-gray-300 rounded-lg shadow-md bg-white"
-          >
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center">
-                <img
-                  src={card.logo}
-                  alt={`${card.title} logo`}
-                  className="w-8 h-8 mr-2"
-                />
-                <div>
-                  <h3 className="font-semibold text-sm">{card.title}</h3>
-                  <p className="text-xs text-gray-500">{card.plan}</p>
+    <div className="w-full overflow-x-auto">
+      <div className="flex space-x-4 p-4">
+        {companies.map((company, index) => (
+          <div key={index} className="flex-shrink-0 w-64 bg-white shadow-md rounded-3xl overflow-hidden">
+            <div className="p-3">
+              <div className="flex items-center space-x-4 mb-2">
+                <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                  <span className="text-xl font-bold">{company.logo}</span>
+                </div>
+                <div className="flex-grow">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-semibold text-lg">{company.name}</h3>
+                    <ChevronRight className="text-gray-400" />
+                  </div>
+                  <p className="text-sm text-gray-600">{company.role}</p>
                 </div>
               </div>
-              {/* <ChevronRight className="w-5 h-5 text-gray-400" /> */}
-            </div>
-            <div className="flex justify-between items-center">
-              <div>
-                <p
-                  className={`text-xs ${
-                    card.isExpiring ? "text-red-500" : "text-green-500"
-                  } mb-1`}
-                >
-                  {card.status}
-                </p>
-                <p className="text-sm font-semibold">{card.timeLeft}</p>
+              <div className="flex flex-wrap gap-2 mt-2">
+                <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">{company.positions} Positions</span>
+                <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">{company.type}</span>
+                <span className="text-xs bg-red-100 text-red-800 px-2 py-1 rounded">{company.lpa} LPA</span>
               </div>
-              <button className="bg-blue-500 text-white text-sm px-4 py-1 rounded">
-                Pay ${card.price}
-              </button>
             </div>
           </div>
         ))}
