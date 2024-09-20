@@ -1,20 +1,22 @@
-const bcrypt = require('bcryptjs');
-const db = require('../config/db');
+const bcrypt = require("bcryptjs");
+const db = require("../config/db");
 
 // Login function
 exports.login = (req, res) => {
   const { username, password } = req.body;
 
   // Query to find user in 'users' table
-  const query = 'SELECT * FROM users WHERE username = ?';
+  const query = "SELECT * FROM users WHERE username = ?";
 
   db.query(query, [username], async (err, results) => {
     if (err) {
-      return res.status(500).json({ message: 'Server error', error: err.message }); 
+      return res
+        .status(500)
+        .json({ message: "Server error", error: err.message });
     }
 
     if (results.length === 0) {
-      return res.status(401).json({ message: 'Invalid credentials' }); // Ensure response for no user found
+      return res.status(401).json({ message: "Invalid credentials" }); // Ensure response for no user found
     }
 
     const user = results[0];
@@ -23,10 +25,12 @@ exports.login = (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
-      return res.status(401).json({ message: 'Invalid credentials' }); // Ensure response for wrong password
+      return res.status(401).json({ message: "Invalid credentials" }); // Ensure response for wrong password
     }
 
-    // Successful login
-    res.json({ message: 'Login successful' }); // Ensure response for successful login
+    // Successful login'
+
+    // res.json({ message: "Login successful" }); // Ensure response for successful login
+    res.send(user); // Ensure response for successful login
   });
 };

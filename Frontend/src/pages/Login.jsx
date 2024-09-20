@@ -1,27 +1,41 @@
-import React, { useState } from 'react';
-import { FaGoogle, FaFacebookF, FaApple, FaEnvelope, FaLock, FaQuoteLeft } from 'react-icons/fa';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  FaGoogle,
+  FaFacebookF,
+  FaApple,
+  FaEnvelope,
+  FaLock,
+  FaQuoteLeft,
+} from "react-icons/fa";
 
 const Login = ({ onLogin }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    
+
     // Basic validation (you can enhance this as needed)
-    if (email === '' || password === '') {
-      setError('Please enter both email and password');
-      return;
+    let result = await fetch("http://localhost:5000/auth/login", {
+      method: "POST",
+      body: JSON.stringify({ username, password }),
+      headers: {
+        "Content-type": "application/json",
+      },
+    });
+
+    result = await result.json();
+
+    if (result.username) {
+      onLogin(); // Notify parent of successful login
+      navigate("/dashboard"); // Navigate to dashboard on success
+    } else {
+      // Set the error message on login failure
+      setError("Invalid username or password");
     }
-
-    // Call the onLogin prop passed from App.js to authenticate
-    onLogin();
-
-    // Optionally, reset the form
-    setEmail('');
-    setPassword('');
-    setError('');
   };
 
   return (
@@ -32,18 +46,25 @@ const Login = ({ onLogin }) => {
           Welcome to AOT
         </h2>
         <p className="text-gray-500 mb-6 text-center md:text-left">
-          Blandit libero volutpat sed cras ornare arcu dui. Accumsan in nisl nisi scelerisque eu.
+          Blandit libero volutpat sed cras ornare arcu dui. Accumsan in nisl
+          nisi scelerisque eu.
         </p>
-        <form className="bg-white shadow-md rounded-lg p-8 mb-4" onSubmit={handleLogin}>
+        <form
+          className="bg-white shadow-md rounded-lg p-8 mb-4"
+          onSubmit={handleLogin}
+        >
           <div className="mb-4 relative">
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 text-left">
-              E-mail
+            <label
+              htmlFor="username"
+              className="block text-sm font-medium text-gray-700 text-left"
+            >
+              Username
             </label>
             <input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              type="username"
+              id="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               className="block w-full pl-4 pr-12 py-2 border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               placeholder="example@mail.com"
             />
@@ -52,7 +73,10 @@ const Login = ({ onLogin }) => {
             </div>
           </div>
           <div className="mb-6 relative">
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 text-left">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700 text-left"
+            >
               Password
             </label>
             <input
@@ -67,6 +91,7 @@ const Login = ({ onLogin }) => {
               <FaLock className="text-gray-400" size="20" />
             </div>
           </div>
+          {/* Display error message if present */}
           {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
           <button
             type="submit"
@@ -97,7 +122,8 @@ const Login = ({ onLogin }) => {
           <FaQuoteLeft size="36" className="mx-auto mb-4 text-white" />
           <h1 className="text-5xl font-bold mb-4">Make a Dream.</h1>
           <p className="text-lg mb-8">
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna."
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+            eiusmod tempor incididunt ut labore et dolore magna."
           </p>
         </div>
       </div>

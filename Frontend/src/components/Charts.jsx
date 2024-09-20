@@ -214,9 +214,9 @@ const Charts = () => {
       <Slider {...settings}>
         {charts.map((chartPair, index) => (
           <div key={index} className="px-4">
-            <div className="flex flex-col md:flex-row flex-wrap">
+            <div className="flex flex-col lg:flex-row flex-wrap">
               {chartPair.map((chart, chartIndex) => (
-                <div key={chartIndex} className="w-full md:w-1/2 p-2">
+                <div key={chartIndex} className="w-full lg:w-1/2 p-2">
                   <div className="bg-white p-4 rounded shadow h-full">
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 space-y-2 sm:space-y-0">
                       <h3 className="text-lg font-bold">{chart.title}</h3>

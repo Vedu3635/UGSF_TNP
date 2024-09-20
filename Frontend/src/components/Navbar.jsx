@@ -1,8 +1,12 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
-import { BookOpenIcon, Bars3BottomRightIcon, XMarkIcon } from "@heroicons/react/24/solid";
+import {
+  BookOpenIcon,
+  Bars3BottomRightIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/solid";
 
-const Header = () => {
+const Navbar = () => {
   const [open, setOpen] = useState(false);
   return (
     <div className="shadow-md w-full sticky top-0 left-0 z-50 bg-white">
@@ -11,42 +15,47 @@ const Header = () => {
           <BookOpenIcon className="w-7 h-7 text-blue-600" />
           <span>Portal</span>
         </div>
-        <div onClick={() => setOpen(!open)} className="absolute right-8 top-6 cursor-pointer md:hidden w-7 h-7">
+        <div
+          onClick={() => setOpen(!open)}
+          className="absolute right-8 top-6 cursor-pointer md:hidden w-7 h-7"
+        >
           {open ? <XMarkIcon /> : <Bars3BottomRightIcon />}
         </div>
-        <ul className={`md:flex md:items-center md:pb-0 pb-12 absolute md:static bg-white md:z-auto z-[-1] left-0 w-full md:w-auto md:pl-0 pl-9 transition-all duration-500 ease-in ${open ? "top-20 opacity-100" : "top-[-490px] md:opacity-100 opacity-0"}`}>
+        <ul
+          className={`md:flex md:items-center md:pb-0 pb-12 absolute md:static bg-white md:z-auto z-[-1] left-0 w-full md:w-auto md:pl-0 pl-9 transition-all duration-500 ease-in ${
+            open
+              ? "top-20 opacity-100"
+              : "top-[-490px] md:opacity-100 opacity-0"
+          }`}
+        >
           <li className="md:ml-8 md:my-0 my-7 font-semibold">
-            <NavLink 
-              to="/" 
+            <NavLink
+              to="/"
               className="text-gray-800 hover:text-blue-400 duration-500"
-              activeClassName="text-blue-600"
             >
               HOME
             </NavLink>
           </li>
           <li className="md:ml-8 md:my-0 my-7 font-semibold">
-            <NavLink 
-              to="/service" 
+            <NavLink
+              to="/service"
               className="text-gray-800 hover:text-blue-400 duration-500"
-              activeClassName="text-blue-600"
             >
               SERVICE
             </NavLink>
           </li>
           <li className="md:ml-8 md:my-0 my-7 font-semibold">
-            <NavLink 
-              to="/about" 
+            <NavLink
+              to="/about"
               className="text-gray-800 hover:text-blue-400 duration-500"
-              activeClassName="text-blue-600"
             >
               ABOUT
             </NavLink>
           </li>
           <li className="md:ml-8 md:my-0 my-7 font-semibold">
-            <NavLink 
-              to="/contact" 
+            <NavLink
+              to="/contact"
               className="text-gray-800 hover:text-blue-400 duration-500"
-              activeClassName="text-blue-600"
             >
               CONTACT
             </NavLink>
@@ -60,4 +69,4 @@ const Header = () => {
   );
 };
 
-export default Header;
+export default Navbar;
