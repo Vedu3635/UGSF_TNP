@@ -18,7 +18,7 @@ app.use(
 );
 
 // Routes
-app.use("/auth", authRoutes);
+app.use("/auth", authRoutes);  // All routes starting with /auth
 
 // Server
 const PORT = process.env.PORT || 5000;

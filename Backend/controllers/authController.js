@@ -1,9 +1,13 @@
 const bcrypt = require("bcryptjs");
 const db = require("../config/db");
+const jwt = require("jsonwebtoken");
+const dotenv = require("dotenv");
+
+dotenv.config();
 
 // Login function
 exports.login = (req, res) => {
-  const { username, password } = req.body;
+  const { username, password } = req.body;  // This is the password from the request body
 
   // Query to find user in 'users' table
   const query = "SELECT * FROM users WHERE username = ?";
@@ -16,21 +20,38 @@ exports.login = (req, res) => {
     }
 
     if (results.length === 0) {
-      return res.status(401).json({ message: "Invalid credentials" }); // Ensure response for no user found
+      return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    const user = results[0];
+    const user = results[0];  // This is the user data from the database
 
-    // Compare password with hashed password in the database
+    // Compare password from req.body with the hashed password in the database
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
-      return res.status(401).json({ message: "Invalid credentials" }); // Ensure response for wrong password
+      return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    // Successful login'
+    // If password matches, generate a JWT token
+    const payload = {
+      user: {
+        id: user.id,
+        username: user.username,
+      },
+    };
 
-    // res.json({ message: "Login successful" }); // Ensure response for successful login
-    res.send(user); // Ensure response for successful login
+    const token = jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: "1h", // Token expires in 1 hour
+    });
+
+    // Exclude the password from the user object before sending it
+    const { password: hashedPassword, ...safeUser } = user; // Rename destructured password to avoid conflict
+
+    // Send the response with the token and user details (without the password)
+    res.json({
+      message: "Login successful",
+      token: token, // Send the token to the client
+      user: safeUser  // Send the user data without password
+    });
   });
 };
