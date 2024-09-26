@@ -1,8 +1,8 @@
-const db = require('../config/db');
+const pool = require("../config/pool");
 
 class Faculty {
   static findByUsername(username) {
-    return db.execute('SELECT * FROM users WHERE username = ?', [username]);
+    return pool.execute("SELECT * FROM users WHERE username = ?", [username]);
   }
 }
 
