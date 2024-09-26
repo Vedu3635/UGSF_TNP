@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom"; // <-- Import useNavigate
 import {
   BookOpenIcon,
   Bars3BottomRightIcon,
@@ -8,6 +8,16 @@ import {
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
+  const navigate = useNavigate(); // <-- Define navigate
+
+  const handleLogout = () => {
+    // Remove token from local storage
+    localStorage.removeItem("token");
+
+    // Redirect to login page
+    navigate("/login");
+  };
+
   return (
     <div className="shadow-md w-full sticky top-0 left-0 z-50 bg-white">
       <div className="md:flex items-center justify-between py-4 md:px-10 px-7">
@@ -60,7 +70,10 @@ const Navbar = () => {
               CONTACT
             </NavLink>
           </li>
-          <button className="btn bg-blue-600 text-white md:ml-8 font-semibold px-3 py-1 rounded duration-500 md:static">
+          <button
+            className="bg-blue-600 text-white md:ml-8 font-semibold px-3 py-1 rounded duration-500 md:static"
+            onClick={handleLogout}
+          >
             Log Out
           </button>
         </ul>

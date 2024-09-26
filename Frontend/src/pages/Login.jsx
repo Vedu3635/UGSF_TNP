@@ -19,7 +19,7 @@ const Login = ({ onLogin }) => {
     e.preventDefault();
 
     // Basic validation (you can enhance this as needed)
-    let result = await fetch("http://localhost:5000/auth/login", {
+    const response = await fetch("http://localhost:5000/auth/login", {
       method: "POST",
       body: JSON.stringify({ username, password }),
       headers: {
@@ -27,9 +27,21 @@ const Login = ({ onLogin }) => {
       },
     });
 
-    result = await result.json();
+    const result = await response.json();
+    console.log(result);
 
-    if (result.username) {
+    if (result.token) {
+      // console.log("TOken");
+      if (typeof localStorage !== "undefined") {
+        // Store the token in localStorage
+        localStorage.setItem("token", result.token);
+        console.log(
+          "Token stored in localStorage:",
+          localStorage.getItem("token")
+        ); // Confirm if the token is stored
+      } else {
+        console.error("localStorage is not available");
+      }
       onLogin(); // Notify parent of successful login
       navigate("/dashboard"); // Navigate to dashboard on success
     } else {
