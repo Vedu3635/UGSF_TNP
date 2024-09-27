@@ -5,7 +5,7 @@ const pool = require("../config/pool"); // Import the database connection
 dotenv.config();
 
 module.exports = (req, res, next) => {
-  const token = req.header("Authorization");
+  const token = req.header("authorization");
 
   if (!token) {
     return res.status(401).json({ message: "No token, authorization denied" });
@@ -13,6 +13,7 @@ module.exports = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token.split(" ")[1], process.env.JWT_SECRET); // Extract the token without "Bearer" prefix
+
     req.user = decoded.user; // Attach decoded user info from the token to req.user
 
     // Check if the user still exists in the database

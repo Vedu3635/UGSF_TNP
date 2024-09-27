@@ -5,7 +5,7 @@ import { useAuth } from "./AuthContext";
 const PrivateRoute = ({ children }) => {
   const { isAuthenticated } = useAuth(); // Get authentication status from context
 
-  return isAuthenticated ? children : <Navigate to="/login1" />;
+  return isAuthenticated ? children : <Navigate to="/login" />;
 };
 
 export default PrivateRoute;

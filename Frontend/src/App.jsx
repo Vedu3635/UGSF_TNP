@@ -3,47 +3,31 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import PrivateRoute from "./pages/PrivateRoute";
-import RootPage from "./pages/RootPage";
-import { AuthProvider, useAuth } from "./pages/AuthContext";
+
+import "./index.css"; // Ensure this is the correct path
 
 // Define routes using createBrowserRouter
-const AppRouter = () => {
-  const { login } = useAuth(); // Get the login function from AuthContext
 
-  const router = createBrowserRouter([
-    {
-      path: "/",
-      element: (
-        <PrivateRoute>
-          <RootPage />
-        </PrivateRoute>
-      ),
-      children: [
-        {
-          path: "dashboard",
-          element: (
-            <PrivateRoute>
-              <Dashboard />
-            </PrivateRoute>
-          ),
-        },
-      ],
-    },
-    {
-      path: "/login1",
-      element: <Login onLogin={login} />, // Pass onLogin here
-    },
-  ]);
-
-  return <RouterProvider router={router} />;
-};
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: (
+      <PrivateRoute>
+        <Dashboard />
+      </PrivateRoute>
+    ),
+  },
+  {
+    path: "/Login",
+    element: <Login />,
+  },
+]);
 
 function App() {
   return (
-    <AuthProvider>
-      <AppRouter />
-    </AuthProvider>
+    <>
+      <RouterProvider router={router} />
+    </>
   );
 }
-
 export default App;

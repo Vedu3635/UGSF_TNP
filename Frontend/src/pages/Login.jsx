@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "./AuthContext"; // Adjust the path as necessary
 import {
   FaGoogle,
   FaFacebookF,
@@ -9,44 +10,44 @@ import {
   FaQuoteLeft,
 } from "react-icons/fa";
 
-const Login = ({ onLogin }) => {
+const Login = () => {
+  const { login } = useAuth();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false); // New loading state
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setLoading(true); // Start loading
 
-    // Basic validation (you can enhance this as needed)
-    const response = await fetch("http://localhost:5000/auth/login", {
-      method: "POST",
-      body: JSON.stringify({ username, password }),
-      headers: {
-        "Content-type": "application/json",
-      },
-    });
+    try {
+      const response = await fetch("http://localhost:5000/auth/login", {
+        method: "POST",
+        body: JSON.stringify({ username, password }),
+        headers: {
+          "Content-type": "application/json",
+        },
+      });
 
-    const result = await response.json();
-    console.log(result);
+      const result = await response.json();
 
-    if (result.token) {
-      // console.log("TOken");
-      if (typeof localStorage !== "undefined") {
-        // Store the token in localStorage
-        localStorage.setItem("token", result.token);
-        console.log(
-          "Token stored in localStorage:",
-          localStorage.getItem("token")
-        ); // Confirm if the token is stored
-      } else {
-        console.error("localStorage is not available");
+      if (!response.ok) {
+        throw new Error(result.message || "Login failed"); // Handle non-200 responses
       }
-      onLogin(); // Notify parent of successful login
-      navigate("/dashboard"); // Navigate to dashboard on success
-    } else {
-      // Set the error message on login failure
-      setError("Invalid username or password");
+
+      if (result.token) {
+        // Pass the token to the login function from context
+        login(result.token); // Notify context of successful login
+        navigate("/"); // Navigate to dashboard on success
+      } else {
+        setError("Invalid username or password");
+      }
+    } catch (error) {
+      setError(error.message); // Display error message
+    } finally {
+      setLoading(false); // Stop loading
     }
   };
 
@@ -73,12 +74,13 @@ const Login = ({ onLogin }) => {
               Username
             </label>
             <input
-              type="username"
+              type="text" // Changed to "text" for proper input type
               id="username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               className="block w-full pl-4 pr-12 py-2 border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               placeholder="example@mail.com"
+              required // Added required validation
             />
             <div className="absolute inset-y-0 right-0 pr-3 mt-4 flex items-center pointer-events-none">
               <FaEnvelope className="text-gray-400" size="20" />
@@ -98,6 +100,7 @@ const Login = ({ onLogin }) => {
               onChange={(e) => setPassword(e.target.value)}
               className="block w-full pl-4 pr-12 py-2 border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               placeholder="6+ strong characters"
+              required // Added required validation
             />
             <div className="absolute inset-y-0 right-0 pr-3 mt-4 flex items-center pointer-events-none">
               <FaLock className="text-gray-400" size="20" />
@@ -107,9 +110,12 @@ const Login = ({ onLogin }) => {
           {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-300"
+            className={`w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-300 ${
+              loading ? "opacity-50 cursor-not-allowed" : ""
+            }`} // Disable button during loading
+            disabled={loading} // Disable button while loading
           >
-            Log In
+            {loading ? "Logging In..." : "Log In"}
           </button>
           <p className="mt-6 text-center text-sm text-gray-500">
             Or sign up with
