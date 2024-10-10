@@ -23,7 +23,7 @@ const Navbar = () => {
       <div className="md:flex items-center justify-between py-4 md:px-10 px-7">
         <div className="font-bold text-2xl cursor-pointer flex items-center gap-1">
           <BookOpenIcon className="w-7 h-7 text-blue-600" />
-          <span>Portal</span>
+          <span>CareerVista</span>
         </div>
         <div
           onClick={() => setOpen(!open)}

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Bar, Pie } from "react-chartjs-2";
+import { Bar, Pie, Line } from "react-chartjs-2";
 import Slider from "react-slick";
 import "chart.js/auto";
 import "slick-carousel/slick/slick.css";
@@ -10,6 +10,7 @@ const Charts = () => {
   const [filter2, setFilter2] = useState("CE");
   const [filter3, setFilter3] = useState("CE");
   const [filter4, setFilter4] = useState("CE");
+  const [filter5, setFilter5] = useState("CE");
 
   const data = {
     CE: {
@@ -17,18 +18,30 @@ const Charts = () => {
       techData: [17.5, 15, 12, 14, 13],
       abroadData: [70, 30],
       placementData: [25, 55],
+      studentsChoiceData: {
+        placement: [60, 65, 70, 75, 80],
+        higherStudies: [40, 35, 30, 25, 20],
+      },
     },
     CSE: {
       yearlyData: [5, 7, 9, 10, 11],
       techData: [18.5, 16, 13, 15, 14],
       abroadData: [75, 25],
       placementData: [20, 50],
+      studentsChoiceData: {
+        placement: [65, 70, 75, 80, 85],
+        higherStudies: [35, 30, 25, 20, 15],
+      },
     },
     IT: {
       yearlyData: [3, 5, 7, 8, 9],
       techData: [16.5, 14, 11, 13, 12],
       abroadData: [65, 35],
       placementData: [22, 45],
+      studentsChoiceData: {
+        placement: [55, 60, 65, 70, 75],
+        higherStudies: [45, 40, 35, 30, 25],
+      },
     },
   };
 
@@ -83,6 +96,32 @@ const Charts = () => {
     ],
   };
 
+  const chartData5 = {
+    labels: ["2019", "2020", "2021", "2022", "2023"],
+    datasets: [
+      {
+        label: "Placement",
+        data: data[filter5].studentsChoiceData.placement,
+        borderColor: "rgba(75, 192, 192, 1)",
+        backgroundColor: "rgba(75, 192, 192, 0.2)",
+        fill: false,
+        tension: 0.1,
+        pointRadius: 5,
+        pointHoverRadius: 7,
+      },
+      {
+        label: "Higher Studies",
+        data: data[filter5].studentsChoiceData.higherStudies,
+        borderColor: "rgba(255, 99, 132, 1)",
+        backgroundColor: "rgba(255, 99, 132, 0.2)",
+        fill: false,
+        tension: 0.1,
+        pointRadius: 5,
+        pointHoverRadius: 7,
+      },
+    ],
+  };
+
   const barChartOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -118,43 +157,114 @@ const Charts = () => {
     },
   };
 
+  const lineChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      y: {
+        beginAtZero: true,
+        max: 100,
+        ticks: {
+          callback: function (value) {
+            return value + "%";
+          },
+        },
+        title: {
+          display: true,
+          text: "Percentage of Students",
+          font: {
+            size: 14,
+            weight: 'bold'
+          }
+        }
+      },
+      x: {
+        title: {
+          display: true,
+          text: "Year",
+          font: {
+            size: 14,
+            weight: 'bold'
+          }
+        }
+      }
+    },
+    plugins: {
+      legend: {
+        position: "bottom",
+        labels: {
+          usePointStyle: true,
+          pointStyle: 'circle',
+          padding: 20,
+        }
+      },
+      tooltip: {
+        callbacks: {
+          label: function (context) {
+            return context.dataset.label + ": " + context.parsed.y + "%";
+          },
+        },
+      },
+      title: {
+        display: true,
+        text: 'Students Opting for Placement vs Higher Studies',
+        font: {
+          size: 16,
+          weight: 'bold'
+        }
+      }
+    },
+    interaction: {
+      mode: 'index',
+      intersect: false,
+    },
+    hover: {
+      mode: 'nearest',
+      intersect: true
+    }
+  };
+
   const charts = [
-    [
-      {
-        title: "LPA vs Year",
-        type: "bar",
-        data: chartData1,
-        options: barChartOptions,
-        filter: filter1,
-        setFilter: setFilter1,
-      },
-      {
-        title: "LPA vs Technologies",
-        type: "bar",
-        data: chartData2,
-        options: barChartOptions,
-        filter: filter2,
-        setFilter: setFilter2,
-      },
-    ],
-    [
-      {
-        title: "Abroad Students University Placement",
-        type: "pie",
-        data: chartData3,
-        options: pieChartOptions,
-        filter: filter3,
-        setFilter: setFilter3,
-      },
-      {
-        title: "Student Placement",
-        type: "pie",
-        data: chartData4,
-        options: pieChartOptions,
-        filter: filter4,
-        setFilter: setFilter4,
-      },
-    ],
+    {
+      title: "LPA vs Year",
+      type: "bar",
+      data: chartData1,
+      options: barChartOptions,
+      filter: filter1,
+      setFilter: setFilter1,
+    },
+    {
+      title: "LPA vs Technologies",
+      type: "bar",
+      data: chartData2,
+      options: barChartOptions,
+      filter: filter2,
+      setFilter: setFilter2,
+    },
+    {
+      title: "Abroad Students University Placement",
+      type: "pie",
+      data: chartData3,
+      options: pieChartOptions,
+      filter: filter3,
+      setFilter: setFilter3,
+    },
+    {
+      title: "Student Placement",
+      type: "pie",
+      data: chartData4,
+      options: pieChartOptions,
+      filter: filter4,
+      setFilter: setFilter4,
+    },
+    {
+      title: "Students Opting for Placement vs Higher Studies",
+      type: "line",
+      data: chartData5,
+      options: lineChartOptions,
+      filter: filter5,
+      setFilter: setFilter5,
+    },
   ];
 
   const NextArrow = ({ onClick }) => {
@@ -183,11 +293,21 @@ const Charts = () => {
     dots: true,
     infinite: true,
     speed: 500,
-    slidesToShow: 1,
+    slidesToShow: 2,
     slidesToScroll: 1,
     nextArrow: <NextArrow />,
     prevArrow: <PrevArrow />,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+        },
+      },
+    ],
   };
+
   const DepartmentSelector = ({ value, onChange }) => {
     const departments = ["CE", "CSE", "IT"];
     return (
@@ -212,29 +332,25 @@ const Charts = () => {
   return (
     <div className="w-full mx-auto my-8 px-0">
       <Slider {...settings}>
-        {charts.map((chartPair, index) => (
+        {charts.map((chart, index) => (
           <div key={index} className="px-4">
-            <div className="flex flex-col lg:flex-row flex-wrap">
-              {chartPair.map((chart, chartIndex) => (
-                <div key={chartIndex} className="w-full lg:w-1/2 p-2">
-                  <div className="bg-white p-4 rounded shadow h-full">
-                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 space-y-2 sm:space-y-0">
-                      <h3 className="text-lg font-bold">{chart.title}</h3>
-                      <DepartmentSelector
-                        value={chart.filter}
-                        onChange={chart.setFilter}
-                      />
-                    </div>
-                    <div className="h-64 w-full">
-                      {chart.type === "bar" ? (
-                        <Bar data={chart.data} options={chart.options} />
-                      ) : (
-                        <Pie data={chart.data} options={chart.options} />
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ))}
+            <div className="bg-white p-4 rounded shadow h-full">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 space-y-2 sm:space-y-0">
+                <h3 className="text-lg font-bold">{chart.title}</h3>
+                <DepartmentSelector
+                  value={chart.filter}
+                  onChange={chart.setFilter}
+                />
+              </div>
+              <div className="h-64 w-full">
+                {chart.type === "bar" ? (
+                  <Bar data={chart.data} options={chart.options} />
+                ) : chart.type === "pie" ? (
+                  <Pie data={chart.data} options={chart.options} />
+                ) : (
+                  <Line data={chart.data} options={chart.options} />
+                )}
+              </div>
             </div>
           </div>
         ))}

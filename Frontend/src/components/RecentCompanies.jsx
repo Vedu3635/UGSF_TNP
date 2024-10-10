@@ -1,8 +1,24 @@
 import React from "react";
 import { ChevronRight } from "lucide-react";
 
-const CompanySlider = () => {
+const RecentCompanies = () => {
   const companies = [
+    {
+      logo: "TCS",
+      name: "Tata Consultancy Service",
+      role: "Full stack developer",
+      positions: 2,
+      type: "Full Time",
+      lpa: 10,
+    },
+    {
+      logo: "TCS",
+      name: "Tata Consultancy Service",
+      role: "Full stack developer",
+      positions: 2,
+      type: "Full Time",
+      lpa: 10,
+    },
     {
       logo: "TCS",
       name: "Tata Consultancy Service",
@@ -79,4 +95,4 @@ const CompanySlider = () => {
   );
 };
 
-export default CompanySlider;
+export default RecentCompanies;
