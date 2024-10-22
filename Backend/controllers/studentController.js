@@ -1,10 +1,81 @@
+// controllers/studentController.js
 const pool = require("../config/pool");
 
+// Fetch job placement students
 const getJobPlacementStudents = (req, res) => {
   const query = `
-    SELECT s.FirstName, s.LastName, s.Email, p.company_name, p.package, p.position
-    FROM students s
-    JOIN placement_details p ON s.Id = p.student_id
-    WHERE s.Career_Choice = 'Job Placement';
+    SELECT s.FirstName, s.LastName, s.PhoneNo, s.Email, s.Program, p.company_name, p.Status, p.package, p.position, p.Notes FROM students s JOIN placement_details p ON s.Id = p.student_id WHERE s.Career_Choice = 'Job Placement';
   `;
+
+  pool.query(query, (err, results) => {
+    if (err) {
+      return res
+        .status(500)
+        .json({ message: "Server error", error: err.message });
+    }
+
+    if (results.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No job placement students found" });
+    }
+
+    res.json({
+      message: "Job placement students fetched successfully",
+      data: results, // Send the fetched student details
+    });
+  });
+};
+
+// Fetch higher studies students
+const getHigherStudiesStudents = (req, res) => {
+  const query = `
+    SELECT s.FirstName, s.LastName, s.Email, h.university_name, h.course_name, h.intake_year
+    FROM students s
+    JOIN higher_studies_details h ON s.Id = h.student_id
+    WHERE s.Career_Choice = 'Higher Studies';
+  `;
+
+  pool.query(query, (err, results) => {
+    if (err) {
+      return res
+        .status(500)
+        .json({ message: "Server error", error: err.message });
+    }
+
+    if (results.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No higher studies students found" });
+    }
+
+    res.json({
+      message: "Higher studies students fetched successfully",
+      data: results, // Send the fetched student details
+    });
+  });
+};
+
+// Fetch all students (if needed)
+const getAllStudents = (req, res) => {
+  const query = `SELECT * FROM students`;
+
+  pool.query(query, (err, results) => {
+    if (err) {
+      return res
+        .status(500)
+        .json({ message: "Server error", error: err.message });
+    }
+
+    res.json({
+      message: "All students fetched successfully",
+      data: results, // Send all student data
+    });
+  });
+};
+
+module.exports = {
+  getAllStudents,
+  getJobPlacementStudents,
+  getHigherStudiesStudents,
 };
