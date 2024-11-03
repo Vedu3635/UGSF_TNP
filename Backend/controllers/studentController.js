@@ -21,8 +21,9 @@ const getJobPlacementStudents = (req, res) => {
     }
 
     res.json({
-      message: "Job placement students fetched successfully",
+      // message: "Job placement students fetched successfully",
       data: results, // Send the fetched student details
+      user: req.user,
     });
   });
 };
@@ -50,8 +51,9 @@ const getHigherStudiesStudents = (req, res) => {
     }
 
     res.json({
-      message: "Higher studies students fetched successfully",
+      // message: "Higher studies students fetched successfully",
       data: results, // Send the fetched student details
+      user: req.user,
     });
   });
 };
@@ -68,8 +70,9 @@ const getAllStudents = (req, res) => {
     }
 
     res.json({
-      message: "All students fetched successfully",
+      // message: "All students fetched successfully",
       data: results, // Send all student data
+      user: req.user,
     });
   });
 };

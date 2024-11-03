@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Briefcase,
   GraduationCap,
   ChevronDown,
   ChevronUp,
   ExternalLink,
-  DollarSign,
+  IndianRupee,
   CalendarDays,
   ChevronLeft,
   ChevronRight,
@@ -13,7 +13,7 @@ import {
 
 const StudentCard = ({ item, type }) => {
   const [expanded, setExpanded] = useState(false);
-
+  // console.log(item);
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 ease-in-out hover:shadow-xl mb-4">
       <div
@@ -28,10 +28,10 @@ const StudentCard = ({ item, type }) => {
           )}
           <div>
             <h4 className="font-bold text-sm md:text-base text-gray-800">
-              {item.name}
+              {item.FirstName} {item.LastName}
             </h4>
             <p className="text-xs md:text-sm text-gray-600">
-              {item.position || item.program}
+              {type === "placement" ? item.position : item.program}
             </p>
           </div>
         </div>
@@ -48,18 +48,19 @@ const StudentCard = ({ item, type }) => {
               <strong>
                 {type === "placement" ? "Company:" : "University:"}
               </strong>{" "}
-              {item.company || item.university}
+              {type === "placement" ? item.company_name : item.university_name}
             </p>
             <p className="text-xs md:text-sm text-gray-700 mt-1 flex items-center">
               <strong className="mr-1">
                 {type === "placement" ? "Salary:" : "Year:"}
               </strong>
+
               {type === "placement" ? (
-                <DollarSign className="w-3 h-3 text-green-500 mr-1" />
+                <IndianRupee className="w-3 h-3 text-green-500 mr-1" />
               ) : (
                 <CalendarDays className="w-3 h-3 text-blue-500 mr-1" />
               )}
-              {item.salary || item.year}
+              {type === "placement" ? item.package : item.intake_year}
             </p>
           </div>
           <a
@@ -165,37 +166,71 @@ const PaginatedList = ({ items, type, initialItemsPerPage = 25 }) => {
 
 const StudentList = () => {
   const [activeTab, setActiveTab] = useState("placements");
+  const [placementData, setPlacementData] = useState([]);
+  const [higherStudiesData, setHigherStudiesData] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const token = localStorage.getItem("token");
+      // console.log(token);
+      try {
+        const placementResponse = await fetch(
+          "http://localhost:5000/api/students/job-placement",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const higherStudiesResponse = await fetch(
+          "http://localhost:5000/api/students/higher-studies",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (placementResponse.ok && higherStudiesResponse.ok) {
+          const placements = await placementResponse.json();
+          const higherStudies = await higherStudiesResponse.json();
+
+          // Log the raw data for debugging
+          // console.log("Raw placements data:", placements);
+          // console.log("Raw higher studies data:", higherStudies);
+
+          // Access the 'data' property correctly
+          if (
+            Array.isArray(placements.data) &&
+            Array.isArray(higherStudies.data)
+          ) {
+            setPlacementData(placements.data); // Set the state with the inner array
+            setHigherStudiesData(higherStudies.data); // Set the state with the inner array
+          } else {
+            console.error(
+              "Fetched data is not an array:",
+              placements.data,
+              higherStudies.data
+            );
+          }
+        } else {
+          console.error("Error fetching data");
+        }
+      } catch (error) {
+        console.error("Fetch error:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   const lists = {
-    placements: [
-      {
-        name: "John Doe",
-        position: "Software Engineer",
-        company: "Tech Co.",
-        salary: "$95,000",
-      },
-      {
-        name: "Jane Smith",
-        position: "Data Analyst",
-        company: "Data Corp.",
-        salary: "$85,000",
-      },
-      // Add more placement items here
-    ],
-    higherStudies: [
-      {
-        name: "Alice Wilson",
-        program: "MS in Computer Science",
-        university: "Stanford University",
-        year: "2024",
-      },
-      {
-        name: "Bob Taylor",
-        program: "MBA",
-        university: "Harvard Business School",
-        year: "2025",
-      },
-      // Add more higher studies items here
-    ],
+    placements: placementData,
+    higherStudies: higherStudiesData,
   };
 
   return (
