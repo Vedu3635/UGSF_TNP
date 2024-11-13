@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import LeftSlider from "../components/LeftSlider";
 import NumberBox from "../components/NumberBox";
@@ -8,6 +8,71 @@ import Charts from "../components/Charts";
 import StudentList from "../components/StudentList";
 
 const Dashboard = () => {
+  const [placementData, setPlacementData] = useState([]);
+  const [higherStudiesData, setHigherStudiesData] = useState([]);
+  const [allStudentsData, setAllStudentsData] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const token = localStorage.getItem("token");
+
+      try {
+        const placementResponse = await fetch(
+          "http://localhost:5000/api/students/job-placement",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const higherStudiesResponse = await fetch(
+          "http://localhost:5000/api/students/higher-studies",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const allStudentsResponse = await fetch(
+          "http://localhost:5000/api/students/all",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (
+          placementResponse.ok &&
+          higherStudiesResponse.ok &&
+          allStudentsResponse.ok
+        ) {
+          const placements = await placementResponse.json();
+          const higherStudies = await higherStudiesResponse.json();
+          const allStudents = await allStudentsResponse.json();
+
+          setPlacementData(placements.data);
+          setHigherStudiesData(higherStudies.data);
+          setAllStudentsData(allStudents.data);
+        } else {
+          console.error("Error fetching data");
+        }
+      } catch (error) {
+        console.error("Fetch error:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   return (
     <div className="bg-gray-100 min-h-screen flex flex-col">
       <Navbar />
@@ -20,8 +85,15 @@ const Dashboard = () => {
             <UpcomingCompanies />
             <b>Recent Companies:</b>
             <RecentCompanies />
-            <Charts />
-            <StudentList />
+            <Charts
+              allStudentsData={allStudentsData}
+              placementData={placementData}
+              higherStudiesData={higherStudiesData}
+            />
+            <StudentList
+              placementData={placementData}
+              higherStudiesData={higherStudiesData}
+            />
           </div>
         </div>
       </div>

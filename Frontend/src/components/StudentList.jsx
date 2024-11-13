@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Briefcase,
   GraduationCap,
@@ -164,69 +164,8 @@ const PaginatedList = ({ items, type, initialItemsPerPage = 25 }) => {
   );
 };
 
-const StudentList = () => {
+const StudentList = ({ placementData, higherStudiesData }) => {
   const [activeTab, setActiveTab] = useState("placements");
-  const [placementData, setPlacementData] = useState([]);
-  const [higherStudiesData, setHigherStudiesData] = useState([]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const token = localStorage.getItem("token");
-      // console.log(token);
-      try {
-        const placementResponse = await fetch(
-          "http://localhost:5000/api/students/job-placement",
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        const higherStudiesResponse = await fetch(
-          "http://localhost:5000/api/students/higher-studies",
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        if (placementResponse.ok && higherStudiesResponse.ok) {
-          const placements = await placementResponse.json();
-          const higherStudies = await higherStudiesResponse.json();
-
-          // Log the raw data for debugging
-          // console.log("Raw placements data:", placements);
-          // console.log("Raw higher studies data:", higherStudies);
-
-          // Access the 'data' property correctly
-          if (
-            Array.isArray(placements.data) &&
-            Array.isArray(higherStudies.data)
-          ) {
-            setPlacementData(placements.data); // Set the state with the inner array
-            setHigherStudiesData(higherStudies.data); // Set the state with the inner array
-          } else {
-            console.error(
-              "Fetched data is not an array:",
-              placements.data,
-              higherStudies.data
-            );
-          }
-        } else {
-          console.error("Error fetching data");
-        }
-      } catch (error) {
-        console.error("Fetch error:", error);
-      }
-    };
-
-    fetchData();
-  }, []);
 
   const lists = {
     placements: placementData,
@@ -235,6 +174,7 @@ const StudentList = () => {
 
   return (
     <div className="max-w-4xl mx-auto my-8 p-6 bg-gray-100 rounded-xl shadow-lg">
+      {/* Tabs for switching between placements and higher studies */}
       <div className="flex justify-center space-x-4 mb-6">
         {["placements", "higherStudies"].map((tab) => (
           <button
@@ -255,6 +195,8 @@ const StudentList = () => {
           </button>
         ))}
       </div>
+
+      {/* Header for the active tab */}
       <h2
         className={`text-2xl font-bold mb-4 text-${
           activeTab === "placements" ? "blue" : "green"
@@ -267,6 +209,8 @@ const StudentList = () => {
         )}
         {activeTab === "placements" ? "Placements" : "Higher Studies"}
       </h2>
+
+      {/* Paginated list for the active tab data */}
       <PaginatedList
         items={lists[activeTab]}
         type={activeTab === "placements" ? "placement" : "higherStudies"}
