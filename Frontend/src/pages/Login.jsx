@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "./AuthContext"; // Adjust the path as necessary
 import {
-  FaGoogle,  
+  FaGoogle,
   FaFacebookF,
   FaApple,
   FaEnvelope,
@@ -56,11 +56,10 @@ const Login = () => {
       {/* Left side */}
       <div className="w-full md:w-1/2 flex flex-col justify-center px-8 md:px-20 lg:px-32">
         <h2 className="text-3xl font-bold text-gray-800 text-center md:text-left mb-8">
-          Welcome to AOT
+          Login to Your Account.
         </h2>
         <p className="text-gray-500 mb-6 text-center md:text-left">
-          Blandit libero volutpat sed cras ornare arcu dui. Accumsan in nisl
-          nisi scelerisque eu.
+          Secure login to continue to your account.
         </p>
         <form
           className="bg-white shadow-md rounded-lg p-8 mb-4"
@@ -117,7 +116,7 @@ const Login = () => {
           >
             {loading ? "Logging In..." : "Log In"}
           </button>
-          <p className="mt-6 text-center text-sm text-gray-500">
+          {/* <p className="mt-6 text-center text-sm text-gray-500">
             Or sign up with
           </p>
           <div className="flex justify-center mt-4 space-x-2">
@@ -130,7 +129,7 @@ const Login = () => {
             <button className="bg-white p-2 rounded-full border border-gray-300 hover:shadow-lg">
               <FaApple className="text-black" size="24" />
             </button>
-          </div>
+          </div> */}
         </form>
       </div>
 
@@ -138,10 +137,12 @@ const Login = () => {
       <div className="hidden md:flex md:w-1/2 bg-[#0066b3] text-white items-center justify-center">
         <div className="text-center px-8 py-12 md:px-16 lg:px-24">
           <FaQuoteLeft size="36" className="mx-auto mb-4 text-white" />
-          <h1 className="text-5xl font-bold mb-4">Make a Dream.</h1>
+          <h1 className="text-5xl font-bold mb-4">
+            Empowering Academic Excellence.
+          </h1>
           <p className="text-lg mb-8">
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna."
+            "CareerVista helps you stay connected with student outcomes, track
+            placement trends, and prepare for upcoming graduations."
           </p>
         </div>
       </div>
