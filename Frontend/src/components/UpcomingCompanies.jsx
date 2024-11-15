@@ -9,7 +9,7 @@ const UpcomingCompanies = () => {
       role: "Full stack developer",
       positions: 2,
       type: "Full Time",
-      lpa: 10,
+      lpa: "5-7",
     },
     {
       logo: "TCS",
@@ -17,7 +17,7 @@ const UpcomingCompanies = () => {
       role: "Full stack developer",
       positions: 2,
       type: "Full Time",
-      lpa: 10,
+      lpa: "5-7",
     },
     {
       logo: "TCS",
@@ -25,7 +25,7 @@ const UpcomingCompanies = () => {
       role: "Full stack developer",
       positions: 2,
       type: "Full Time",
-      lpa: 10,
+      lpa: "5-7",
     },
     {
       logo: "TCS",
@@ -33,7 +33,7 @@ const UpcomingCompanies = () => {
       role: "Full stack developer",
       positions: 2,
       type: "Full Time",
-      lpa: 10,
+      lpa: "5-7",
     },
     {
       logo: "TCS",
@@ -41,7 +41,7 @@ const UpcomingCompanies = () => {
       role: "Full stack developer",
       positions: 2,
       type: "Full Time",
-      lpa: 10,
+      lpa: "5-7",
     },
     {
       logo: "TCS",
@@ -49,14 +49,26 @@ const UpcomingCompanies = () => {
       role: "Full stack developer",
       positions: 2,
       type: "Full Time",
-      lpa: 10,
+      lpa: "5-7",
     },
-
-    // Add more companies here if needed
   ];
 
   return (
-    <div className="w-full overflow-x-auto">
+    <div 
+      className="w-full overflow-x-auto" 
+      style={{ 
+        scrollbarWidth: 'none',
+        msOverflowStyle: 'none',
+        WebkitOverflowScrolling: 'touch'
+      }}
+    >
+      <style>
+        {`
+          .w-full::-webkit-scrollbar {
+            display: none;
+          }
+        `}
+      </style>
       <div className="flex space-x-4 p-4">
         {companies.map((company, index) => (
           <div

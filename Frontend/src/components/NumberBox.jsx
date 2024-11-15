@@ -3,7 +3,7 @@ import { PiStudentFill, PiBuildingOfficeFill } from "react-icons/pi";
 import { GiBookmarklet } from "react-icons/gi";
 import { FaUserTie } from "react-icons/fa";
 
-const NumberBox = () => {
+const NumberBox = ({ studentsCount, higherStudiesCount,placedStudentsCount }) => {
   const colorClasses = {
     blue: {
       bg: "bg-blue-500",
@@ -24,20 +24,10 @@ const NumberBox = () => {
   };
 
   const items = [
-    { icon: PiStudentFill, title: "Students", count: 1000, color: "blue" },
-    {
-      icon: GiBookmarklet,
-      title: "Higher Studies",
-      count: 1000,
-      color: "green",
-    },
-    {
-      icon: PiBuildingOfficeFill,
-      title: "Companies",
-      count: 150,
-      color: "purple",
-    },
-    { icon: FaUserTie, title: "Placed Students", count: 200, color: "pink" },
+    { icon: PiStudentFill, title: "Students", count: studentsCount, color: "blue" },
+    { icon: GiBookmarklet, title: "Higher Studies", count: higherStudiesCount, color: "green" },
+    { icon: PiBuildingOfficeFill, title: "Companies", count: 25, color: "purple" },
+    { icon: FaUserTie, title: "Placed Students", count: placedStudentsCount, color: "pink" },
   ];
 
   return (

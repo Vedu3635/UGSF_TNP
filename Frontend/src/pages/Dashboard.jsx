@@ -80,7 +80,12 @@ const Dashboard = () => {
         <LeftSlider />
         <div className="flex-1 p-4 bg-[#bed5e7] overflow-auto">
           <div className="max-w-7xl mx-auto">
-            <NumberBox />
+            <NumberBox 
+              studentsCount={allStudentsData.length}
+              higherStudiesCount={higherStudiesData.length}
+            
+              placedStudentsCount={placementData.length}
+            />
             <b>Upcoming Companies:</b>
             <UpcomingCompanies />
             <b>Recent Companies:</b>
