@@ -432,7 +432,7 @@ const Charts = ({ allStudentsData, placementData, higherStudiesData }) => {
       setFilter: setFilter4,
     },
     {
-      title: "Students Opting for Placement vs Higher Studies",
+      title: "Placement vs Higher Studies",
       type: "line",
       data: chartData5,
       options: lineChartOptions,

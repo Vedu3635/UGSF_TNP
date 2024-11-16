@@ -108,32 +108,6 @@ const UploadButton = () => {
     }
   };
 
-  const handleDownload = async () => {
-    try {
-      const response = await axios.get(
-        "http://localhost:5000/api/file/export-excel",
-        {
-          responseType: "blob",
-        }
-      );
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", "data.xlsx");
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-    } catch (error) {
-      console.error("Error downloading file:", error);
-      setUploadStatus({
-        type: "error",
-        message:
-          error.response?.data?.message ||
-          "An error occurred while downloading the file.",
-      });
-    }
-  };
-
   return (
     <div className="flex flex-col gap-4">
       {/* File Upload Section */}
@@ -202,17 +176,6 @@ const UploadButton = () => {
       </div>
 
       {/* Download Button */}
-      <button
-        onClick={handleDownload}
-        className="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-lg p-3 
-                 flex items-center justify-center gap-2 transition duration-200"
-      >
-        <Download className="w-5 h-5" />
-        Download Excel
-        {uploadStatus.message && (
-          <Alert type={uploadStatus.type}>{uploadStatus.message}</Alert>
-        )}
-      </button>
 
       {/* Company Registration Button & Modal */}
       <button
