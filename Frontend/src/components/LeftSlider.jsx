@@ -1,6 +1,8 @@
 import React from "react";
 import UploadButton from "./UploadButton";
 import DownloadButton from "./DownloadButton";
+import StudentListManagement from "./StudentListManagement";
+import CompanyDropdown from "./CompanyDropdown";
 
 const LeftSlider = () => {
   return (
@@ -10,6 +12,12 @@ const LeftSlider = () => {
       <UploadButton />
       <div className="my-4">
         <DownloadButton />
+      </div>
+      <div className="my-4">
+        <StudentListManagement />
+      </div>
+      <div className="my-4">
+        <CompanyDropdown />
       </div>
     </div>
   );

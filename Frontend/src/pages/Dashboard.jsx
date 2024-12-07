@@ -86,19 +86,19 @@ const Dashboard = () => {
             
               placedStudentsCount={placementData.length}
             />
-            <b>Upcoming Companies:</b>
+            {/* <b>Upcoming Companies:</b>
             <UpcomingCompanies />
             <b>Recent Companies:</b>
-            <RecentCompanies />
+            <RecentCompanies /> */}
             <Charts
               allStudentsData={allStudentsData}
               placementData={placementData}
               higherStudiesData={higherStudiesData}
             />
-            <StudentList
+            {/* <StudentList
               placementData={placementData}
               higherStudiesData={higherStudiesData}
-            />
+            /> */}
           </div>
         </div>
       </div>
