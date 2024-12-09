@@ -28,8 +28,8 @@ const StudentCard = ({ item, type }) => {
           }`}
         >
           {type === "placement"
-            ? `${`${item.package / 100000}LPA` || "N/A"}`
-            : `${item.university_name || "N/A"}`}
+            ? `${item.package / 100000}LPA`
+            : item.university_name}
         </span>
       </div>
       <div className="grid grid-cols-3 gap-2 text-gray-600">
@@ -55,13 +55,13 @@ const StudentCard = ({ item, type }) => {
         {type === "placement" ? (
           <div className="mt-2 flex items-center       space-x-2">
             <span className="text-xs bg-white text-gray-700 px-2 py-1 rounded-full">
-              {item.position || "N/A"}
+              {item.position}
             </span>
           </div>
         ) : (
           <div className="mt-2 flex items-center       space-x-2">
             <span className="text-xs bg-white text-gray-700 px-2 py-1 rounded-full">
-              {item.intake_year || "N/A"}
+              {item.intake_year}
             </span>
           </div>
         )}

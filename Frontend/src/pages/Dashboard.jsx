@@ -5,6 +5,8 @@ import NumberBox from "../components/NumberBox";
 import RecentCompanies from "../components/RecentCompanies";
 import UpcomingCompanies from "../components/UpcomingCompanies";
 import Charts from "../components/Charts";
+import CompanyList from "../components/CompanyList";
+
 import StudentList from "../components/StudentList";
 
 const Dashboard = () => {
@@ -80,10 +82,9 @@ const Dashboard = () => {
         <LeftSlider />
         <div className="flex-1 p-4 bg-[#bed5e7] overflow-auto">
           <div className="max-w-7xl mx-auto">
-            <NumberBox 
+            <NumberBox
               studentsCount={allStudentsData.length}
               higherStudiesCount={higherStudiesData.length}
-            
               placedStudentsCount={placementData.length}
             />
             {/* <b>Upcoming Companies:</b>
@@ -95,10 +96,11 @@ const Dashboard = () => {
               placementData={placementData}
               higherStudiesData={higherStudiesData}
             />
-            {/* <StudentList
+            <CompanyList />
+            <StudentList
               placementData={placementData}
               higherStudiesData={higherStudiesData}
-            /> */}
+            />
           </div>
         </div>
       </div>
