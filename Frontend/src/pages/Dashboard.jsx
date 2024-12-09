@@ -74,6 +74,7 @@ const Dashboard = () => {
 
     fetchData();
   }, []);
+  console.log(higherStudiesData);
 
   return (
     <div className="bg-gray-100 min-h-screen flex flex-col">

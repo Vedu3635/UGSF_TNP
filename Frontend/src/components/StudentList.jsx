@@ -49,7 +49,7 @@ const StudentCard = ({ item, type }) => {
         ) : (
           <div>
             <span className="font-medium text-xs">Course</span>
-            <p className="text-sm">{item.course || "N/A"}</p>
+            <p className="text-sm">{item.course_name || "N/A"}</p>
           </div>
         )}
         {type === "placement" ? (
