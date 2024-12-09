@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 13, 2024 at 01:40 PM
+-- Generation Time: Dec 09, 2024 at 07:01 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -20,6 +20,24 @@ SET time_zone = "+00:00";
 --
 -- Database: `tnp_ugsf`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `companies`
+--
+
+CREATE TABLE `companies` (
+  `Id` int(11) NOT NULL,
+  `Company_Name` varchar(255) NOT NULL,
+  `Domain` varchar(255) NOT NULL,
+  `Positions` int(5) NOT NULL,
+  `Package_Min` int(15) NOT NULL,
+  `Package_Max` int(15) NOT NULL,
+  `Hiring_Date` date NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -67,11 +85,9 @@ INSERT INTO `higher_studies_details` (`id`, `student_id`, `university_name`, `co
 (1, 5, 'IIT Manipur', 'AI/ML', 'India', '2026', 'Got into the University'),
 (2, 8, 'MIT', 'Data Science in AI/ML', 'USA', '2027', 'Got into the University'),
 (3, 48, '', '', '', '', 'Don\'t get in University'),
-(39, 5, 'Stanford University', 'Computer Science', 'USA', '2026', 'Got into the University'),
 (40, 8, 'University of Toronto', 'Data Science', 'Canada', '2025', 'Got into the University'),
 (41, 40, '', '', '', '', 'Don\'t get in University'),
 (42, 44, 'Massachusetts Institute of Technology', 'Machine Learning', 'USA', '2027', 'Got into the University'),
-(43, 48, '', '', '', '', 'Don\'t get in University'),
 (44, 51, 'University of Melbourne', 'Cybersecurity', 'Australia', '2026', 'Got into the University'),
 (45, 56, '', '', '', '', 'Don\'t get in University'),
 (46, 58, 'ETH Zurich', 'Robotics', 'Switzerland', '2026', 'Got into the University'),
@@ -193,7 +209,12 @@ INSERT INTO `students` (`Id`, `FirstName`, `MiddleName`, `LastName`, `Email`, `S
 (71, 'Simran', 'L', 'Gill', 'simrangill@gmail.com', '19DIT015', '2019', 2147483647, 'IT', 'Job Placement', 'SEM 5', '5IT2', 'C', '2024-11-07 16:29:42', '2024-11-13 11:52:44'),
 (72, 'Kavya', 'R', 'Mehta', 'kavyamehta@gmail.com', '21DCE017', '2021', 2147483647, 'CE', 'Higher Studies', 'SEM 5', '5CE1', 'B', '2024-11-07 16:29:42', '2024-11-13 11:52:44'),
 (73, 'Lakshay', NULL, 'Jain', 'lakshayjain@gmail.com', '22DCS018', '2022', 2147483647, 'CSE', 'Job Placement', 'SEM 5', '5CSE1', 'C', '2024-11-07 16:29:42', '2024-11-13 11:52:44'),
-(74, 'Nikhil', 'V', 'Shah', 'nikhilshah@gmail.com', '17DIT019', '2017', 2147483647, 'IT', 'Job Placement', 'SEM 5', '5IT1', 'A', '2024-11-07 16:29:42', '2024-11-13 11:52:44');
+(74, 'Nikhil', 'V', 'Shah', 'nikhilshah@gmail.com', '17DIT019', '2017', 2147483647, 'IT', 'Job Placement', 'SEM 5', '5IT1', 'A', '2024-11-07 16:29:42', '2024-11-13 11:52:44'),
+(85, 'Vedant', NULL, 'Paghdar', '22DCE053@gmail.com', '22DCE059', NULL, 2022, '97244420998', '', '', 'SEM 5', '', '2024-11-21 16:41:14', '2024-11-21 16:41:14'),
+(86, 'Kalp', NULL, 'Modha', '22DCE059@gmail.com', '22DCE053', NULL, 2022, '1234567890', '', '', 'SEM 5', '', '2024-11-21 16:41:14', '2024-11-21 16:41:14'),
+(87, 'Jeet', NULL, 'Modi', '22DCE056@gmail.com', '22DCE056', NULL, 2022, '987654321', '', '', 'SEM 5', '', '2024-11-21 16:41:14', '2024-11-21 16:41:14'),
+(88, 'Harsh', NULL, 'Thummar', '22DIT081@gmail.com', '22DIT81', NULL, 2022, '5646738920', '', '', 'SEM 5', '', '2024-11-21 16:41:14', '2024-11-21 16:41:14'),
+(89, 'Jaimish', NULL, 'Satani', '22DCS102@gmail.com', '22DCS102', NULL, 2022, '1112223334', '', '', 'SEM 5', '', '2024-11-21 16:41:14', '2024-11-21 16:41:14');
 
 -- --------------------------------------------------------
 
@@ -218,6 +239,12 @@ INSERT INTO `users` (`id`, `username`, `type`, `password`) VALUES
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `companies`
+--
+ALTER TABLE `companies`
+  ADD PRIMARY KEY (`Id`);
 
 --
 -- Indexes for table `data`
@@ -256,6 +283,12 @@ ALTER TABLE `users`
 --
 
 --
+-- AUTO_INCREMENT for table `companies`
+--
+ALTER TABLE `companies`
+  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `data`
 --
 ALTER TABLE `data`
@@ -277,7 +310,7 @@ ALTER TABLE `placement_details`
 -- AUTO_INCREMENT for table `students`
 --
 ALTER TABLE `students`
-  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=75;
+  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=90;
 
 --
 -- AUTO_INCREMENT for table `users`
