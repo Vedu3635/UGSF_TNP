@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Briefcase,
   GraduationCap,
@@ -159,8 +159,72 @@ const PaginatedList = ({ items, type, initialItemsPerPage = 25 }) => {
   );
 };
 
-const StudentList = ({ placementData, higherStudiesData }) => {
+const StudentList = () => {
   const [activeTab, setActiveTab] = useState("placements");
+  const [placementData, setPlacementData] = useState([]);
+  const [higherStudiesData, setHigherStudiesData] = useState([]);
+  const [allStudentsData, setAllStudentsData] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const token = localStorage.getItem("token");
+
+      try {
+        const placementResponse = await fetch(
+          "http://localhost:5000/api/students/job-placement",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const higherStudiesResponse = await fetch(
+          "http://localhost:5000/api/students/higher-studies",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const allStudentsResponse = await fetch(
+          "http://localhost:5000/api/students/all",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (
+          placementResponse.ok &&
+          higherStudiesResponse.ok &&
+          allStudentsResponse.ok
+        ) {
+          const placements = await placementResponse.json();
+          const higherStudies = await higherStudiesResponse.json();
+          const allStudents = await allStudentsResponse.json();
+
+          setPlacementData(placements.data);
+          setHigherStudiesData(higherStudies.data);
+          setAllStudentsData(allStudents.data);
+        } else {
+          console.error("Error fetching data");
+        }
+      } catch (error) {
+        console.error("Fetch error:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const lists = {
     placements: placementData,

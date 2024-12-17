@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
-import LeftSlider from "../components/LeftSlider";
+import LeftSlider2 from "../components/LeftSlider2";
 import NumberBox from "../components/NumberBox";
-import RecentCompanies from "../components/RecentCompanies";
-import UpcomingCompanies from "../components/UpcomingCompanies";
 import Charts from "../components/Charts";
 import CompanyList from "../components/CompanyList";
-
 import StudentList from "../components/StudentList";
 
 const Dashboard = () => {
+  const [activeSection, setActiveSection] = useState("dashboard"); // Default is 'dashboard'
   const [placementData, setPlacementData] = useState([]);
   const [higherStudiesData, setHigherStudiesData] = useState([]);
   const [allStudentsData, setAllStudentsData] = useState([]);
@@ -74,34 +72,40 @@ const Dashboard = () => {
 
     fetchData();
   }, []);
-  console.log(higherStudiesData);
 
   return (
     <div className="bg-gray-100 min-h-screen flex flex-col">
       <Navbar />
-      <div className="flex-1 flex flex-col md:flex-row">
-        <LeftSlider />
-        <div className="flex-1 p-4 bg-[#bed5e7] overflow-auto">
+      <div className="flex">
+        <LeftSlider2
+          setActiveSection={setActiveSection}
+          activeSection={activeSection}
+          className="left-slider"
+        />
+        <div className="flex-1 p-4 bg-[#bed5e7] overflow-auto ml-[16rem]">
           <div className="max-w-7xl mx-auto">
-            <NumberBox
-              studentsCount={allStudentsData.length}
-              higherStudiesCount={higherStudiesData.length}
-              placedStudentsCount={placementData.length}
-            />
-            {/* <b>Upcoming Companies:</b>
-            <UpcomingCompanies />
-            <b>Recent Companies:</b>
-            <RecentCompanies /> */}
-            <Charts
-              allStudentsData={allStudentsData}
-              placementData={placementData}
-              higherStudiesData={higherStudiesData}
-            />
-            <CompanyList />
-            <StudentList
-              placementData={placementData}
-              higherStudiesData={higherStudiesData}
-            />
+            {/* Conditional rendering based on activeSection */}
+            {activeSection === "dashboard" && (
+              <>
+                <NumberBox
+                  studentsCount={allStudentsData.length}
+                  higherStudiesCount={higherStudiesData.length}
+                  placedStudentsCount={placementData.length}
+                />
+                <Charts
+                  allStudentsData={allStudentsData}
+                  placementData={placementData}
+                  higherStudiesData={higherStudiesData}
+                />
+                <CompanyList />
+              </>
+            )}
+            {activeSection === "studentList" && (
+              <StudentList
+                placementData={placementData}
+                higherStudiesData={higherStudiesData}
+              />
+            )}
           </div>
         </div>
       </div>
