@@ -1,84 +1,127 @@
 import React, { useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom"; // <-- Import useNavigate
+import { NavLink, useNavigate } from "react-router-dom";
 import {
-  BookOpenIcon,
+  HomeIcon,
+  CalendarIcon,
+  AcademicCapIcon,
+  DocumentMagnifyingGlassIcon,
+  UserCircleIcon,
   Bars3BottomRightIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/solid";
+  XMarkIcon
+} from "@heroicons/react/24/outline";
 
-const Navbar = () => {
+const Navbar = ({ userProfile }) => {
   const [open, setOpen] = useState(false);
-  const navigate = useNavigate(); // <-- Define navigate
+  const navigate = useNavigate();
 
-  const handleLogout = () => {
-    // Remove token from local storage
-    localStorage.removeItem("token");
+  // Default profile image in case no image is provided
+  const defaultProfileImage = "https://i.pravatar.cc/150?u=default";
 
-    // Redirect to login page
-    navigate("/login");
-  };
+  // Navigation items with icons
+  const navItems = [
+    { 
+      name: 'TNP', 
+      path: '/', 
+      icon: <HomeIcon className="w-5 h-5 mr-2" /> 
+    },
+    { 
+      name: 'EVENTS', 
+      path: '/events', 
+      icon: <CalendarIcon className="w-5 h-5 mr-2" /> 
+    },
+    { 
+      name: 'QUIZ', 
+      path: '/quiz', 
+      icon: <AcademicCapIcon className="w-5 h-5 mr-2" /> 
+    },
+    { 
+      name: 'RESEARCH', 
+      path: '/research', 
+      icon: <DocumentMagnifyingGlassIcon className="w-5 h-5 mr-2" /> 
+    }
+  ];
 
   return (
-    <div className="shadow-md w-full sticky top-0 left-0 z-50 bg-white">
-      <div className="md:flex items-center justify-between py-4 md:px-10 px-7">
-        <div className="font-bold text-2xl cursor-pointer flex items-center gap-1">
-          <BookOpenIcon className="w-7 h-7 text-blue-600" />
-          <span>CareerVista</span>
-        </div>
-        <div
-          onClick={() => setOpen(!open)}
-          className="absolute right-8 top-6 cursor-pointer md:hidden w-7 h-7"
-        >
-          {open ? <XMarkIcon /> : <Bars3BottomRightIcon />}
-        </div>
-        <ul
-          className={`md:flex md:items-center md:pb-0 pb-12 absolute md:static bg-white md:z-auto z-[-1] left-0 w-full md:w-auto md:pl-0 pl-9 transition-all duration-500 ease-in ${
-            open
-              ? "top-20 opacity-100"
-              : "top-[-490px] md:opacity-100 opacity-0"
-          }`}
-        >
-          <li className="md:ml-8 md:my-0 my-7 font-semibold">
-            <NavLink
-              to="/"
-              className="text-gray-800 hover:text-blue-400 duration-500"
-            >
-              HOME
-            </NavLink>
-          </li>
-          <li className="md:ml-8 md:my-0 my-7 font-semibold">
-            <NavLink
-              to="/service"
-              className="text-gray-800 hover:text-blue-400 duration-500"
-            >
-              SERVICE
-            </NavLink>
-          </li>
-          <li className="md:ml-8 md:my-0 my-7 font-semibold">
-            <NavLink
-              to="/about"
-              className="text-gray-800 hover:text-blue-400 duration-500"
-            >
-              ABOUT
-            </NavLink>
-          </li>
-          <li className="md:ml-8 md:my-0 my-7 font-semibold">
-            <NavLink
-              to="/contact"
-              className="text-gray-800 hover:text-blue-400 duration-500"
-            >
-              CONTACT
-            </NavLink>
-          </li>
-          <button
-            className="bg-blue-600 text-white md:ml-8 font-semibold px-3 py-1 rounded duration-500 md:static"
-            onClick={handleLogout}
+    <nav className="bg-gradient-to-r from-blue-50 to-blue-100 shadow-lg w-full sticky top-0 left-0 z-50">
+      <div className="container mx-auto px-4 py-3 md:flex md:items-center md:justify-between">
+        {/* Logo and Mobile Toggle */}
+        <div className="flex items-center justify-between">
+          <div 
+            className="flex items-center cursor-pointer"
+            onClick={() => navigate('/')}
           >
-            Log Out
-          </button>
-        </ul>
+            <UserCircleIcon className="w-8 h-8 text-blue-600 mr-2" />
+            <span className="text-xl font-bold text-blue-800">CareerVista</span>
+          </div>
+
+          {/* Mobile Menu Toggle */}
+          <div 
+            className="md:hidden cursor-pointer"
+            onClick={() => setOpen(!open)}
+          >
+            {open ? (
+              <XMarkIcon className="w-6 h-6 text-blue-600" />
+            ) : (
+              <Bars3BottomRightIcon className="w-6 h-6 text-blue-600" />
+            )}
+          </div>
+        </div>
+
+        {/* Navigation Menu */}
+        <div 
+          className={`
+            md:flex md:items-center 
+            ${open ? 'block' : 'hidden'}
+            transition-all duration-300 ease-in-out
+          `}
+        >
+          <ul className="md:flex md:space-x-6 items-center">
+            {navItems.map((item) => (
+              <li key={item.path} className="my-2 md:my-0">
+                <NavLink
+                  to={item.path}
+                  className={({ isActive }) => `
+                    flex items-center 
+                    px-3 py-2 
+                    rounded-lg 
+                    transition-all duration-300 
+                    ${isActive 
+                      ? 'bg-blue-600 text-white hover:bg-blue-700' 
+                      : 'text-blue-800 hover:bg-blue-200'}
+                  `}
+                >
+                  {item.icon}
+                  {item.name}
+                </NavLink>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Profile Section */}
+        <div className="hidden md:block">
+          <div 
+            className="
+              w-12 h-12 
+              rounded-full 
+              border-2 border-blue-500 
+              overflow-hidden 
+              cursor-pointer 
+              hover:shadow-lg 
+              transition-all 
+              transform hover:scale-110
+            "
+            onClick={() => navigate('/profile')}
+          >
+            <img 
+              src={userProfile?.profileImage || defaultProfileImage} 
+              alt="Profile" 
+              className="w-full h-full object-cover"
+            />
+          </div>
+        </div>
       </div>
-    </div>
+    </nav>
   );
 };
 

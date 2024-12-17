@@ -6,10 +6,18 @@ import {
   Building2,
   LogOut,
 } from "lucide-react";
-
+import { NavLink, useNavigate } from "react-router-dom";
 const LeftSlider2 = ({ setActiveSection, activeSection }) => {
   const handleButtonClick = (button) => {
     setActiveSection(button);
+  };
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    // Remove token from local storage
+    localStorage.removeItem("token");
+
+    // Redirect to login page
+    navigate("/login");
   };
 
   return (
@@ -81,7 +89,7 @@ const LeftSlider2 = ({ setActiveSection, activeSection }) => {
       <div className="p-4 border-t border-blue-800">
         <button
           className="w-full flex items-center space-x-3 p-2 hover:bg-red-500 rounded transition duration-200"
-          onClick={() => handleButtonClick("logout")}
+          onClick={handleLogout}
         >
           <LogOut className="w-5 h-5" />
           <span>Logout</span>
