@@ -7,7 +7,7 @@ import {
   LogOut,
 } from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
-const LeftSlider2 = ({ setActiveSection, activeSection }) => {
+const LeftSlider2 = ({ setActiveSection, activeSection, onUploadClick }) => {
   const handleButtonClick = (button) => {
     setActiveSection(button);
   };
@@ -48,7 +48,7 @@ const LeftSlider2 = ({ setActiveSection, activeSection }) => {
               className={`w-full flex items-center space-x-3 p-2 rounded transition duration-200 ${
                 activeSection === "upload" ? "bg-blue-800" : "hover:bg-blue-800"
               }`}
-              onClick={() => handleButtonClick("upload")}
+              onClick={onUploadClick}
             >
               <Upload className="w-5 h-5" />
               <span>Upload File</span>

@@ -5,13 +5,17 @@ import NumberBox from "../components/NumberBox";
 import Charts from "../components/Charts";
 import CompanyList from "../components/CompanyList";
 import StudentList from "../components/StudentList";
+import FileUploadModal from "../components/FileUploadModal";
 
 const Dashboard = () => {
   const [activeSection, setActiveSection] = useState("dashboard"); // Default is 'dashboard'
   const [placementData, setPlacementData] = useState([]);
   const [higherStudiesData, setHigherStudiesData] = useState([]);
   const [allStudentsData, setAllStudentsData] = useState([]);
-
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const handleUploadClick = () => {
+    setIsUploadModalOpen(true);
+  };
   useEffect(() => {
     const fetchData = async () => {
       const token = localStorage.getItem("token");
@@ -80,6 +84,7 @@ const Dashboard = () => {
         <LeftSlider2
           setActiveSection={setActiveSection}
           activeSection={activeSection}
+          onUploadClick={handleUploadClick}
           className="left-slider"
         />
         <div className="flex-1 p-4 bg-[#bed5e7] overflow-auto ml-[16rem]">
@@ -109,6 +114,10 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+      <FileUploadModal
+        isOpen={isUploadModalOpen}
+        onClose={() => setIsUploadModalOpen(false)}
+      />
     </div>
   );
 };
