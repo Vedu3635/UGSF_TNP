@@ -10,7 +10,9 @@ import { NavLink, useNavigate } from "react-router-dom";
 const LeftSlider2 = ({ setActiveSection, activeSection, onUploadClick }) => {
   const handleButtonClick = (button) => {
     setActiveSection(button);
+    // localStorage.setItem("activeSection", activeSection); // Save to localStorage
   };
+
   const navigate = useNavigate();
   const handleLogout = () => {
     // Remove token from local storage

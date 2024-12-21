@@ -8,14 +8,23 @@ import StudentList from "../components/StudentList";
 import FileUploadModal from "../components/FileUploadModal";
 
 const Dashboard = () => {
-  const [activeSection, setActiveSection] = useState("dashboard"); // Default is 'dashboard'
+  const [activeSection, setActiveSection] = useState(
+    localStorage.getItem("activeSection") || "dashboard" // Default to 'dashboard' if not set
+  );
   const [placementData, setPlacementData] = useState([]);
   const [higherStudiesData, setHigherStudiesData] = useState([]);
   const [allStudentsData, setAllStudentsData] = useState([]);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+
   const handleUploadClick = () => {
     setIsUploadModalOpen(true);
   };
+
+  const handleSetActiveSection = (section) => {
+    setActiveSection(section);
+    localStorage.setItem("activeSection", section); // Save to localStorage
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       const token = localStorage.getItem("token");
@@ -82,7 +91,7 @@ const Dashboard = () => {
       <Navbar />
       <div className="flex">
         <LeftSlider2
-          setActiveSection={setActiveSection}
+          setActiveSection={handleSetActiveSection}
           activeSection={activeSection}
           onUploadClick={handleUploadClick}
           className="left-slider"

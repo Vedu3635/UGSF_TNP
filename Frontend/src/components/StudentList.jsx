@@ -10,7 +10,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-
+import DownloadButton2 from "./DownloadButton2";
 const StudentCard = ({ item, type }) => {
   return (
     <div
@@ -234,28 +234,39 @@ const StudentList = () => {
   return (
     <div className="max-w-4xl mx-auto my-8 p-6 bg-gray-100 rounded-xl shadow-lg">
       {/* Tabs for switching between placements and higher studies */}
-      <div className="flex justify-center space-x-4 mb-6">
-        {["placements", "higherStudies"].map((tab) => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`px-4 py-2 rounded-full ${
-              activeTab === tab
-                ? `bg-${tab === "placements" ? "blue" : "green"}-500 text-white`
-                : "bg-white text-gray-700 hover:bg-gray-100"
-            }`}
-          >
-            {tab === "placements" ? (
-              <Briefcase className="w-5 h-5 inline-block mr-2" />
-            ) : (
-              <GraduationCap className="w-5 h-5 inline-block mr-2" />
-            )}
-            {tab === "placements" ? "Placements" : "Higher Studies"}
-          </button>
-        ))}
+      <div className="flex items-center justify-center relative mb-6">
+        {/* Center-aligned tabs */}
+        <div className="absolute left-1/2 transform -translate-x-1/2 flex space-x-4">
+          {["placements", "higherStudies"].map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`px-4 py-2 rounded-full ${
+                activeTab === tab
+                  ? `bg-${
+                      tab === "placements" ? "blue" : "green"
+                    }-500 text-white`
+                  : "bg-white text-gray-700 hover:bg-gray-100"
+              }`}
+            >
+              {tab === "placements" ? (
+                <Briefcase className="w-5 h-5 inline-block mr-2" />
+              ) : (
+                <GraduationCap className="w-5 h-5 inline-block mr-2" />
+              )}
+              {tab === "placements" ? "Placements" : "Higher Studies"}
+            </button>
+          ))}
+        </div>
+
+        {/* Right-aligned download button */}
+        <div className="ml-auto">
+          <DownloadButton2 />
+        </div>
       </div>
 
       {/* Header for the active tab */}
+
       <h2
         className={`text-2xl font-bold mb-4 text-${
           activeTab === "placements" ? "blue" : "green"
