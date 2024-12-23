@@ -116,6 +116,7 @@ const Dashboard = () => {
             )}
             {activeSection === "studentList" && (
               <StudentList
+                allStudentsData={allStudentsData}
                 placementData={placementData}
                 higherStudiesData={higherStudiesData}
               />
