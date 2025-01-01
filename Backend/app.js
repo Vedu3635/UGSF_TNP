@@ -9,7 +9,6 @@ const companyRoutes = require("./routes/companyRoutes");
 const editCompanyRoutes = require("./routes/editCompanyRoutes");
 const dotenv = require("dotenv");
 
-
 dotenv.config();
 
 const app = express();
@@ -29,7 +28,7 @@ app.use("/auth", authRoutes);
 app.use("/api/file", fileRoutes);
 app.use("/api/students", studentRoutes);
 app.use("/api", excelRoutes);
-app.use("/api/edit-student", editStudentRoutes); 
+app.use("/api/edit-student", editStudentRoutes);
 app.use("/api", companyRoutes);
 app.use("/api", editCompanyRoutes);
 
@@ -38,4 +37,3 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
-

@@ -6,6 +6,7 @@ import Charts from "../components/Charts";
 import CompanyList from "../components/CompanyList";
 import StudentList from "../components/StudentList";
 import FileUploadModal from "../components/FileUploadModal";
+import CompanyRegistrationForm from "../components/CompanyRegistrationForm";
 
 const Dashboard = () => {
   const [activeSection, setActiveSection] = useState(
@@ -121,6 +122,7 @@ const Dashboard = () => {
                 higherStudiesData={higherStudiesData}
               />
             )}
+            {activeSection === "companiesReg" && <CompanyRegistrationForm />}
           </div>
         </div>
       </div>

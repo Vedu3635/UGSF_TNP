@@ -78,7 +78,7 @@ const LeftSlider2 = ({ setActiveSection, activeSection, onUploadClick }) => {
                   ? "bg-blue-800"
                   : "hover:bg-blue-800"
               }`}
-              onClick={() => handleButtonClick("companies")}
+              onClick={() => handleButtonClick("companiesReg")}
             >
               <Building2 className="w-5 h-5" />
               <span>Companies</span>

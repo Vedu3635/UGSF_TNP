@@ -107,7 +107,7 @@ const StudentList = ({ allStudentsData, placementData, higherStudiesData }) => {
         .join(" ")
         .toLowerCase()
         .includes(searchTerm.toLowerCase());
-      console.log(filters);
+      // console.log(filters);
       const matchesFilters = Object.entries(filters).every(([key, value]) => {
         if (!value) return true;
         return item[key]?.toString().toLowerCase() === value.toLowerCase();

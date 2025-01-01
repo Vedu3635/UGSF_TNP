@@ -416,7 +416,7 @@ const Charts = ({ allStudentsData, placementData, higherStudiesData }) => {
       setFilter: setFilter2,
     },
     {
-      title: "Abroad Students University Placement",
+      title: "Higher Studies",
       type: "pie",
       data: chartData3,
       options: pieChartOptions,
