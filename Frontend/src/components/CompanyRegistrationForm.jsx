@@ -93,22 +93,22 @@ const Select = ({ label, icon: Icon, options, ...props }) => (
 
 const CompanyRegistrationForm = () => {
   const [formData, setFormData] = useState({
-    companyName: "",
-    // logo: "",
-    industryDomain: "",
-    websiteUrl: "",
-    contactPersonName: "",
-    contactEmail: "",
-    contactPhone: "",
-    jobRoles: "",
-    openPositions: "",
-    jobLocation: "",
-    employmentType: "",
-    eligibilityCriteria: "",
-    selectionRounds: "",
-    driveDates: "",
-    hiringMode: "",
+    Company_Name: "",
+    Industry_Domain: "",
+    Website_URL: "",
+    Contact_Name: "",
+    Contact_Email: "",
+    Contact_Phone: "",
+    Job_Roles: "",
+    Positions: "",
+    Job_Location: "",
+    Employment_Type: "",
+    Eligibility_Criteria: "",
+    Selection_Rounds: "",
+    Hiring_Date: "",
+    Mode_Hiring: "",
   });
+  
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -117,33 +117,53 @@ const CompanyRegistrationForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("User not authenticated. Please log in.");
+      return;
+    }
+  
+    // Map form fields to match backend expectations
+    const mappedData = {
+      Company_Name: formData.companyName,
+      Industry_Domain: formData.industryDomain,
+      Website_URL: formData.websiteUrl,
+      Contact_Name: formData.contactPersonName,
+      Contact_Email: formData.contactEmail,
+      Contact_Phone: formData.contactPhone,
+      Job_Roles: formData.jobRoles,
+      Positions: formData.openPositions,
+      Package_Min: formData.minSalary,
+      Package_Max: formData.maxSalary,
+      Employment_Type: formData.employmentType,
+      Eligibility_Criteria: formData.eligibilityCriteria,
+      Selection_Rounds: formData.selectionRounds,
+      Hiring_Date: formData.driveDates,
+      Mode_Hiring: formData.hiringMode
+    };
+  
     try {
-      console.log(formData);
-      const token = localStorage.getItem("token");
       const response = await fetch("http://localhost:5000/api/companies", {
         method: "POST",
-        body: JSON.stringify(formData),
+        body: JSON.stringify(mappedData),
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          "Authorization": `Bearer ${token}`
         },
       });
-
-      // console.log(response);
+  
       if (response.ok) {
-        const result = await response.json();
-        console.log("Form submitted successfully:", result);
         alert("Company registration successful!");
       } else {
-        console.error("Error submitting form:", response.statusText);
         alert("Failed to register the company. Please try again.");
       }
     } catch (error) {
       console.error("Error:", error);
-      alert("An error occurred while submitting the form. Please try again.");
+      alert("An error occurred while submitting the form.");
     }
   };
+  
 
   return (
     <form

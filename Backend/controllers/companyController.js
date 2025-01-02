@@ -2,8 +2,6 @@ const companyModel = require("../models/companyModel");
 
 // Controller to handle adding company details
 exports.addCompany = async (req, res) => {
-  console.log("hihello");
-  console.log(req);
   const {
     Company_Name,
     Industry_Domain,
