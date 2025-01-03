@@ -81,7 +81,7 @@ const LeftSlider2 = ({ setActiveSection, activeSection, onUploadClick }) => {
               onClick={() => handleButtonClick("companiesReg")}
             >
               <Building2 className="w-5 h-5" />
-              <span>Companies</span>
+              <span>Register Companies</span>
             </button>
           </li>
         </ul>

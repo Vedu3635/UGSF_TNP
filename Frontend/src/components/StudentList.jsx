@@ -1,13 +1,16 @@
 import React, { useState, useMemo } from "react";
-import { Briefcase, GraduationCap } from "lucide-react";
+import { Briefcase, GraduationCap, Users } from "lucide-react";
 import DownloadButton2 from "./DownloadButton2";
 import PaginatedList from "./PaginatedList";
 import FilterComponent from "./FilterComponent";
 
 const StudentList = ({ allStudentsData, placementData, higherStudiesData }) => {
-  const [activeTab, setActiveTab] = useState("placements");
+  const [activeTab, setActiveTab] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [filters, setFilters] = useState({
+    Enrollment_Year: "",
+    Career_Choice: "",
+    Semester: "",
     year: "",
     company_name: "",
     position: "",
@@ -19,6 +22,9 @@ const StudentList = ({ allStudentsData, placementData, higherStudiesData }) => {
 
   const resetFilters = () => {
     setFilters({
+      Enrollment_Year: "",
+      Career_Choice: "",
+      Semester: "",
       year: "",
       company_name: "",
       position: "",
@@ -31,7 +37,33 @@ const StudentList = ({ allStudentsData, placementData, higherStudiesData }) => {
   };
 
   const filterOptions = useMemo(() => {
+    const getTopItems = (array, count) =>
+      [...new Set(array)]
+        .filter((value) => value !== "" && value !== null)
+        .sort((a, b) => b - a) // Assuming years are numeric and in descending order
+        .slice(0, count);
+
     const options = {
+      all: {
+        Enrollment_Year: getTopItems(
+          allStudentsData.map((item) => item.Enrollment_Year || ""),
+          5
+        ),
+        Career_Choice: [
+          ...new Set(
+            allStudentsData
+              .map((item) => item.Career_Choice || "")
+              .filter((value) => value !== "" && value !== null)
+          ),
+        ].sort(),
+        Semester: [
+          ...new Set(
+            allStudentsData
+              .map((item) => item.Semester || "")
+              .filter((value) => value !== "" && value !== null)
+          ),
+        ].sort(),
+      },
       placements: {
         year: [
           ...new Set(
@@ -40,6 +72,7 @@ const StudentList = ({ allStudentsData, placementData, higherStudiesData }) => {
               .filter((value) => value !== "" && value !== null)
           ),
         ].sort(),
+
         company_name: [
           ...new Set(
             placementData
@@ -94,12 +127,24 @@ const StudentList = ({ allStudentsData, placementData, higherStudiesData }) => {
         ].sort(),
       },
     };
+    console.log(options.all);
     return options;
-  }, [placementData, higherStudiesData]);
+  }, [allStudentsData, placementData, higherStudiesData]);
+  const getCurrentData = () => {
+    switch (activeTab) {
+      case "all":
+        return allStudentsData;
+      case "placements":
+        return placementData;
+      case "higherStudies":
+        return higherStudiesData;
+      default:
+        return [];
+    }
+  };
 
   const filteredData = useMemo(() => {
-    const currentData =
-      activeTab === "placements" ? placementData : higherStudiesData;
+    const currentData = getCurrentData();
 
     return currentData.filter((item) => {
       // console.log(item);
@@ -115,14 +160,46 @@ const StudentList = ({ allStudentsData, placementData, higherStudiesData }) => {
 
       return matchesSearch && matchesFilters;
     });
-  }, [activeTab, searchTerm, filters, placementData, higherStudiesData]);
+  }, [
+    activeTab,
+    searchTerm,
+    filters,
+    allStudentsData,
+    placementData,
+    higherStudiesData,
+  ]);
+
+  const getTabColor = (tab) => {
+    switch (tab) {
+      case "all":
+        return "purple"; // Default tab
+      case "placements":
+        return "blue"; // Placement-specific color
+      case "higherStudies":
+        return "green"; // Higher Studies-specific color
+      default:
+        return "gray"; // Fallback color
+    }
+  };
+
+  const getTabIcon = (tab) => {
+    switch (tab) {
+      case "all":
+        return <Users className="w-5 h-5 inline-block mr-2" />;
+      case "placements":
+        return <Briefcase className="w-5 h-5 inline-block mr-2" />;
+      case "higherStudies":
+        return <GraduationCap className="w-5 h-5 inline-block mr-2" />;
+      default:
+        return null;
+    }
+  };
 
   return (
     <div className="max-w-4xl mx-auto my-8 p-6 bg-gray-100 rounded-xl shadow-lg">
-      {/* Tabs */}
       <div className="flex items-center justify-center relative mb-6">
         <div className="absolute left-1/2 transform -translate-x-1/2 flex space-x-4">
-          {["placements", "higherStudies"].map((tab) => (
+          {["all", "placements", "higherStudies"].map((tab) => (
             <button
               key={tab}
               onClick={() => {
@@ -131,18 +208,16 @@ const StudentList = ({ allStudentsData, placementData, higherStudiesData }) => {
               }}
               className={`px-4 py-2 rounded-full ${
                 activeTab === tab
-                  ? `bg-${
-                      tab === "placements" ? "blue" : "green"
-                    }-500 text-white`
+                  ? `bg-${getTabColor(tab)}-500 text-white`
                   : "bg-white text-gray-700 hover:bg-gray-100"
               }`}
             >
-              {tab === "placements" ? (
-                <Briefcase className="w-5 h-5 inline-block mr-2" />
-              ) : (
-                <GraduationCap className="w-5 h-5 inline-block mr-2" />
-              )}
-              {tab === "placements" ? "Placements" : "Higher Studies"}
+              {getTabIcon(tab)}
+              {tab === "all"
+                ? "All Students"
+                : tab === "placements"
+                ? "Placements"
+                : "Higher Studies"}
             </button>
           ))}
         </div>
@@ -151,7 +226,6 @@ const StudentList = ({ allStudentsData, placementData, higherStudiesData }) => {
         </div>
       </div>
 
-      {/* Filter Component */}
       <FilterComponent
         activeTab={activeTab}
         searchTerm={searchTerm}
@@ -162,25 +236,34 @@ const StudentList = ({ allStudentsData, placementData, higherStudiesData }) => {
         resetFilters={resetFilters}
       />
 
-      {/* Results */}
       <h2
-        className={`text-2xl font-bold mb-4 text-${
-          activeTab === "placements" ? "blue" : "green"
-        }-700 flex items-center justify-center`}
+        className={`text-2xl font-bold mb-4 ${
+          activeTab === "placements"
+            ? "text-blue-700"
+            : activeTab === "higherStudies"
+            ? "text-green-700"
+            : "text-purple-700"
+        } flex items-center justify-center`}
       >
-        {activeTab === "placements" ? (
-          <Briefcase className="w-6 h-6 mr-2" />
-        ) : (
-          <GraduationCap className="w-6 h-6 mr-2" />
-        )}
-        {activeTab === "placements" ? "Placements" : "Higher Studies"}
+        {getTabIcon(activeTab)}
+        {activeTab === "all"
+          ? "All Students"
+          : activeTab === "placements"
+          ? "Placements"
+          : "Higher Studies"}
       </h2>
       <div className="text-sm text-gray-500 mb-4 text-center">
         Showing {filteredData.length} results
       </div>
       <PaginatedList
         items={filteredData}
-        type={activeTab === "placements" ? "placement" : "higherStudies"}
+        type={
+          activeTab === "all"
+            ? "all"
+            : activeTab === "placements"
+            ? "placement"
+            : "higherStudies"
+        }
       />
     </div>
   );

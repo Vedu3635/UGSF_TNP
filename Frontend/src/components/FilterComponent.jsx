@@ -32,8 +32,6 @@ const FilterComponent = ({
   filterOptions,
   resetFilters,
 }) => {
-  const isPlacementsTab = activeTab === "placements";
-
   return (
     <div className="mb-6 space-y-4">
       {/* Search Bar */}
@@ -58,7 +56,7 @@ const FilterComponent = ({
       </div>
 
       {/* Filters */}
-      <div className="flex gap-4 flex-wrap">
+      {/* <div className="flex gap-4 flex-wrap">
         {isPlacementsTab ? (
           <>
             <SelectFilter
@@ -122,6 +120,18 @@ const FilterComponent = ({
             />
           </>
         )}
+      </div> */}
+      {/* Filters */}
+      <div className="flex gap-4 flex-wrap">
+        {Object.keys(filterOptions[activeTab]).map((filterKey) => (
+          <SelectFilter
+            key={filterKey}
+            placeholder={`Filter by ${filterKey.replace("_", " ")}`}
+            value={filters[filterKey]}
+            onChange={(value) => setFilters({ ...filters, [filterKey]: value })}
+            options={filterOptions[activeTab][filterKey]}
+          />
+        ))}
       </div>
     </div>
   );
