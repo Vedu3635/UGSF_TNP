@@ -12,6 +12,7 @@ const Dashboard = () => {
   const [activeSection, setActiveSection] = useState(
     localStorage.getItem("activeSection") || "dashboard" // Default to 'dashboard' if not set
   );
+  const [companiesData, setcompaniesData] = useState([]);
   const [placementData, setPlacementData] = useState([]);
   const [higherStudiesData, setHigherStudiesData] = useState([]);
   const [allStudentsData, setAllStudentsData] = useState([]);
@@ -29,6 +30,27 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       const token = localStorage.getItem("token");
+      try {
+        const companiesReaponse = await fetch(
+          "http://localhost:5000/api/companies",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (companiesReaponse.ok) {
+          const companiesData = await companiesReaponse.json();
+          setcompaniesData(companiesData);
+        } else {
+          console.error(companiesReaponse.statusText);
+        }
+      } catch (error) {
+        console.error("Fetch error:", error);
+      }
 
       try {
         const placementResponse = await fetch(
@@ -86,7 +108,7 @@ const Dashboard = () => {
 
     fetchData();
   }, []);
-
+  console.log(companiesData);
   return (
     <div className="bg-gray-100 min-h-screen flex flex-col">
       <Navbar />
@@ -106,13 +128,14 @@ const Dashboard = () => {
                   studentsCount={allStudentsData.length}
                   higherStudiesCount={higherStudiesData.length}
                   placedStudentsCount={placementData.length}
+                  companiesCount={companiesData.length}
                 />
                 <Charts
                   allStudentsData={allStudentsData}
                   placementData={placementData}
                   higherStudiesData={higherStudiesData}
                 />
-                <CompanyList />
+                <CompanyList companiesData={companiesData} />
               </>
             )}
             {activeSection === "studentList" && (

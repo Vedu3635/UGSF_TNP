@@ -2,63 +2,33 @@ import React, { useState, useEffect } from "react";
 import { Tabs, TabList, TabTrigger, TabContent } from "./CompanyTabs";
 import CompanyCard from "./CompanyCard";
 
-// Main Component
-const CompanyList = () => {
+const CompanyList = ({ companiesData }) => {
   const [companies, setCompanies] = useState({ upcoming: [], visited: [] });
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchCompanies = async () => {
-      try {
-        const mockData = {
-          upcoming: [
-            {
-              name: "TechInnovate Solutions",
-              domain: "Web Development",
-              positions: 15,
-              packageMin: 5,
-              packageMax: 12,
-              date: "15 Jan 2024",
-            },
-            {
-              name: "DataDrive Analytics",
-              domain: "Data Science",
-              positions: 10,
-              packageMin: 7,
-              packageMax: 15,
-              date: "22 Jan 2024",
-            },
-          ],
-          visited: [
-            {
-              name: "CodeCraft Technologies",
-              domain: "Full Stack Development",
-              positions: 20,
-              packageMin: 6,
-              packageMax: 14,
-              date: "10 Dec 2023",
-            },
-            {
-              name: "CloudNative Systems",
-              domain: "Cloud Engineering",
-              positions: 12,
-              packageMin: 8,
-              packageMax: 16,
-              date: "05 Dec 2023",
-            },
-          ],
-        };
+    if (companiesData) {
+      // Get the current date
+      const currentDate = new Date();
 
-        setCompanies(mockData);
-        setIsLoading(false);
-      } catch (error) {
-        console.error("Failed to fetch companies", error);
-        setIsLoading(false);
-      }
-    };
+      // Divide the data into upcoming and visited
+      const dividedData = companiesData.reduce(
+        (acc, company) => {
+          const hiringDate = new Date(company.Hiring_Date);
+          if (hiringDate >= currentDate) {
+            acc.upcoming.push(company);
+          } else {
+            acc.visited.push(company);
+          }
+          return acc;
+        },
+        { upcoming: [], visited: [] }
+      );
 
-    fetchCompanies();
-  }, []);
+      setCompanies(dividedData);
+      setIsLoading(false);
+    }
+  }, [companiesData]);
 
   if (isLoading) {
     return (
