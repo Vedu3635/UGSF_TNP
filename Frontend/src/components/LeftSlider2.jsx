@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   LayoutDashboard,
   Upload,
@@ -7,13 +7,32 @@ import {
   LogOut,
 } from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
+
 const LeftSlider2 = ({ setActiveSection, activeSection, onUploadClick }) => {
+  const [userRole, setUserRole] = useState(null);
+
+  useEffect(() => {
+    // Retrieve the token from local storage
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        // Decode the token to extract the user role
+        const decodedToken = jwtDecode(token);
+        setUserRole(decodedToken.user.role); // Assuming the role is stored as user.role in the payload
+      } catch (err) {
+        console.error("Error decoding token:", err);
+        setUserRole(null);
+      }
+    }
+  }, []);
+  console.log(userRole);
   const handleButtonClick = (button) => {
     setActiveSection(button);
-    // localStorage.setItem("activeSection", activeSection); // Save to localStorage
   };
 
   const navigate = useNavigate();
+
   const handleLogout = () => {
     // Remove token from local storage
     localStorage.removeItem("token");
@@ -45,17 +64,22 @@ const LeftSlider2 = ({ setActiveSection, activeSection, onUploadClick }) => {
             </button>
           </li>
 
-          <li>
-            <button
-              className={`w-full flex items-center space-x-3 p-2 rounded transition duration-200 ${
-                activeSection === "upload" ? "bg-blue-800" : "hover:bg-blue-800"
-              }`}
-              onClick={onUploadClick}
-            >
-              <Upload className="w-5 h-5" />
-              <span>Upload File</span>
-            </button>
-          </li>
+          {/* Conditionally render the Upload File button based on user role */}
+          {userRole === "ADMIN" && (
+            <li>
+              <button
+                className={`w-full flex items-center space-x-3 p-2 rounded transition duration-200 ${
+                  activeSection === "upload"
+                    ? "bg-blue-800"
+                    : "hover:bg-blue-800"
+                }`}
+                onClick={onUploadClick}
+              >
+                <Upload className="w-5 h-5" />
+                <span>Upload File</span>
+              </button>
+            </li>
+          )}
 
           <li>
             <button

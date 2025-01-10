@@ -122,8 +122,7 @@ const Dashboard = () => {
   };
 
   const averagePackage = calculateAveragePackage(placementData);
-  console.log(`The average package of placed students is: ₹${averagePackage}`);
-  console.log(placementData);
+
   return (
     <div className="bg-gray-100 min-h-screen flex flex-col">
       <Navbar />
