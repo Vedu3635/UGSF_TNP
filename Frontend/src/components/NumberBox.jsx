@@ -1,11 +1,10 @@
 import React from "react";
 import { PiStudentFill, PiBuildingOfficeFill } from "react-icons/pi";
-import { GiBookmarklet } from "react-icons/gi";
-import { FaUserTie } from "react-icons/fa";
+import { FaUserTie, FaMoneyBillWave } from "react-icons/fa";
 
 const NumberBox = ({
   studentsCount,
-  higherStudiesCount,
+  averagePackage,
   placedStudentsCount,
   companiesCount,
 }) => {
@@ -36,9 +35,9 @@ const NumberBox = ({
       color: "blue",
     },
     {
-      icon: GiBookmarklet,
-      title: "Higher Studies",
-      count: higherStudiesCount,
+      icon: FaMoneyBillWave,
+      title: "Average Salary",
+      count: `₹${averagePackage.toLocaleString()} LPA`,
       color: "green",
     },
     {

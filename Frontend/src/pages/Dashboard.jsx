@@ -108,7 +108,22 @@ const Dashboard = () => {
 
     fetchData();
   }, []);
-  console.log(companiesData);
+
+  const calculateAveragePackage = (data) => {
+    const filteredData = data.filter((student) => student.package > 0); // Filter students with a package > 0
+    const totalPackage = filteredData.reduce(
+      (sum, student) => sum + student.package,
+      0
+    ); // Sum up all packages
+    const averagePackage =
+      filteredData.length > 0 ? totalPackage / filteredData.length : 0; // Calculate average
+
+    return Math.round(averagePackage / 100000);
+  };
+
+  const averagePackage = calculateAveragePackage(placementData);
+  console.log(`The average package of placed students is: ₹${averagePackage}`);
+  console.log(placementData);
   return (
     <div className="bg-gray-100 min-h-screen flex flex-col">
       <Navbar />
@@ -126,7 +141,7 @@ const Dashboard = () => {
               <>
                 <NumberBox
                   studentsCount={allStudentsData.length}
-                  higherStudiesCount={higherStudiesData.length}
+                  averagePackage={averagePackage}
                   placedStudentsCount={placementData.length}
                   companiesCount={companiesData.length}
                 />
