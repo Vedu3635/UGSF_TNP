@@ -95,19 +95,22 @@ const LeftSlider2 = ({ setActiveSection, activeSection, onUploadClick }) => {
             </button>
           </li>
 
-          <li>
-            <button
-              className={`w-full flex items-center space-x-3 p-2 rounded transition duration-200 ${
-                activeSection === "companies"
-                  ? "bg-blue-800"
-                  : "hover:bg-blue-800"
-              }`}
-              onClick={() => handleButtonClick("companiesReg")}
-            >
-              <Building2 className="w-5 h-5" />
-              <span>Register Companies</span>
-            </button>
-          </li>
+          {/* Conditionally render the Company Registration button based on user role  */}
+          {userRole === "ADMIN" && (
+            <li>
+              <button
+                className={`w-full flex items-center space-x-3 p-2 rounded transition duration-200 ${
+                  activeSection === "companies"
+                    ? "bg-blue-800"
+                    : "hover:bg-blue-800"
+                }`}
+                onClick={() => handleButtonClick("companiesReg")}
+              >
+                <Building2 className="w-5 h-5" />
+                <span>Register Companies</span>
+              </button>
+            </li>
+          )}
         </ul>
       </nav>
 

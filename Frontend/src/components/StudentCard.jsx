@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { X } from "lucide-react";
+import { jwtDecode } from "jwt-decode";
 
 const StudentCard = ({ item, type, onUpdate }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [userRole, setUserRole] = useState(null);
 
   useEffect(() => {
     // Disable scroll when modal is open
@@ -72,6 +74,23 @@ const StudentCard = ({ item, type, onUpdate }) => {
     }
   };
 
+  const canUpdate = () => {
+    const token = localStorage.getItem("token"); // Retrieve token from local storage
+    let userRole = "";
+    if (token) {
+      try {
+        const decodedToken = jwtDecode(token);
+        userRole = decodedToken.user.role || "";
+        if (userRole === "ADMIN") return true; // Admin can update all
+      } catch (error) {
+        console.error("Invalid token:", error);
+        userRole = null;
+        return false;
+      }
+    }
+    return false; // Viewer or unauthorized user cannot update
+  };
+
   return (
     <>
       <div
@@ -125,12 +144,15 @@ const StudentCard = ({ item, type, onUpdate }) => {
               ? item.intake_year
               : item.Batch || "N/A"}
           </span>
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className={`${getButtonColor()} text-xs text-white font-medium px-2 py-1 rounded shadow-sm transition-colors duration-200 transform hover:scale-105`}
-          >
-            Update
-          </button>
+          {/* Conditionally render the Update button */}
+          {canUpdate() && (
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className={`${getButtonColor()} text-xs text-white font-medium px-2 py-1 rounded shadow-sm transition-colors duration-200 transform hover:scale-105`}
+            >
+              Update
+            </button>
+          )}
         </div>
       </div>
 

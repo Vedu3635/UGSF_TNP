@@ -152,15 +152,15 @@ const CompanyList = ({ companiesData }) => {
     if (token) {
       try {
         const decodedToken = jwtDecode(token);
-        userRole = decodedToken.user.role; // Assuming the token contains a `role` field
-        console.log(userRole);
+        userRole = decodedToken.user.role || ""; // Assuming the token contains a `role` field
       } catch (error) {
         console.error("Invalid token:", error);
+        userRole = null;
       }
     }
 
-    <div>
-      {userRole === "ADMIN" && (
+    if (userRole === "ADMIN") {
+      return (
         <button
           onClick={onClick}
           className="absolute top-4 right-4 flex items-center gap-2 px-4 py-2 rounded-xl bg-white/80 backdrop-blur-sm hover:bg-white border border-gray-200 text-gray-700 text-sm font-medium transition-all duration-300 hover:shadow-md"
@@ -168,8 +168,10 @@ const CompanyList = ({ companiesData }) => {
           <Pencil className="w-4 h-4" />
           Update
         </button>
-      )}
-    </div>;
+      );
+    }
+
+    return null;
   };
 
   const formatDate = (dateString) => {
