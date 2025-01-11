@@ -1,5 +1,6 @@
 const mysql = require("mysql");
 const dotenv = require("dotenv");
+const util = require("util");
 
 dotenv.config(); // Load environment variables from .env file
 
@@ -9,10 +10,10 @@ const pool = mysql.createPool({
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  connectionLimit: 10, // You can specify the maximum number of connections in the pool
+  connectionLimit: 10, // Maximum number of connections in the pool
 });
 
-// Optionally, you can log successful pool creation
+// Log successful connection
 pool.getConnection((err, connection) => {
   if (err) {
     console.error("Error connecting to the database:", err);
@@ -22,5 +23,7 @@ pool.getConnection((err, connection) => {
   connection.release(); // Release the connection back to the pool
 });
 
-// Export the pool for use in other parts of your application
+// Promisify the pool's query method
+pool.query = util.promisify(pool.query);
+
 module.exports = pool;
