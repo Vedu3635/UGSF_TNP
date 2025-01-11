@@ -26,7 +26,7 @@ const LeftSlider2 = ({ setActiveSection, activeSection, onUploadClick }) => {
       }
     }
   }, []);
-  console.log(userRole);
+
   const handleButtonClick = (button) => {
     setActiveSection(button);
   };

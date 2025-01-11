@@ -91,7 +91,7 @@ const StudentCard = ({ item, type, onUpdate }) => {
         <div className="grid grid-cols-3 gap-2 text-gray-600 mt-2">
           <div>
             <span className="font-medium text-xs">Roll Number</span>
-            <p className="text-sm">{item.StudentId || "N/A"}</p>
+            <p className="text-sm">{item.Enrollment_Id || "N/A"}</p>
           </div>
           <div>
             <span className="font-medium text-xs">Program</span>
@@ -188,7 +188,7 @@ const UpdateForm = ({ item, type, onUpdate, onClose }) => {
     FirstName: item.FirstName || "",
     LastName: item.LastName || "",
     Email: item.Email || "",
-    StudentId: item.StudentId || "",
+    Enrollment_Id: item.Enrollment_Id || "",
     Enrollment_Year: item.Enrollment_Year || "",
     Program: item.Program || "",
     PhoneNo: item.PhoneNo || "",
@@ -221,7 +221,8 @@ const UpdateForm = ({ item, type, onUpdate, onClose }) => {
     if (!formData.FirstName) newErrors.FirstName = "First Name is required";
     if (!formData.LastName) newErrors.LastName = "Last Name is required";
     if (!formData.Email) newErrors.Email = "Email is required";
-    if (!formData.StudentId) newErrors.StudentId = "Student ID is required";
+    if (!formData.Enrollment_Id)
+      newErrors.Enrollment_Id = "Enrollment_Id is required";
     if (!formData.Program) newErrors.Program = "Program is required";
 
     // Email validation
@@ -273,7 +274,7 @@ const UpdateForm = ({ item, type, onUpdate, onClose }) => {
     if (!validateForm()) return;
 
     try {
-      const response = await fetch(`/api/students/${item.StudentId}`, {
+      const response = await fetch(`/api/students/${item.Enrollment_Id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -343,7 +344,7 @@ const UpdateForm = ({ item, type, onUpdate, onClose }) => {
             Academic Information
           </h4>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {renderField("StudentId", "Student ID")}
+            {renderField("Enrollment_Id", "Enrollment_Id")}
             {renderField("Program", "Program")}
             {renderField("Enrollment_Year", "Enrollment Year")}
           </div>

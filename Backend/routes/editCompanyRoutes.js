@@ -4,6 +4,6 @@ const editCompanyController = require("../controllers/editCompanyController");
 const authMiddleware = require("../middleware/authMiddleware");
 
 // Route to edit company details
-router.put("/companies/:id", authMiddleware, editCompanyController.editCompany);
+router.put("/:id", authMiddleware, editCompanyController.editCompany);
 
 module.exports = router;

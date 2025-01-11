@@ -30,7 +30,7 @@ app.use("/api/students", studentRoutes);
 app.use("/api", excelRoutes);
 app.use("/api/edit-student", editStudentRoutes);
 app.use("/api", companyRoutes);
-app.use("/api", editCompanyRoutes);
+app.use("/api/edit-company", editCompanyRoutes);
 
 // Server
 const PORT = process.env.PORT || 5000;

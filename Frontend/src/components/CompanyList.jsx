@@ -2,16 +2,14 @@ import React, { useState, useEffect } from "react";
 import { Tabs, TabList, TabTrigger, TabContent } from "./CompanyTabs";
 import CompanyCard from "./CompanyCard";
 import { Pencil } from "lucide-react";
+import { jwtDecode } from "jwt-decode";
 
 const Dialog = ({ isOpen, onClose, children }) => {
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div 
-        className="fixed inset-0 bg-black/50" 
-        onClick={onClose}
-      />
+      <div className="fixed inset-0 bg-black/50" onClick={onClose} />
       <div className="relative z-50 bg-white rounded-3xl shadow-xl max-w-xl w-full mx-4 max-h-[90vh] overflow-y-auto">
         {children}
       </div>
@@ -25,6 +23,7 @@ const CompanyList = ({ companiesData }) => {
   const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
   const [selectedCompany, setSelectedCompany] = useState(null);
   const [formData, setFormData] = useState({
+    Id: "",
     Company_Name: "",
     Industry_Domain: "",
     Website_URL: "",
@@ -39,7 +38,7 @@ const CompanyList = ({ companiesData }) => {
     Eligibility_Criteria: "",
     Selection_Rounds: "",
     Hiring_Date: "",
-    Mode_Hiring: ""
+    Mode_Hiring: "",
   });
 
   useEffect(() => {
@@ -66,6 +65,7 @@ const CompanyList = ({ companiesData }) => {
   const handleUpdateClick = (company) => {
     setSelectedCompany(company);
     setFormData({
+      Id: company.Id,
       Company_Name: company.Company_Name,
       Industry_Domain: company.Industry_Domain,
       Website_URL: company.Website_URL,
@@ -80,7 +80,7 @@ const CompanyList = ({ companiesData }) => {
       Eligibility_Criteria: company.Eligibility_Criteria,
       Selection_Rounds: company.Selection_Rounds,
       Hiring_Date: company.Hiring_Date,
-      Mode_Hiring: company.Mode_Hiring
+      Mode_Hiring: company.Mode_Hiring,
     });
     setIsUpdateDialogOpen(true);
   };
@@ -94,34 +94,42 @@ const CompanyList = ({ companiesData }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+    const token = localStorage.getItem("token");
     try {
-      const response = await fetch(`/api/companies/${selectedCompany.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
+      const response = await fetch(
+        `http://localhost:5000/api/edit-company/${selectedCompany.Id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(formData),
+        }
+      );
 
       if (!response.ok) {
-        throw new Error('Failed to update company');
+        throw new Error("Failed to update company");
       }
 
       const updatedCompany = await response.json();
-      
+
       const currentDate = new Date();
       const hiringDate = new Date(updatedCompany.Hiring_Date);
       const isUpcoming = hiringDate >= currentDate;
 
-      setCompanies(prev => {
+      setCompanies((prev) => {
         const newCompanies = {
           upcoming: [...prev.upcoming],
-          visited: [...prev.visited]
+          visited: [...prev.visited],
         };
 
-        newCompanies.upcoming = newCompanies.upcoming.filter(c => c.id !== updatedCompany.id);
-        newCompanies.visited = newCompanies.visited.filter(c => c.id !== updatedCompany.id);
+        newCompanies.upcoming = newCompanies.upcoming.filter(
+          (c) => c.id !== updatedCompany.id
+        );
+        newCompanies.visited = newCompanies.visited.filter(
+          (c) => c.id !== updatedCompany.id
+        );
 
         if (isUpcoming) {
           newCompanies.upcoming.push(updatedCompany);
@@ -134,24 +142,61 @@ const CompanyList = ({ companiesData }) => {
 
       setIsUpdateDialogOpen(false);
     } catch (error) {
-      console.error('Error updating company:', error);
+      console.error("Error updating company:", error);
     }
   };
-  const UpdateButton = ({ onClick }) => (
-    <button
-      onClick={onClick}
-      className="absolute top-4 right-4 flex items-center gap-2 px-4 py-2 rounded-xl bg-white/80 backdrop-blur-sm hover:bg-white border border-gray-200 text-gray-700 text-sm font-medium transition-all duration-300 hover:shadow-md"
-    >
-      <Pencil className="w-4 h-4" />
-      Update
-    </button>
-  );
+  const UpdateButton = ({ onClick }) => {
+    const token = localStorage.getItem("token"); // Retrieve token from local storage
+    let userRole = "";
+
+    if (token) {
+      try {
+        const decodedToken = jwtDecode(token);
+        userRole = decodedToken.user.role; // Assuming the token contains a `role` field
+        console.log(userRole);
+      } catch (error) {
+        console.error("Invalid token:", error);
+      }
+    }
+
+    <div>
+      {userRole === "ADMIN" && (
+        <button
+          onClick={onClick}
+          className="absolute top-4 right-4 flex items-center gap-2 px-4 py-2 rounded-xl bg-white/80 backdrop-blur-sm hover:bg-white border border-gray-200 text-gray-700 text-sm font-medium transition-all duration-300 hover:shadow-md"
+        >
+          <Pencil className="w-4 h-4" />
+          Update
+        </button>
+      )}
+    </div>;
+  };
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+
+    // Check if the date is valid
+    if (isNaN(date.getTime())) {
+      console.error("Invalid date:", dateString);
+      return ""; // Return an empty string or a default value
+    }
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${day}/${month}/${year}`;
+  };
+  const formattedDate = formData.Hiring_Date
+    ? formatDate(formData.Hiring_Date)
+    : "";
 
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center h-64 space-y-4">
         <div className="animate-pulse w-16 h-16 bg-blue-200 rounded-full"></div>
-        <p className="text-gray-600 animate-pulse">Loading placement insights...</p>
+        <p className="text-gray-600 animate-pulse">
+          Loading placement insights...
+        </p>
       </div>
     );
   }
@@ -208,8 +253,8 @@ const CompanyList = ({ companiesData }) => {
           </TabContent>
         </Tabs>
 
-        <Dialog 
-          isOpen={isUpdateDialogOpen} 
+        <Dialog
+          isOpen={isUpdateDialogOpen}
           onClose={() => setIsUpdateDialogOpen(false)}
         >
           <div className="p-6">
@@ -230,7 +275,7 @@ const CompanyList = ({ companiesData }) => {
                     className="w-full px-4 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
-                
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Industry Domain
@@ -378,7 +423,7 @@ const CompanyList = ({ companiesData }) => {
                   </label>
                   <input
                     name="Selection_Rounds"
-                    type="number"
+                    type="text"
                     value={formData.Selection_Rounds}
                     onChange={handleChange}
                     className="w-full px-4 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -391,6 +436,7 @@ const CompanyList = ({ companiesData }) => {
                   </label>
                   <input
                     name="Mode_Hiring"
+                    type="text"
                     value={formData.Mode_Hiring}
                     onChange={handleChange}
                     className="w-full px-4 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -404,7 +450,7 @@ const CompanyList = ({ companiesData }) => {
                   <input
                     name="Hiring_Date"
                     type="date"
-                    value={formData.Hiring_Date?.split('T')[0]}
+                    value={formattedDate}
                     onChange={handleChange}
                     className="w-full px-4 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />

@@ -1,5 +1,11 @@
 import React, { useState, useMemo } from "react";
-import { Briefcase, GraduationCap, Users } from "lucide-react";
+import {
+  Briefcase,
+  GraduationCap,
+  Users,
+  CheckCircle,
+  XCircle,
+} from "lucide-react";
 import DownloadButton2 from "./DownloadButton2";
 import PaginatedList from "./PaginatedList";
 import FilterComponent from "./FilterComponent";
@@ -7,6 +13,7 @@ import FilterComponent from "./FilterComponent";
 const StudentList = ({ allStudentsData, placementData, higherStudiesData }) => {
   const [activeTab, setActiveTab] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all"); // "all", "placed", "notPlaced", "found", "notFound"
   const [filters, setFilters] = useState({
     Enrollment_Year: "",
     Career_Choice: "",
@@ -34,8 +41,10 @@ const StudentList = ({ allStudentsData, placementData, higherStudiesData }) => {
       intake_year: "",
     });
     setSearchTerm("");
+    setStatusFilter("all");
   };
 
+  // Rest of your existing filterOptions code remains the same...
   const filterOptions = useMemo(() => {
     const getTopItems = (array, count) =>
       [...new Set(array)]
@@ -127,7 +136,7 @@ const StudentList = ({ allStudentsData, placementData, higherStudiesData }) => {
         ].sort(),
       },
     };
-    console.log(options.all);
+
     return options;
   }, [allStudentsData, placementData, higherStudiesData]);
   const getCurrentData = () => {
@@ -147,23 +156,39 @@ const StudentList = ({ allStudentsData, placementData, higherStudiesData }) => {
     const currentData = getCurrentData();
 
     return currentData.filter((item) => {
-      // console.log(item);
       const matchesSearch = Object.values(item)
         .join(" ")
         .toLowerCase()
         .includes(searchTerm.toLowerCase());
-      // console.log(filters);
+
       const matchesFilters = Object.entries(filters).every(([key, value]) => {
         if (!value) return true;
         return item[key]?.toString().toLowerCase() === value.toLowerCase();
       });
 
-      return matchesSearch && matchesFilters;
+      // Add status filtering logic
+      let matchesStatus = true;
+      if (activeTab === "placements") {
+        if (statusFilter === "placed") {
+          matchesStatus = item.Status === "Placed";
+        } else if (statusFilter === "notPlaced") {
+          matchesStatus = item.Status !== "Placed";
+        }
+      } else if (activeTab === "higherStudies") {
+        if (statusFilter === "found") {
+          matchesStatus = item.Status === "Got into the University";
+        } else if (statusFilter === "notFound") {
+          matchesStatus = item.Status === "Don't get in University";
+        }
+      }
+
+      return matchesSearch && matchesFilters && matchesStatus;
     });
   }, [
     activeTab,
     searchTerm,
     filters,
+    statusFilter,
     allStudentsData,
     placementData,
     higherStudiesData,
@@ -193,6 +218,87 @@ const StudentList = ({ allStudentsData, placementData, higherStudiesData }) => {
       default:
         return null;
     }
+  };
+
+  const StatusToggleButtons = () => {
+    if (activeTab === "placements") {
+      return (
+        <div className="flex justify-center space-x-4 mb-4">
+          <button
+            onClick={() => setStatusFilter("all")}
+            className={`px-4 py-2 rounded-full flex items-center ${
+              statusFilter === "all"
+                ? "bg-blue-500 text-white"
+                : "bg-white text-gray-700 hover:bg-gray-100"
+            }`}
+          >
+            <Users className="w-4 h-4 mr-2" />
+            All
+          </button>
+          <button
+            onClick={() => setStatusFilter("placed")}
+            className={`px-4 py-2 rounded-full flex items-center ${
+              statusFilter === "placed"
+                ? "bg-green-500 text-white"
+                : "bg-white text-gray-700 hover:bg-gray-100"
+            }`}
+          >
+            <CheckCircle className="w-4 h-4 mr-2" />
+            Placed
+          </button>
+          <button
+            onClick={() => setStatusFilter("notPlaced")}
+            className={`px-4 py-2 rounded-full flex items-center ${
+              statusFilter === "notPlaced"
+                ? "bg-red-500 text-white"
+                : "bg-white text-gray-700 hover:bg-gray-100"
+            }`}
+          >
+            <XCircle className="w-4 h-4 mr-2" />
+            Not Placed
+          </button>
+        </div>
+      );
+    } else if (activeTab === "higherStudies") {
+      return (
+        <div className="flex justify-center space-x-4 mb-4">
+          <button
+            onClick={() => setStatusFilter("all")}
+            className={`px-4 py-2 rounded-full flex items-center ${
+              statusFilter === "all"
+                ? "bg-blue-500 text-white"
+                : "bg-white text-gray-700 hover:bg-gray-100"
+            }`}
+          >
+            <Users className="w-4 h-4 mr-2" />
+            All
+          </button>
+          <button
+            onClick={() => setStatusFilter("found")}
+            className={`px-4 py-2 rounded-full flex items-center ${
+              statusFilter === "found"
+                ? "bg-green-500 text-white"
+                : "bg-white text-gray-700 hover:bg-gray-100"
+            }`}
+          >
+            <CheckCircle className="w-4 h-4 mr-2" />
+            Found University
+          </button>
+          <button
+            onClick={() => setStatusFilter("notFound")}
+            className={`px-4 py-2 rounded-full flex items-center ${
+              statusFilter === "notFound"
+                ? "bg-red-500 text-white"
+                : "bg-white text-gray-700 hover:bg-gray-100"
+            }`}
+          >
+            <XCircle className="w-4 h-4 mr-2" />
+            Not Found University
+          </button>
+        </div>
+      );
+    }
+    return null;
   };
 
   return (
@@ -225,6 +331,8 @@ const StudentList = ({ allStudentsData, placementData, higherStudiesData }) => {
           <DownloadButton2 />
         </div>
       </div>
+
+      <StatusToggleButtons />
 
       <FilterComponent
         activeTab={activeTab}

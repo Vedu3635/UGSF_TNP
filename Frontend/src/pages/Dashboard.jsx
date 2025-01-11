@@ -123,6 +123,13 @@ const Dashboard = () => {
 
   const averagePackage = calculateAveragePackage(placementData);
 
+  const getPlacedStudentsCount = (data) => {
+    return data.filter((student) => student.package > 0 && student.company_name)
+      .length;
+  };
+
+  const placedStudentsCount = getPlacedStudentsCount(placementData);
+
   return (
     <div className="bg-gray-100 min-h-screen flex flex-col">
       <Navbar />
@@ -141,7 +148,7 @@ const Dashboard = () => {
                 <NumberBox
                   studentsCount={allStudentsData.length}
                   averagePackage={averagePackage}
-                  placedStudentsCount={placementData.length}
+                  placedStudentsCount={placedStudentsCount}
                   companiesCount={companiesData.length}
                 />
                 <Charts
