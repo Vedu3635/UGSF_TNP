@@ -107,44 +107,48 @@ const CompanyList = ({ companiesData }) => {
           body: JSON.stringify(formData),
         }
       );
-
+  
       if (!response.ok) {
         throw new Error("Failed to update company");
       }
-
-      const updatedCompany = await response.json();
-
-      const currentDate = new Date();
-      const hiringDate = new Date(updatedCompany.Hiring_Date);
-      const isUpcoming = hiringDate >= currentDate;
-
-      setCompanies((prev) => {
-        const newCompanies = {
-          upcoming: [...prev.upcoming],
-          visited: [...prev.visited],
-        };
-
-        newCompanies.upcoming = newCompanies.upcoming.filter(
-          (c) => c.id !== updatedCompany.id
-        );
-        newCompanies.visited = newCompanies.visited.filter(
-          (c) => c.id !== updatedCompany.id
-        );
-
-        if (isUpcoming) {
-          newCompanies.upcoming.push(updatedCompany);
-        } else {
-          newCompanies.visited.push(updatedCompany);
-        }
-
-        return newCompanies;
+  
+      // After successful update, fetch fresh data
+      const companiesResponse = await fetch("http://localhost:5000/api/companies", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       });
-
+      
+      if (!companiesResponse.ok) {
+        throw new Error("Failed to fetch updated companies");
+      }
+  
+      const freshCompaniesData = await companiesResponse.json();
+      
+      // Update the companies state with fresh data
+      const currentDate = new Date();
+      const dividedData = freshCompaniesData.reduce(
+        (acc, company) => {
+          const hiringDate = new Date(company.Hiring_Date);
+          if (hiringDate >= currentDate) {
+            acc.upcoming.push(company);
+          } else {
+            acc.visited.push(company);
+          }
+          return acc;
+        },
+        { upcoming: [], visited: [] }
+      );
+  
+      setCompanies(dividedData);
       setIsUpdateDialogOpen(false);
+      
     } catch (error) {
       console.error("Error updating company:", error);
     }
   };
+
   const UpdateButton = ({ onClick }) => {
     const token = localStorage.getItem("token"); // Retrieve token from local storage
     let userRole = "";
