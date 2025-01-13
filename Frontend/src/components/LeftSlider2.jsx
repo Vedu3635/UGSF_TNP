@@ -35,7 +35,10 @@ const LeftSlider2 = ({ setActiveSection, activeSection, onUploadClick }) => {
 
   const handleLogout = () => {
     // Remove token from local storage
-    localStorage.removeItem("token");
+    // localStorage.removeItem("token");
+
+    // Removes all things from the local storage
+    localStorage.clear();
 
     // Redirect to login page
     navigate("/login");

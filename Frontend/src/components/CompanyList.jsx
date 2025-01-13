@@ -107,25 +107,28 @@ const CompanyList = ({ companiesData }) => {
           body: JSON.stringify(formData),
         }
       );
-  
+
       if (!response.ok) {
         throw new Error("Failed to update company");
       }
-  
+
       // After successful update, fetch fresh data
-      const companiesResponse = await fetch("http://localhost:5000/api/companies", {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      
+      const companiesResponse = await fetch(
+        "http://localhost:5000/api/companies",
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
       if (!companiesResponse.ok) {
         throw new Error("Failed to fetch updated companies");
       }
-  
+
       const freshCompaniesData = await companiesResponse.json();
-      
+
       // Update the companies state with fresh data
       const currentDate = new Date();
       const dividedData = freshCompaniesData.reduce(
@@ -140,10 +143,9 @@ const CompanyList = ({ companiesData }) => {
         },
         { upcoming: [], visited: [] }
       );
-  
+
       setCompanies(dividedData);
       setIsUpdateDialogOpen(false);
-      
     } catch (error) {
       console.error("Error updating company:", error);
     }
@@ -216,7 +218,7 @@ const CompanyList = ({ companiesData }) => {
 
         <Tabs defaultTab="upcoming">
           <TabList>
-            <TabTrigger value="upcoming">Upcoming Drives</TabTrigger>
+            <TabTrigger value="upcoming">Upcoming Companies</TabTrigger>
             <TabTrigger value="visited">Visited Companies</TabTrigger>
           </TabList>
 

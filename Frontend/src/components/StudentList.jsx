@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import {
   Briefcase,
   GraduationCap,
@@ -14,6 +14,7 @@ const StudentList = ({ allStudentsData, placementData, higherStudiesData }) => {
   const [activeTab, setActiveTab] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all"); // "all", "placed", "notPlaced", "found", "notFound"
+
   const [filters, setFilters] = useState({
     Enrollment_Year: "",
     Career_Choice: "",
@@ -44,6 +45,18 @@ const StudentList = ({ allStudentsData, placementData, higherStudiesData }) => {
     setStatusFilter("all");
   };
 
+  useEffect(() => {
+    const savedTab = localStorage.getItem("activeTab");
+    if (savedTab) {
+      setActiveTab(savedTab);
+    }
+  }, []);
+
+  const handleSetActiveTab = (tab) => {
+    setActiveTab(tab);
+    localStorage.setItem("activeTab", tab); // Save to localStorage
+    resetFilters(); // Reset filters when switching tabs
+  };
   // Rest of your existing filterOptions code remains the same...
   const filterOptions = useMemo(() => {
     const getTopItems = (array, count) =>
@@ -309,7 +322,7 @@ const StudentList = ({ allStudentsData, placementData, higherStudiesData }) => {
             <button
               key={tab}
               onClick={() => {
-                setActiveTab(tab);
+                handleSetActiveTab(tab);
                 resetFilters();
               }}
               className={`px-4 py-2 rounded-full ${
