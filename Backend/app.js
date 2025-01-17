@@ -7,6 +7,7 @@ const excelRoutes = require("./routes/excelRoutes");
 const editStudentRoutes = require("./routes/editStudent");
 const companyRoutes = require("./routes/companyRoutes");
 const editCompanyRoutes = require("./routes/editCompanyRoutes");
+const deleteCompnayRoutes = require("./routes/deleteCompany");
 const dotenv = require("dotenv");
 
 dotenv.config();
@@ -31,6 +32,7 @@ app.use("/api", excelRoutes);
 app.use("/api/edit-student", editStudentRoutes);
 app.use("/api", companyRoutes);
 app.use("/api/edit-company", editCompanyRoutes);
+app.use("/api", deleteCompnayRoutes);
 
 // Server
 const PORT = process.env.PORT || 5000;
