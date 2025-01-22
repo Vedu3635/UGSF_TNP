@@ -3,111 +3,109 @@ import { X } from "lucide-react";
 import { jwtDecode } from "jwt-decode";
 import UpdateForm from "./UpdateForm";
 
-const StudentCard = ({ item, type, onUpdate }) => {
+const StudentCard = ({ item, type, onUpdate, onDelete }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const handleUpdate = (updatedData) => {
-    // Update the state with the new data
     setStudentData(updatedData);
-    // You can also do other tasks like closing the modal or updating the list
   };
+
+  const handleDelete = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(`/api/students/${item.id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        onDelete(item.id); // Callback to parent to update the UI
+        setShowDeleteConfirm(false);
+      } else {
+        throw new Error('Failed to delete student');
+      }
+    } catch (error) {
+      console.error('Error deleting student:', error);
+      // You might want to show an error message to the user here
+    }
+  };
+
   useEffect(() => {
-    // Disable scroll when modal is open
-    if (isModalOpen) {
+    if (isModalOpen || showDeleteConfirm) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "auto";
     }
 
-    // Cleanup on unmount to ensure scrolling is enabled
     return () => {
       document.body.style.overflow = "auto";
     };
-  }, [isModalOpen]);
+  }, [isModalOpen, showDeleteConfirm]);
 
   const getBackgroundColor = () => {
     switch (type) {
-      case "all":
-        return "bg-purple-100";
-      case "placement":
-        return "bg-blue-100";
-      case "higherStudies":
-        return "bg-green-100";
-      default:
-        return "bg-gray-100";
+      case "all": return "bg-purple-100";
+      case "placement": return "bg-blue-100";
+      case "higherStudies": return "bg-green-100";
+      default: return "bg-gray-100";
     }
   };
 
   const getButtonColor = () => {
     switch (type) {
-      case "all":
-        return "bg-purple-500 hover:bg-purple-600";
-      case "placement":
-        return "bg-blue-500 hover:bg-blue-600";
-      case "higherStudies":
-        return "bg-green-500 hover:bg-green-600";
-      default:
-        return "bg-gray-500 hover:bg-gray-600";
+      case "all": return "bg-purple-500 hover:bg-purple-600";
+      case "placement": return "bg-blue-500 hover:bg-blue-600";
+      case "higherStudies": return "bg-green-500 hover:bg-green-600";
+      default: return "bg-gray-500 hover:bg-gray-600";
     }
   };
 
   const getStatusColor = () => {
     switch (type) {
-      case "all":
-        return "text-purple-600";
-      case "placement":
-        return "text-blue-600";
-      case "higherStudies":
-        return "text-green-600";
-      default:
-        return "text-gray-600";
+      case "all": return "text-purple-600";
+      case "placement": return "text-blue-600";
+      case "higherStudies": return "text-green-600";
+      default: return "text-gray-600";
     }
   };
 
   const getStatusText = () => {
     switch (type) {
-      case "all":
-        return item.Career_Choice || "N/A";
-      case "placement":
-        return `${
-          item.package ? (item.package / 100000).toFixed(1) + " LPA" : "N/A"
-        }`;
-      case "higherStudies":
-        return item.university_name || "N/A";
-      default:
-        return "N/A";
+      case "all": return item.Career_Choice || "N/A";
+      case "placement": return `${item.package ? (item.package / 100000).toFixed(1) + " LPA" : "N/A"}`;
+      case "higherStudies": return item.university_name || "N/A";
+      default: return "N/A";
     }
   };
 
   const canUpdate = () => {
-    const token = localStorage.getItem("token"); // Retrieve token from local storage
+    const token = localStorage.getItem("token");
     let userRole = "";
     if (token) {
       try {
         const decodedToken = jwtDecode(token);
         userRole = decodedToken.user.role || "";
-        if (userRole === "ADMIN") return true; // Admin can update all
+        if (userRole === "ADMIN") return true;
       } catch (error) {
         console.error("Invalid token:", error);
-        userRole = null;
         return false;
       }
     }
-    return false; // Viewer or unauthorized user cannot update
+    return false;
   };
 
   return (
     <>
-      <div
-        className={`${getBackgroundColor()} p-4 rounded-xl shadow-md hover:shadow-lg transition-all duration-300`}
-      >
+      <div className={`${getBackgroundColor()} p-4 rounded-xl shadow-md hover:shadow-lg transition-all duration-300`}>
         <div className="flex justify-between items-center">
           <h2 className="text-xl font-bold text-gray-800">
             {item.FirstName} {item.LastName}
           </h2>
-          <span
-            className={`text-sm font-semibold bg-white px-3 py-1 rounded-full ${getStatusColor()}`}
-          >
+          <span className={`text-sm font-semibold bg-white px-3 py-1 rounded-full ${getStatusColor()}`}>
             {getStatusText()}
           </span>
         </div>
@@ -143,20 +141,23 @@ const StudentCard = ({ item, type, onUpdate }) => {
 
         <div className="flex justify-between items-center mt-4">
           <span className="text-xs bg-white text-gray-700 px-2 py-1 rounded-full">
-            {type === "placement"
-              ? item.position
-              : type === "higherStudies"
-              ? item.intake_year
-              : item.Batch || "N/A"}
+            {type === "placement" ? item.position : type === "higherStudies" ? item.intake_year : item.Batch || "N/A"}
           </span>
-          {/* Conditionally render the Update button */}
           {canUpdate() && (
-            <button
-              onClick={() => setIsModalOpen(true)}
-              className={`${getButtonColor()} text-xs text-white font-medium px-2 py-1 rounded shadow-sm transition-colors duration-200 transform hover:scale-105`}
-            >
-              Update
-            </button>
+            <div className="space-x-2">
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className={`${getButtonColor()} text-xs text-white font-medium px-2 py-1 rounded shadow-sm transition-colors duration-200 transform hover:scale-105`}
+              >
+                Update
+              </button>
+              <button
+                onClick={() => setShowDeleteConfirm(true)}
+                className="bg-red-500 hover:bg-red-600 text-xs text-white font-medium px-2 py-1 rounded shadow-sm transition-colors duration-200 transform hover:scale-105"
+              >
+                Delete
+              </button>
+            </div>
           )}
         </div>
       </div>
@@ -164,24 +165,16 @@ const StudentCard = ({ item, type, onUpdate }) => {
       {isModalOpen && (
         <div className="fixed inset-0 z-50 overflow-y-auto">
           <div className="flex items-center justify-center min-h-screen p-4">
-            {/* Backdrop with blur effect */}
             <div
               className="fixed inset-0 bg-black/30 backdrop-blur-sm transition-opacity"
               onClick={() => setIsModalOpen(false)}
             />
-
-            {/* Modal container with scrolling */}
             <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-4xl my-8 transform transition-all duration-300 ease-in-out animate-in fade-in slide-in-from-bottom-4">
-              {/* Modal header - fixed at top */}
               <div className="sticky top-0 z-50 bg-white rounded-t-2xl border-b border-gray-100">
                 <div className="flex justify-between items-center p-6">
                   <div>
-                    <h3 className="text-2xl font-bold text-gray-900">
-                      Update Student Information
-                    </h3>
-                    <p className="mt-1 text-sm text-gray-500">
-                      Make changes to student details below
-                    </p>
+                    <h3 className="text-2xl font-bold text-gray-900">Update Student Information</h3>
+                    <p className="mt-1 text-sm text-gray-500">Make changes to student details below</p>
                   </div>
                   <button
                     onClick={() => setIsModalOpen(false)}
@@ -196,6 +189,37 @@ const StudentCard = ({ item, type, onUpdate }) => {
                 type={type}
                 onClose={() => setIsModalOpen(false)}
               />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 z-50 overflow-y-auto">
+          <div className="flex items-center justify-center min-h-screen p-4">
+            <div
+              className="fixed inset-0 bg-black/30 backdrop-blur-sm transition-opacity"
+              onClick={() => setShowDeleteConfirm(false)}
+            />
+            <div className="relative bg-white rounded-xl shadow-xl w-full max-w-md p-6">
+              <h3 className="text-lg font-bold text-gray-900 mb-4">Confirm Delete</h3>
+              <p className="text-gray-600 mb-6">
+                Are you sure you want to delete {item.FirstName} {item.LastName}'s record? This action cannot be undone.
+              </p>
+              <div className="flex justify-end space-x-3">
+                <button
+                  onClick={() => setShowDeleteConfirm(false)}
+                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleDelete}
+                  className="px-4 py-2 text-sm font-medium text-white bg-red-500 rounded-md hover:bg-red-600"
+                >
+                  Delete
+                </button>
+              </div>
             </div>
           </div>
         </div>
