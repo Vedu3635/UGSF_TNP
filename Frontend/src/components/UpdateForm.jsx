@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-const UpdateForm = ({ item, type, onClose }) => {
+const UpdateForm = ({ item, type, onStudentUpdate, onClose }) => {
   const [formData, setFormData] = useState({
     // Common fields
     student_id: item.student_id || "",
@@ -81,6 +81,7 @@ const UpdateForm = ({ item, type, onClose }) => {
       ...prev,
       [name]: value,
     }));
+
     // Clear error when user starts typing
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: "" }));
@@ -101,7 +102,7 @@ const UpdateForm = ({ item, type, onClose }) => {
     } else {
       endpoint = `http://localhost:5000/api/edit-student/updateStudent/${item.student_id}`; // API for all students
     }
-    console.log(formData);
+
     try {
       const response = await fetch(endpoint, {
         method: "PUT",
@@ -115,9 +116,10 @@ const UpdateForm = ({ item, type, onClose }) => {
         throw new Error("Failed to update");
       }
 
-      const updatedData = await response.json();
+      // const updatedData = await response.json();
       // onUpdate(updatedData); // Notify parent about the update
       onClose(); // Close the modal
+      onStudentUpdate();
     } catch (error) {
       console.error("Error updating student:", error);
       alert("Failed to update student information");
@@ -226,7 +228,34 @@ const UpdateForm = ({ item, type, onClose }) => {
               Additional Information
             </h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {renderField("Career_Choice", "Career Choice")}
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-700">
+                  Career Choice
+                </label>
+                <select
+                  name="Career_Choice"
+                  value={formData.Career_Choice}
+                  onChange={handleChange}
+                  className="mt-1 block w-full rounded-lg border shadow-sm 
+      transition-all duration-200 ease-in-out
+      focus:ring-2 focus:ring-offset-0 focus:ring-blue-500 focus:border-transparent
+      border-gray-200 hover:border-gray-300 focus:border-blue-500
+      p-3 text-sm"
+                >
+                  <option value="">Select Career Choice</option>
+                  <option value="Higher Studies">Higher Studies</option>
+                  <option value="Job Placement">Job Placement</option>
+                  <option value="Entrepreneurial Venture">
+                    Entrepreneurial Venture
+                  </option>
+                </select>
+                {errors.Career_Choice && (
+                  <p className="mt-1 text-xs text-red-600 flex items-center">
+                    <span className="mr-1">⚠️</span>
+                    {errors.Career_Choice}
+                  </p>
+                )}
+              </div>
               {renderField("Semester", "Semester")}
               {renderField("Class", "Class")}
               {renderField("Batch", "Batch")}

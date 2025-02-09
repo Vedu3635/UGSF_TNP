@@ -2,7 +2,13 @@ import React, { useState } from "react";
 import Pagination from "./Pagination";
 import StudentCard from "./StudentCard";
 
-const PaginatedList = ({ items, type, initialItemsPerPage = 25 }) => {
+const PaginatedList = ({
+  items,
+  type,
+  onStudentUpdate,
+  onDelete,
+  initialItemsPerPage = 25,
+}) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(initialItemsPerPage);
 
@@ -16,7 +22,13 @@ const PaginatedList = ({ items, type, initialItemsPerPage = 25 }) => {
     <div>
       <div className="space-y-4 mb-4">
         {currentItems.map((item, index) => (
-          <StudentCard key={index} item={item} type={type} />
+          <StudentCard
+            key={index}
+            item={item}
+            type={type}
+            onStudentUpdate={onStudentUpdate}
+            onDelete={onDelete}
+          />
         ))}
       </div>
       <Pagination

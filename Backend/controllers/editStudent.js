@@ -75,13 +75,13 @@ const updateStudentDetails = async (req, res) => {
 
 const updatePlacementDetails = async (req, res) => {
   const { studentId } = req.params;
-  const { 
+  const {
     // Placement details
-    company_name, 
-    package, 
-    position, 
-    Status, 
-    Notes,
+    company_name,
+    package,
+    position,
+    status,
+    notes,
     // Student details
     FirstName,
     LastName,
@@ -89,12 +89,12 @@ const updatePlacementDetails = async (req, res) => {
     Enrollment_Id,
     Enrollment_Year,
     PhoneNo,
-    Program 
+    Program,
   } = req.body;
 
   try {
     // Start transaction
-    await pool.query('START TRANSACTION');
+    await pool.query("START TRANSACTION");
 
     // Update student details
     const studentSql = `
@@ -119,7 +119,7 @@ const updatePlacementDetails = async (req, res) => {
       Enrollment_Year,
       PhoneNo,
       Program,
-      studentId
+      studentId,
     ];
 
     const studentResult = await pool.query(studentSql, studentValues);
@@ -131,36 +131,45 @@ const updatePlacementDetails = async (req, res) => {
         company_name = ?,
         package = ?,
         position = ?,
-        Status = ?,
-        Notes = ?,
+        status = ?,
+        notes = ?,
         year = YEAR(CURRENT_DATE())
       WHERE student_id = ?
     `;
 
-    const placementValues = [company_name, package, position, Status, Notes, studentId];
+    const placementValues = [
+      company_name,
+      package,
+      position,
+      status,
+      notes,
+      studentId,
+    ];
 
     const placementResult = await pool.query(placementSql, placementValues);
 
-    if (studentResult.affectedRows === 0 || placementResult.affectedRows === 0) {
-      await pool.query('ROLLBACK');
+    if (
+      studentResult.affectedRows === 0 ||
+      placementResult.affectedRows === 0
+    ) {
+      await pool.query("ROLLBACK");
       return res.status(404).json({
         success: false,
-        message: 'Student or placement details not found',
+        message: "Student or placement details not found",
       });
     }
 
-    await pool.query('COMMIT');
+    await pool.query("COMMIT");
     res.status(200).json({
       success: true,
-      message: 'Student and placement details updated successfully',
+      message: "Student and placement details updated successfully",
     });
-
   } catch (error) {
-    await pool.query('ROLLBACK');
-    console.error('Error updating details:', error);
+    await pool.query("ROLLBACK");
+    console.error("Error updating details:", error);
     res.status(500).json({
       success: false,
-      message: 'Failed to update details',
+      message: "Failed to update details",
       error: error.message,
     });
   }
@@ -168,12 +177,12 @@ const updatePlacementDetails = async (req, res) => {
 
 const updateHigherStudiesDetails = async (req, res) => {
   const { studentId } = req.params;
-  const { 
+  const {
     // Higher studies details
-    university_name, 
-    course_name, 
-    intake_year, 
-    Status,
+    university_name,
+    course_name,
+    intake_year,
+    status,
     // Student details
     FirstName,
     LastName,
@@ -181,12 +190,12 @@ const updateHigherStudiesDetails = async (req, res) => {
     Enrollment_Id,
     Enrollment_Year,
     PhoneNo,
-    Program 
+    Program,
   } = req.body;
 
   try {
     // Start transaction
-    await pool.query('START TRANSACTION');
+    await pool.query("START TRANSACTION");
 
     // Update student details
     const studentSql = `
@@ -211,7 +220,7 @@ const updateHigherStudiesDetails = async (req, res) => {
       Enrollment_Year,
       PhoneNo,
       Program,
-      studentId
+      studentId,
     ];
 
     const studentResult = await pool.query(studentSql, studentValues);
@@ -223,34 +232,45 @@ const updateHigherStudiesDetails = async (req, res) => {
         university_name = ?,
         course_name = ?,
         intake_year = ?,
-        Status = ?
+        status = ?
       WHERE student_id = ?
     `;
 
-    const higherStudiesValues = [university_name, course_name, intake_year, Status, studentId];
+    const higherStudiesValues = [
+      university_name,
+      course_name,
+      intake_year,
+      status,
+      studentId,
+    ];
 
-    const higherStudiesResult = await pool.query(higherStudiesSql, higherStudiesValues);
+    const higherStudiesResult = await pool.query(
+      higherStudiesSql,
+      higherStudiesValues
+    );
 
-    if (studentResult.affectedRows === 0 || higherStudiesResult.affectedRows === 0) {
-      await pool.query('ROLLBACK');
+    if (
+      studentResult.affectedRows === 0 ||
+      higherStudiesResult.affectedRows === 0
+    ) {
+      await pool.query("ROLLBACK");
       return res.status(404).json({
         success: false,
-        message: 'Student or higher studies details not found',
+        message: "Student or higher studies details not found",
       });
     }
 
-    await pool.query('COMMIT');
+    await pool.query("COMMIT");
     res.status(200).json({
       success: true,
-      message: 'Student and higher studies details updated successfully',
+      message: "Student and higher studies details updated successfully",
     });
-
   } catch (error) {
-    await pool.query('ROLLBACK');
-    console.error('Error updating details:', error);
+    await pool.query("ROLLBACK");
+    console.error("Error updating details:", error);
     res.status(500).json({
       success: false,
-      message: 'Failed to update details',
+      message: "Failed to update details",
       error: error.message,
     });
   }
@@ -259,5 +279,5 @@ const updateHigherStudiesDetails = async (req, res) => {
 module.exports = {
   updateStudentDetails,
   updatePlacementDetails,
-  updateHigherStudiesDetails
+  updateHigherStudiesDetails,
 };

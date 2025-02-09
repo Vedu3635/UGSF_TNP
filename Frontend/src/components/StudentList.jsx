@@ -10,7 +10,13 @@ import DownloadButton2 from "./DownloadButton2";
 import PaginatedList from "./PaginatedList";
 import FilterComponent from "./FilterComponent";
 
-const StudentList = ({ allStudentsData, placementData, higherStudiesData }) => {
+const StudentList = ({
+  allStudentsData,
+  placementData,
+  higherStudiesData,
+  onStudentUpdate, // Add this prop
+  onDelete,
+}) => {
   const [activeTab, setActiveTab] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all"); // "all", "placed", "notPlaced", "found", "notFound"
@@ -57,6 +63,7 @@ const StudentList = ({ allStudentsData, placementData, higherStudiesData }) => {
     localStorage.setItem("activeTab", tab); // Save to localStorage
     resetFilters(); // Reset filters when switching tabs
   };
+
   // Rest of your existing filterOptions code remains the same...
   const filterOptions = useMemo(() => {
     const getTopItems = (array, count) =>
@@ -152,6 +159,7 @@ const StudentList = ({ allStudentsData, placementData, higherStudiesData }) => {
 
     return options;
   }, [allStudentsData, placementData, higherStudiesData]);
+
   const getCurrentData = () => {
     switch (activeTab) {
       case "all":
@@ -385,6 +393,8 @@ const StudentList = ({ allStudentsData, placementData, higherStudiesData }) => {
             ? "placement"
             : "higherStudies"
         }
+        onStudentUpdate={onStudentUpdate} // Pass onStudentUpdate to PaginatedList
+        onDelete={onDelete}
       />
     </div>
   );

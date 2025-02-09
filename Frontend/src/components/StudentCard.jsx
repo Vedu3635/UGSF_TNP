@@ -3,33 +3,38 @@ import { X } from "lucide-react";
 import { jwtDecode } from "jwt-decode";
 import UpdateForm from "./UpdateForm";
 
-const StudentCard = ({ item, type, onUpdate, onDelete }) => {
+const StudentCard = ({ item, type, onStudentUpdate, onDelete }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const handleUpdate = (updatedData) => {
-    setStudentData(updatedData);
+    onStudentUpdate(updatedData); // Notify parent component of the update
+    setIsModalOpen(false); // Close the modal
   };
 
   const handleDelete = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch(`/api/students/${item.id}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
+
+      const response = await fetch(
+        `http://localhost:5000/api/deleteStudent/${item.student_id}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
         }
-      });
+      );
 
       if (response.ok) {
         onDelete(item.id); // Callback to parent to update the UI
         setShowDeleteConfirm(false);
       } else {
-        throw new Error('Failed to delete student');
+        throw new Error("Failed to delete student");
       }
     } catch (error) {
-      console.error('Error deleting student:', error);
+      console.error("Error deleting student:", error);
       // You might want to show an error message to the user here
     }
   };
@@ -48,37 +53,55 @@ const StudentCard = ({ item, type, onUpdate, onDelete }) => {
 
   const getBackgroundColor = () => {
     switch (type) {
-      case "all": return "bg-purple-100";
-      case "placement": return "bg-blue-100";
-      case "higherStudies": return "bg-green-100";
-      default: return "bg-gray-100";
+      case "all":
+        return "bg-purple-100";
+      case "placement":
+        return "bg-blue-100";
+      case "higherStudies":
+        return "bg-green-100";
+      default:
+        return "bg-gray-100";
     }
   };
 
   const getButtonColor = () => {
     switch (type) {
-      case "all": return "bg-purple-500 hover:bg-purple-600";
-      case "placement": return "bg-blue-500 hover:bg-blue-600";
-      case "higherStudies": return "bg-green-500 hover:bg-green-600";
-      default: return "bg-gray-500 hover:bg-gray-600";
+      case "all":
+        return "bg-purple-500 hover:bg-purple-600";
+      case "placement":
+        return "bg-blue-500 hover:bg-blue-600";
+      case "higherStudies":
+        return "bg-green-500 hover:bg-green-600";
+      default:
+        return "bg-gray-500 hover:bg-gray-600";
     }
   };
 
   const getStatusColor = () => {
     switch (type) {
-      case "all": return "text-purple-600";
-      case "placement": return "text-blue-600";
-      case "higherStudies": return "text-green-600";
-      default: return "text-gray-600";
+      case "all":
+        return "text-purple-600";
+      case "placement":
+        return "text-blue-600";
+      case "higherStudies":
+        return "text-green-600";
+      default:
+        return "text-gray-600";
     }
   };
 
   const getStatusText = () => {
     switch (type) {
-      case "all": return item.Career_Choice || "N/A";
-      case "placement": return `${item.package ? (item.package / 100000).toFixed(1) + " LPA" : "N/A"}`;
-      case "higherStudies": return item.university_name || "N/A";
-      default: return "N/A";
+      case "all":
+        return item.Career_Choice || "N/A";
+      case "placement":
+        return `${
+          item.package ? (item.package / 100000).toFixed(1) + " LPA" : "N/A"
+        }`;
+      case "higherStudies":
+        return item.university_name || "N/A";
+      default:
+        return "N/A";
     }
   };
 
@@ -100,12 +123,16 @@ const StudentCard = ({ item, type, onUpdate, onDelete }) => {
 
   return (
     <>
-      <div className={`${getBackgroundColor()} p-4 rounded-xl shadow-md hover:shadow-lg transition-all duration-300`}>
+      <div
+        className={`${getBackgroundColor()} p-4 rounded-xl shadow-md hover:shadow-lg transition-all duration-300`}
+      >
         <div className="flex justify-between items-center">
           <h2 className="text-xl font-bold text-gray-800">
             {item.FirstName} {item.LastName}
           </h2>
-          <span className={`text-sm font-semibold bg-white px-3 py-1 rounded-full ${getStatusColor()}`}>
+          <span
+            className={`text-sm font-semibold bg-white px-3 py-1 rounded-full ${getStatusColor()}`}
+          >
             {getStatusText()}
           </span>
         </div>
@@ -141,7 +168,11 @@ const StudentCard = ({ item, type, onUpdate, onDelete }) => {
 
         <div className="flex justify-between items-center mt-4">
           <span className="text-xs bg-white text-gray-700 px-2 py-1 rounded-full">
-            {type === "placement" ? item.position : type === "higherStudies" ? item.intake_year : item.Batch || "N/A"}
+            {type === "placement"
+              ? item.position
+              : type === "higherStudies"
+              ? item.intake_year
+              : item.Batch || "N/A"}
           </span>
           {canUpdate() && (
             <div className="space-x-2">
@@ -173,8 +204,12 @@ const StudentCard = ({ item, type, onUpdate, onDelete }) => {
               <div className="sticky top-0 z-50 bg-white rounded-t-2xl border-b border-gray-100">
                 <div className="flex justify-between items-center p-6">
                   <div>
-                    <h3 className="text-2xl font-bold text-gray-900">Update Student Information</h3>
-                    <p className="mt-1 text-sm text-gray-500">Make changes to student details below</p>
+                    <h3 className="text-2xl font-bold text-gray-900">
+                      Update Student Information
+                    </h3>
+                    <p className="mt-1 text-sm text-gray-500">
+                      Make changes to student details below
+                    </p>
                   </div>
                   <button
                     onClick={() => setIsModalOpen(false)}
@@ -188,6 +223,7 @@ const StudentCard = ({ item, type, onUpdate, onDelete }) => {
                 item={item}
                 type={type}
                 onClose={() => setIsModalOpen(false)}
+                onStudentUpdate={handleUpdate} // Pass onStudentUpdate to UpdateForm
               />
             </div>
           </div>
@@ -202,9 +238,12 @@ const StudentCard = ({ item, type, onUpdate, onDelete }) => {
               onClick={() => setShowDeleteConfirm(false)}
             />
             <div className="relative bg-white rounded-xl shadow-xl w-full max-w-md p-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">Confirm Delete</h3>
+              <h3 className="text-lg font-bold text-gray-900 mb-4">
+                Confirm Delete
+              </h3>
               <p className="text-gray-600 mb-6">
-                Are you sure you want to delete {item.FirstName} {item.LastName}'s record? This action cannot be undone.
+                Are you sure you want to delete {item.FirstName} {item.LastName}
+                's record? This action cannot be undone.
               </p>
               <div className="flex justify-end space-x-3">
                 <button
