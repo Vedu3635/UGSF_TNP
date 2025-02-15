@@ -18,9 +18,9 @@ class ExcelModel {
 
       // Determine the appropriate query based on tableName
       if (tableName === "higher_studies_details") {
-        sqlQuery = `SELECT * FROM students s JOIN higher_studies_details h ON s.ID = h.student_id`;
+        sqlQuery = `SELECT * FROM students s JOIN higher_studies_details h ON s.student_id = h.student_id`;
       } else if (tableName === "placement_details") {
-        sqlQuery = `SELECT * FROM students s JOIN placement_details p ON s.ID = p.student_id`;
+        sqlQuery = `SELECT * FROM students s JOIN placement_details p ON s.student_id = p.student_id`;
       } else {
         sqlQuery = `SELECT * FROM students`;
       }

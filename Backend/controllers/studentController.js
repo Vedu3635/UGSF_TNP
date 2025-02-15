@@ -4,7 +4,7 @@ const pool = require("../config/pool");
 // Fetch job placement students
 const getJobPlacementStudents = (req, res) => {
   const query = `
-    SELECT s.student_id, s.FirstName, s.LastName, s.PhoneNo, s.Email,s.Enrollment_Id, s.Enrollment_Year, s.Program, p.year,p.company_name, p.Status, p.package, p.position, p.Notes FROM students s JOIN placement_details p ON s.student_id = p.student_id WHERE s.Career_Choice = 'Job Placement';
+    SELECT s.student_id, s.FirstName, s.LastName, s.PhoneNo, s.Email,s.Enrollment_Id, s.Enrollment_Year, s.Program, p.year,p.company_name, p.status, p.package, p.position, p.notes FROM students s JOIN placement_details p ON s.student_id = p.student_id WHERE s.Career_Choice = 'Job Placement';
   `;
 
   pool.query(query, (err, results) => {
@@ -31,7 +31,7 @@ const getJobPlacementStudents = (req, res) => {
 // Fetch higher studies students
 const getHigherStudiesStudents = (req, res) => {
   const query = `
-    SELECT s.student_id, s.FirstName, s.LastName, s.Email, s.Enrollment_Year,s.Enrollment_Id, s.Enrollment_Year, s.Program, h.university_name, h.course_name, h.intake_year, h.Status
+    SELECT s.student_id, s.FirstName, s.LastName, s.Email, s.Enrollment_Year,s.Enrollment_Id, s.Enrollment_Year, s.Program, h.university_name, h.course_name, h.intake_year, h.status
     FROM students s
     JOIN higher_studies_details h ON s.student_id = h.student_id
     WHERE s.Career_Choice = 'Higher Studies';
