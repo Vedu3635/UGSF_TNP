@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Building2,
   Globe,
@@ -10,7 +11,6 @@ import {
   Users,
   GraduationCap,
   Calendar,
-  Upload,
   Building,
   CheckCircle2,
   DollarSign,
@@ -92,6 +92,7 @@ const Select = ({ label, icon: Icon, options, ...props }) => (
 );
 
 const CompanyRegistrationForm = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     Company_Name: "",
     Industry_Domain: "",
@@ -108,7 +109,6 @@ const CompanyRegistrationForm = () => {
     Hiring_Date: "",
     Mode_Hiring: "",
   });
-  
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -144,7 +144,7 @@ const CompanyRegistrationForm = () => {
     };
   
     try {
-      const response = await fetch("http://localhost:5000/api/companies", {
+      const response = await fetch("http://localhost:5000/api/addcompanies", {
         method: "POST",
         body: JSON.stringify(mappedData),
         headers: {
@@ -154,7 +154,22 @@ const CompanyRegistrationForm = () => {
       });
   
       if (response.ok) {
+        // After successful registration
         alert("Company registration successful!");
+        
+        // Fetch updated company list to ensure data is fresh
+        const companiesResponse = await fetch("http://localhost:5000/api/companies", {
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
+        
+        if (companiesResponse.ok) {
+          // Navigate to the company list page
+          navigate("/companies");
+        } else {
+          console.error("Failed to fetch updated companies");
+        }
       } else {
         alert("Failed to register the company. Please try again.");
       }
