@@ -6,7 +6,7 @@ import {
   AcademicCapIcon,
   DocumentMagnifyingGlassIcon,
   UserCircleIcon,
-  Bars3BottomRightIcon,
+  UsersIcon,
   XMarkIcon
 } from "@heroicons/react/24/outline";
 
@@ -39,6 +39,12 @@ const Navbar = ({ userProfile }) => {
       path: '/research', 
       icon: <DocumentMagnifyingGlassIcon className="w-5 h-5 mr-2" /> 
     }
+    ,
+    { 
+      name: 'Alumni', 
+      path: '/alumni', 
+      icon: <DocumentMagnifyingGlassIcon className="w-5 h-5 mr-2" /> 
+    }
   ];
 
   return (
@@ -59,11 +65,7 @@ const Navbar = ({ userProfile }) => {
             className="md:hidden cursor-pointer"
             onClick={() => setOpen(!open)}
           >
-            {open ? (
-              <XMarkIcon className="w-6 h-6 text-blue-600" />
-            ) : (
-              <Bars3BottomRightIcon className="w-6 h-6 text-blue-600" />
-            )}
+            {open && <XMarkIcon className="w-6 h-6 text-blue-600" />}
           </div>
         </div>
 
@@ -85,6 +87,7 @@ const Navbar = ({ userProfile }) => {
                     px-3 py-2 
                     rounded-lg 
                     transition-all duration-300 
+                    relative
                     ${isActive 
                       ? 'bg-blue-600 text-white hover:bg-blue-700' 
                       : 'text-blue-800 hover:bg-blue-200'}
@@ -92,6 +95,11 @@ const Navbar = ({ userProfile }) => {
                 >
                   {item.icon}
                   {item.name}
+                  {item.badge && (
+                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
+                      {item.badge}
+                    </span>
+                  )}
                 </NavLink>
               </li>
             ))}
