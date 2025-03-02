@@ -1,4 +1,4 @@
-const pool = require("../config/pool");
+const pool = require("../../config/pool");
 
 const deleteStudent = async (req, res) => {
   const { studentId } = req.params;

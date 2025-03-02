@@ -14,7 +14,7 @@
 
 const express = require("express");
 const router = express.Router();
-const studentController = require("../controllers/editStudent");
+const studentController = require("../../controllers/TNP/editStudent");
 
 // Student update routes
 router.put("/updateStudent/:studentId", studentController.updateStudentDetails);

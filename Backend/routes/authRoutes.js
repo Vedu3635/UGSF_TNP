@@ -11,7 +11,7 @@ router.get("/profile", authMiddleware, (req, res) => {
   // This route is protected and only accessible with a valid token
   res.json({
     message: "Access granted",
-    user: req.user,  // req.user is available because of the middleware
+    user: req.user, // req.user is available because of the middleware
   });
 });
 

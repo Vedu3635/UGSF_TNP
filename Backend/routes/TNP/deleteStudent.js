@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const { deleteStudent } = require("../controllers/deleteStudent");
-const authMiddleware = require("../middleware/authMiddleware");
+const { deleteStudent } = require("../../controllers/TNP/deleteStudent");
+const authMiddleware = require("../../middleware/authMiddleware");
 
 // Route for deleting a student
 //localhost:5000/api/deleteStudent/41

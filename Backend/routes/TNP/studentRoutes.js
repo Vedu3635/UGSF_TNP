@@ -4,8 +4,8 @@ const {
   getJobPlacementStudents,
   getHigherStudiesStudents,
   getAllStudents,
-} = require("../controllers/studentController");
-const authMiddleware = require("../middleware/authMiddleware");
+} = require("../../controllers/TNP/studentController");
+const authMiddleware = require("../../middleware/authMiddleware");
 
 const router = express.Router();
 

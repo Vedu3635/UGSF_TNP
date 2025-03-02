@@ -1,14 +1,14 @@
 const express = require("express");
 const cors = require("cors");
 const authRoutes = require("./routes/authRoutes");
-const fileRoutes = require("./routes/fileRoutes");
-const studentRoutes = require("./routes/studentRoutes");
-const excelRoutes = require("./routes/excelRoutes");
-const editStudentRoutes = require("./routes/editStudent");
-const companyRoutes = require("./routes/companyRoutes");
-const editCompanyRoutes = require("./routes/editCompanyRoutes");
-const deleteCompnayRoutes = require("./routes/deleteCompany");
-const deleteStudentRoutes = require("./routes/deleteStudent");
+const fileRoutes = require("./routes/TNP/fileRoutes");
+const studentRoutes = require("./routes/TNP/studentRoutes");
+const excelRoutes = require("./routes/TNP/excelRoutes");
+const editStudentRoutes = require("./routes/TNP/editStudent");
+const companyRoutes = require("./routes/TNP/companyRoutes");
+const editCompanyRoutes = require("./routes/TNP/editCompanyRoutes");
+const deleteCompnayRoutes = require("./routes/TNP/deleteCompany");
+const deleteStudentRoutes = require("./routes/TNP/deleteStudent");
 const dotenv = require("dotenv");
 
 dotenv.config();
@@ -21,7 +21,7 @@ app.use(express.json());
 // Use CORS and allow requests from 'http://localhost:5173'
 app.use(
   cors({
-    origin: ["http://localhost:5174/","http://localhost:5173"],
+    origin: ["http://localhost:5174/", "http://localhost:5173"],
   })
 );
 

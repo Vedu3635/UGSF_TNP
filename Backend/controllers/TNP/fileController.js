@@ -1,6 +1,6 @@
 const fs = require("fs");
 const xlsx = require("xlsx");
-const pool = require("../config/pool"); // Update this path if pool.js is in a different location
+const pool = require("../../config/pool"); // Update this path if pool.js is in a different location
 
 exports.uploadFile = (req, res) => {
   console.log("File received:", req.file);
@@ -41,29 +41,31 @@ function uploadExcel(path, callback) {
     excelData.shift();
 
     // Ensure correct data mapping
-    const studentsData = excelData.map((row) => {
-      if (row.length < 12) {
-        console.error("Row has missing values:", row);
-        return null; // Skip invalid rows
-      }
+    const studentsData = excelData
+      .map((row) => {
+        if (row.length < 12) {
+          console.error("Row has missing values:", row);
+          return null; // Skip invalid rows
+        }
 
-      return [
-        row[0],  // FirstName
-        row[1],  // MiddleName
-        row[2],  // LastName
-        row[3],  // Email
-        row[4],  // Enrollment_Id
-        row[5],  // Enrollment_Year
-        row[6],  // PhoneNo
-        row[7],  // Program
-        row[8],  // Career_Choice
-        row[9],  // Semester
-        row[10], // Class
-        row[11], // Batch
-        new Date(), // created_at
-        new Date()  // updated_at
-      ];
-    }).filter(row => row !== null); // Remove invalid rows
+        return [
+          row[0], // FirstName
+          row[1], // MiddleName
+          row[2], // LastName
+          row[3], // Email
+          row[4], // Enrollment_Id
+          row[5], // Enrollment_Year
+          row[6], // PhoneNo
+          row[7], // Program
+          row[8], // Career_Choice
+          row[9], // Semester
+          row[10], // Class
+          row[11], // Batch
+          new Date(), // created_at
+          new Date(), // updated_at
+        ];
+      })
+      .filter((row) => row !== null); // Remove invalid rows
 
     if (studentsData.length === 0) {
       console.error("No valid data found in the Excel file.");
@@ -99,4 +101,3 @@ function uploadExcel(path, callback) {
     callback(error);
   }
 }
-

@@ -1,5 +1,5 @@
-const companyModel = require("../models/companyModel");
-const pool = require("../config/pool");
+const companyModel = require("../../models/companyModel");
+const pool = require("../../config/pool");
 
 //Controller to get the compaines
 exports.getCompanies = (req, res) => {

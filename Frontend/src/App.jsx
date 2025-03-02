@@ -1,12 +1,13 @@
 import React from "react";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import "./index.css";
-import Login from "./pages/Login";
-import Dashboard from "./pages/Dashboard";
+import Login from "./pages/TNP/Login";
+import Dashboard from "./pages/TNP/Dashboard";
 import PrivateRoute from "./pages/PrivateRoute";
-import StudentList from "./components/StudentList";
-import AlumniManagement from "./components/AlumniManagement"; 
-import Navbar from "./components/Navbar"; 
+import StudentList from "./components/TNP/StudentList";
+import AlumniManagement from "./components/AlumniPortal/AlumniManagement";
+import Navbar from "./components/Navbar";
+import AlumniDashboard from "./pages/AlumniPortal/AlumniDashboard";
 
 const router = createBrowserRouter([
   {
@@ -33,7 +34,7 @@ const router = createBrowserRouter([
     path: "/alumni",
     element: (
       <PrivateRoute>
-        <AlumniManagement />
+        <AlumniDashboard />
       </PrivateRoute>
     ),
   },
@@ -41,8 +42,8 @@ const router = createBrowserRouter([
 
 function App() {
   return (
-    <RouterProvider router={router}> 
-      <Navbar />  
+    <RouterProvider router={router}>
+      <Navbar />
     </RouterProvider>
   );
 }

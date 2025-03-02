@@ -1,5 +1,5 @@
 // controllers/studentController.js
-const pool = require("../config/pool");
+const pool = require("../../config/pool");
 
 // Fetch job placement students
 const getJobPlacementStudents = (req, res) => {

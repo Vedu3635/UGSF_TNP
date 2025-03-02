@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import Navbar from "../components/Navbar";
-import LeftSlider2 from "../components/LeftSlider2";
-import NumberBox from "../components/NumberBox";
-import Charts from "../components/Charts";
-import CompanyList from "../components/CompanyList";
-import StudentList from "../components/StudentList";
-import FileUploadModal from "../components/FileUploadModal";
-import CompanyRegistrationForm from "../components/CompanyRegistrationForm";
+import Navbar from "../../components/Navbar";
+import LeftSlider2 from "../../components/TNP/LeftSlider2";
+import NumberBox from "../../components/TNP/NumberBox";
+import Charts from "../../components/TNP/Charts";
+import CompanyList from "../../components/TNP/CompanyList";
+import StudentList from "../../components/TNP/StudentList";
+import FileUploadModal from "../../components/TNP/FileUploadModal";
+import CompanyRegistrationForm from "../../components/TNP/CompanyRegistrationForm";
 
 const Dashboard = () => {
   const [activeSection, setActiveSection] = useState(
@@ -47,6 +47,7 @@ const Dashboard = () => {
       console.error("Fetch error:", error);
     }
   };
+  console.log(fetchCompaniesData);
 
   const fetchStudentData = async () => {
     const token = localStorage.getItem("token");

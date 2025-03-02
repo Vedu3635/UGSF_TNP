@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "./AuthContext"; // Adjust the path as necessary
+import { useAuth } from "../AuthContext"; // Adjust the path as necessary
 import {
   FaGoogle,
   FaFacebookF,

@@ -1,4 +1,4 @@
-const editCompanyModel = require("../models/editCompanyModel");
+const editCompanyModel = require("../../models/editCompanyModel");
 
 // Controller to handle editing company details
 exports.editCompany = async (req, res) => {
