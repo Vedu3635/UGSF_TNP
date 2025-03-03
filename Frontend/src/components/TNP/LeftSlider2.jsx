@@ -68,7 +68,7 @@ const LeftSlider2 = ({ setActiveSection, activeSection, onUploadClick }) => {
           </li>
 
           {/* Conditionally render the Upload File button based on user role */}
-          {userRole === "ADMIN" && (
+          {userRole === "tnpfaculty" && (
             <li>
               <button
                 className={`w-full flex items-center space-x-3 p-2 rounded transition duration-200 ${
@@ -99,7 +99,7 @@ const LeftSlider2 = ({ setActiveSection, activeSection, onUploadClick }) => {
           </li>
 
           {/* Conditionally render the Company Registration button based on user role  */}
-          {userRole === "ADMIN" && (
+          {userRole === "tnpfaculty" && (
             <li>
               <button
                 className={`w-full flex items-center space-x-3 p-2 rounded transition duration-200 ${

@@ -2,18 +2,22 @@ const companyModel = require("../../models/companyModel");
 const pool = require("../../config/pool");
 
 //Controller to get the compaines
-exports.getCompanies = (req, res) => {
-  const query = "SELECT * FROM companies"; // SQL query to fetch all companies
-
-  pool.query(query, (err, results) => {
-    if (err) {
-      console.error("Error fetching companies: ", err);
-      return res
-        .status(500)
-        .json({ message: "Server Error", error: err.message });
-    }
-    res.status(200).json(results); // Send back the results as JSON
-  });
+exports.getCompanies = async (req, res) => {
+  try {
+    const query = "SELECT * FROM companies"; // Make sure this table exists
+    pool.query(query, (err, results) => {
+      if (err) {
+        console.error("Database error:", err);
+        return res
+          .status(500)
+          .json({ message: "Database error", error: err.message });
+      }
+      res.json(results);
+    });
+  } catch (error) {
+    console.error("Server error:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
 };
 
 // Controller to handle adding company details

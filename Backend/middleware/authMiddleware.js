@@ -17,7 +17,7 @@ module.exports = (req, res, next) => {
     req.user = decoded.user; // Attach decoded user info from the token to req.user
 
     // Check if the user still exists in the database
-    const query = "SELECT * FROM users WHERE id = ?";
+    const query = "SELECT * FROM users WHERE user_id = ?";
 
     pool.query(query, [req.user.id], (err, results) => {
       if (err) {

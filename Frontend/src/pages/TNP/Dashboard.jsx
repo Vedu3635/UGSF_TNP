@@ -47,7 +47,6 @@ const Dashboard = () => {
       console.error("Fetch error:", error);
     }
   };
-  console.log(fetchCompaniesData);
 
   const fetchStudentData = async () => {
     const token = localStorage.getItem("token");

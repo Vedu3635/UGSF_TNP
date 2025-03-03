@@ -57,7 +57,7 @@ const CompanyLogo = ({ name, size = 60 }) => {
 
 const CompanyCard = ({ company, type }) => {
   const isUpcoming = type === "upcoming";
-
+  console.log(company);
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return new Intl.DateTimeFormat("en-GB", {

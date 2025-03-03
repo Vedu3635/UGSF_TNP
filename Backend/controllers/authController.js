@@ -35,9 +35,9 @@ exports.login = async (req, res) => {
     // If password matches, generate a JWT token
     const payload = {
       user: {
-        id: user.id,
+        id: user.user_id,
         username: user.username,
-        role: user.type,
+        role: user.role,
       },
     };
 

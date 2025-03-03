@@ -18,6 +18,7 @@ const Dialog = ({ isOpen, onClose, children }) => {
 };
 
 const CompanyList = ({ companiesData }) => {
+  // console.log(companiesData);
   const [companies, setCompanies] = useState({ upcoming: [], visited: [] });
   const [isLoading, setIsLoading] = useState(true);
   const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
@@ -43,10 +44,14 @@ const CompanyList = ({ companiesData }) => {
 
   useEffect(() => {
     if (companiesData) {
+      console.log("Received companiesData:", companiesData); // Check if data is received
+
       const currentDate = new Date();
       const dividedData = companiesData.reduce(
         (acc, company) => {
-          const hiringDate = new Date(company.Hiring_Date);
+          const hiringDate = new Date(company.hiring_date);
+          console.log("hiringDate:", hiringDate);
+
           if (hiringDate >= currentDate) {
             acc.upcoming.push(company);
           } else {
@@ -57,11 +62,14 @@ const CompanyList = ({ companiesData }) => {
         { upcoming: [], visited: [] }
       );
 
+      console.log("Processed Data:", dividedData); // Verify how data is classified
+
       setCompanies(dividedData);
       setIsLoading(false);
     }
   }, [companiesData]);
 
+  // console.log(companies);
   const handleUpdateClick = (company) => {
     setSelectedCompany(company);
     setFormData({
@@ -165,7 +173,7 @@ const CompanyList = ({ companiesData }) => {
       }
     }
 
-    if (userRole === "ADMIN") {
+    if (userRole === "tnpfaculty") {
       return (
         <button
           onClick={onClick}

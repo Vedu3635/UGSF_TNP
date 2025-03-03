@@ -112,7 +112,7 @@ const StudentCard = ({ item, type, onStudentUpdate, onDelete }) => {
       try {
         const decodedToken = jwtDecode(token);
         userRole = decodedToken.user.role || "";
-        if (userRole === "ADMIN") return true;
+        if (userRole === "tnpfaculty") return true;
       } catch (error) {
         console.error("Invalid token:", error);
         return false;
