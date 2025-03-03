@@ -44,13 +44,13 @@ const CompanyList = ({ companiesData }) => {
 
   useEffect(() => {
     if (companiesData) {
-      console.log("Received companiesData:", companiesData); // Check if data is received
+      
 
       const currentDate = new Date();
       const dividedData = companiesData.reduce(
         (acc, company) => {
           const hiringDate = new Date(company.hiring_date);
-          console.log("hiringDate:", hiringDate);
+   
 
           if (hiringDate >= currentDate) {
             acc.upcoming.push(company);
@@ -62,7 +62,7 @@ const CompanyList = ({ companiesData }) => {
         { upcoming: [], visited: [] }
       );
 
-      console.log("Processed Data:", dividedData); // Verify how data is classified
+      
 
       setCompanies(dividedData);
       setIsLoading(false);

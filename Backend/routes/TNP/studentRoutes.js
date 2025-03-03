@@ -18,7 +18,7 @@ router.get("/job-placement", authMiddleware, getJobPlacementStudents);
 router.get("/higher-studies", authMiddleware, getHigherStudiesStudents);
 
 // Route to get all the students
-// http://localhost:5000/api/students/all
+//  
 router.get("/all", authMiddleware, getAllStudents);
 
 module.exports = router;

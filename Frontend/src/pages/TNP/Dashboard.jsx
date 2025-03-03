@@ -50,6 +50,7 @@ const Dashboard = () => {
 
   const fetchStudentData = async () => {
     const token = localStorage.getItem("token");
+      console.log(token )
     try {
       const [placementResponse, higherStudiesResponse, allStudentsResponse] =
         await Promise.all([
@@ -100,7 +101,7 @@ const Dashboard = () => {
     fetchCompaniesData();
     fetchStudentData();
   }, []);
-
+console.log(allStudentsData)
   const handleStudentUpdate = () => {
     fetchStudentData();
   };

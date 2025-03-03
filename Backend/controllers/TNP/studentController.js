@@ -4,7 +4,25 @@ const pool = require("../../config/pool");
 // Fetch job placement students
 const getJobPlacementStudents = (req, res) => {
   const query = `
-    SELECT s.student_id, s.FirstName, s.LastName, s.PhoneNo, s.Email,s.Enrollment_Id, s.Enrollment_Year, s.Program, p.year,p.company_name, p.status, p.package, p.position, p.notes FROM students s JOIN placement_details p ON s.student_id = p.student_id WHERE s.Career_Choice = 'Job Placement';
+  SELECT 
+    s.student_id, 
+    s.first_name, 
+    s.middle_name, 
+    s.last_name, 
+    s.email, 
+    s.enrollment_Id, 
+    s.enrollment_year, 
+    s.phone_no, 
+    s.program, 
+    p.company_name, 
+    p.position, 
+    p.status, 
+    p.notes, 
+    p.package, 
+    p.placement_year  
+FROM students s  
+JOIN placements p ON s.student_id = p.student_id  
+WHERE s.career_choice = 'Job Placement';
   `;
 
   pool.query(query, (err, results) => {
@@ -31,10 +49,24 @@ const getJobPlacementStudents = (req, res) => {
 // Fetch higher studies students
 const getHigherStudiesStudents = (req, res) => {
   const query = `
-    SELECT s.student_id, s.FirstName, s.LastName, s.Email, s.Enrollment_Year,s.Enrollment_Id, s.Enrollment_Year, s.Program, h.university_name, h.course_name, h.intake_year, h.status
-    FROM students s
-    JOIN higher_studies_details h ON s.student_id = h.student_id
-    WHERE s.Career_Choice = 'Higher Studies';
+    SELECT 
+    s.student_id, 
+    s.first_name, 
+    s.middle_name, 
+    s.last_name, 
+    s.email, 
+    s.enrollment_id, 
+    s.enrollment_year, 
+    s.phone_no, 
+    s.program, 
+    h.university_name, 
+    h.course_name, 
+    h.admission_year, 
+    h.status
+FROM students s
+INNER JOIN higher_studies h ON s.student_id = h.student_id
+WHERE s.career_choice = 'Higher Studies';
+
   `;
 
   pool.query(query, (err, results) => {

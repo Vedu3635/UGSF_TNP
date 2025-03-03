@@ -93,7 +93,7 @@ const StudentCard = ({ item, type, onStudentUpdate, onDelete }) => {
   const getStatusText = () => {
     switch (type) {
       case "all":
-        return item.Career_Choice || "N/A";
+        return item.career_choice || "N/A";
       case "placement":
         return `${
           item.package ? (item.package / 100000).toFixed(1) + " LPA" : "N/A"
@@ -128,7 +128,7 @@ const StudentCard = ({ item, type, onStudentUpdate, onDelete }) => {
       >
         <div className="flex justify-between items-center">
           <h2 className="text-xl font-bold text-gray-800">
-            {item.FirstName} {item.LastName}
+            {item.first_name} {item.last_name}
           </h2>
           <span
             className={`text-sm font-semibold bg-white px-3 py-1 rounded-full ${getStatusColor()}`}
@@ -140,11 +140,11 @@ const StudentCard = ({ item, type, onStudentUpdate, onDelete }) => {
         <div className="grid grid-cols-3 gap-2 text-gray-600 mt-2">
           <div>
             <span className="font-medium text-xs">Roll Number</span>
-            <p className="text-sm">{item.Enrollment_Id || "N/A"}</p>
+            <p className="text-sm">{item.enrollment_id || "N/A"}</p>
           </div>
           <div>
             <span className="font-medium text-xs">Program</span>
-            <p className="text-sm">{item.Program || "N/A"}</p>
+            <p className="text-sm">{item.program || "N/A"}</p>
           </div>
           {type === "placement" && (
             <div>
@@ -161,7 +161,7 @@ const StudentCard = ({ item, type, onStudentUpdate, onDelete }) => {
           {type === "all" && (
             <div>
               <span className="font-medium text-xs">Semester</span>
-              <p className="text-sm">{item.Semester || "N/A"}</p>
+              <p className="text-sm">{item.semester || "N/A"}</p>
             </div>
           )}
         </div>
@@ -171,8 +171,8 @@ const StudentCard = ({ item, type, onStudentUpdate, onDelete }) => {
             {type === "placement"
               ? item.position
               : type === "higherStudies"
-              ? item.intake_year
-              : item.Batch || "N/A"}
+              ? item.admission_year
+              : item.batch || "N/A"}
           </span>
           {canUpdate() && (
             <div className="space-x-2">
