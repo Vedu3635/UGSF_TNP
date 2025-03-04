@@ -1,10 +1,10 @@
 const pool = require("../config/pool");
 
 // Update company details in the database
-exports.editCompany = (companyId, companyData) => {
+exports.editCompany = (company_id, companyData) => {
   return new Promise((resolve, reject) => {
-    // Validate companyId
-    if (!companyId) {
+    // Validate company_id
+    if (!company_id) {
       return reject(new Error("Company ID is required."));
     }
 
@@ -20,13 +20,13 @@ exports.editCompany = (companyId, companyData) => {
     const setClause = fields.map(([key]) => `${key} = ?`).join(", ");
     const values = fields.map(([_, value]) => value);
 
-    // Add the companyId to the values array for the WHERE clause
+    // Add the company_id to the values array for the WHERE clause
     const query = `
       UPDATE companies
       SET ${setClause}, updated_at = CURRENT_TIMESTAMP
-      WHERE Id = ?
+      WHERE company_id = ?
     `;
-    values.push(companyId);
+    values.push(company_id);
 
     // Execute the query
     pool.query(query, values, (error, results) => {

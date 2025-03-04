@@ -2,48 +2,48 @@ const editCompanyModel = require("../../models/editCompanyModel");
 
 // Controller to handle editing company details
 exports.editCompany = async (req, res) => {
-  const companyId = req.params.id; // Get company ID from URL params
+  const company_id = req.params.id; // Get company ID from URL params
 
   // Extract fields from the request body
   const {
-    Company_Name,
-    Industry_Domain,
-    Website_URL,
-    Contact_Name,
-    Contact_Email,
-    Contact_Phone,
-    Job_Roles,
-    Positions,
-    Package_Min,
-    Package_Max,
-    Employment_Type,
-    Eligibility_Criteria,
-    Selection_Rounds,
-    Hiring_Date,
-    Mode_Hiring,
+    company_name,
+    industry_domain,
+    website_url,
+    contact_name,
+    contact_email,
+    contact_phone,
+    job_roles,
+    positions,
+    package_min,
+    package_max,
+    employment_type,
+    eligibility_criteria,
+    selection_rounds,
+    hiring_date,
+    mode_hiring,
   } = req.body;
 
   // Validate required input data
-  if (!companyId) {
+  if (!company_id) {
     return res.status(400).json({ message: "Company ID is required." });
   }
 
   const fieldsToUpdate = {
-    Company_Name,
-    Industry_Domain,
-    Website_URL,
-    Contact_Name,
-    Contact_Email,
-    Contact_Phone,
-    Job_Roles,
-    Positions,
-    Package_Min,
-    Package_Max,
-    Employment_Type,
-    Eligibility_Criteria,
-    Selection_Rounds,
-    Hiring_Date,
-    Mode_Hiring,
+    company_name,
+    industry_domain,
+    website_url,
+    contact_name,
+    contact_email,
+    contact_phone,
+    job_roles,
+    positions,
+    package_min,
+    package_max,
+    employment_type,
+    eligibility_criteria,
+    selection_rounds,
+    hiring_date,
+    mode_hiring,
   };
 
   // Remove undefined or null fields
@@ -63,7 +63,7 @@ exports.editCompany = async (req, res) => {
   try {
     // Pass the sanitized fields to the model
     const result = await editCompanyModel.editCompany(
-      companyId,
+      company_id,
       sanitizedFields
     );
 
