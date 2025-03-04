@@ -169,9 +169,9 @@ const StudentCard = ({ item, type, onStudentUpdate, onDelete }) => {
         <div className="flex justify-between items-center mt-4">
           <span className="text-xs bg-white text-gray-700 px-2 py-1 rounded-full">
             {type === "placement"
-              ? item.position
+              ? item.position || "N/A"
               : type === "higherStudies"
-              ? item.admission_year
+              ? item.admission_year || "N/A"
               : item.batch || "N/A"}
           </span>
           {canUpdate() && (
@@ -242,7 +242,7 @@ const StudentCard = ({ item, type, onStudentUpdate, onDelete }) => {
                 Confirm Delete
               </h3>
               <p className="text-gray-600 mb-6">
-                Are you sure you want to delete {item.FirstName} {item.LastName}
+                Are you sure you want to delete {item.firstName} {item.lastName}
                 's record? This action cannot be undone.
               </p>
               <div className="flex justify-end space-x-3">

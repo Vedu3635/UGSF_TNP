@@ -10,7 +10,7 @@ const getJobPlacementStudents = (req, res) => {
     s.middle_name, 
     s.last_name, 
     s.email, 
-    s.enrollment_Id, 
+    s.enrollment_id, 
     s.enrollment_year, 
     s.phone_no, 
     s.program, 

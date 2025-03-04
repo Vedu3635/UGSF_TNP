@@ -14,7 +14,7 @@ const StudentList = ({
   allStudentsData,
   placementData,
   higherStudiesData,
-  onStudentUpdate, // Add this prop
+  onStudentUpdate,
   onDelete,
 }) => {
   const [activeTab, setActiveTab] = useState("all");
