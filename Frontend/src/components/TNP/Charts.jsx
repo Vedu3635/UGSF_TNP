@@ -45,23 +45,23 @@ const Charts = ({ allStudentsData, placementData, higherStudiesData }) => {
   // Helper function to get student counts by career choice
   const getStudentCountsByCareerChoice = (careerChoice) => {
     return allStudentsData.filter(
-      (student) => student.Career_Choice === careerChoice
+      (student) => student.career_choice === careerChoice
     ).length;
   };
 
   // Helper function to get data for each department
   const getDepartmentData = (department) => {
     const departmentStudents = allStudentsData.filter(
-      (student) => student.Program === department
+      (student) => student.program === department
     );
     const placementCount = departmentStudents.filter(
-      (student) => student.Career_Choice === "Job Placement"
+      (student) => student.career_choice === "Job Placement"
     ).length;
     const higherStudiesCount = departmentStudents.filter(
-      (student) => student.Career_Choice === "Higher Studies"
+      (student) => student.career_choice === "Higher Studies"
     ).length;
     const entrepreneurialCount = departmentStudents.filter(
-      (student) => student.Career_Choice === "Entrepreneurial Venture"
+      (student) => student.career_choice === "Entrepreneurial Venture"
     ).length;
 
     return {
@@ -72,12 +72,17 @@ const Charts = ({ allStudentsData, placementData, higherStudiesData }) => {
   };
 
   const years1 = [
-    ...new Set(placementData.map((student) => student.year)),
+    ...new Set(
+      placementData
+        .map((student) => student.placement_year)
+        .filter((year) => year && year !== "0000") // Remove null and "0000"
+    ),
   ].sort();
 
   // Filter and prepare chart data based on the selected program
+
   const filteredData1 = placementData.filter(
-    (student) => student.Program === filter1
+    (student) => student.program === filter1
   );
 
   // Prepare chartData1
@@ -88,7 +93,7 @@ const Charts = ({ allStudentsData, placementData, higherStudiesData }) => {
         label: filter1, // Dynamically change label based on selected program
         data: years1.map((year) => {
           const studentsInYearAndProgram = filteredData1.filter(
-            (student) => student.year === year
+            (student) => student.placement_year === year
           );
           return studentsInYearAndProgram.length > 0
             ? Math.max(
@@ -121,7 +126,7 @@ const Charts = ({ allStudentsData, placementData, higherStudiesData }) => {
 
   const filteredPlacementData = useMemo(() => {
     const filteredData = placementData.filter(
-      (student) => student.Program === filter2
+      (student) => student.program === filter2
     );
     // Log filtered data to check if it's correct
     return filteredData;
@@ -155,17 +160,23 @@ const Charts = ({ allStudentsData, placementData, higherStudiesData }) => {
   // Function to get students filtered by a specific program (department)
 
   const filteredData3 = higherStudiesData.filter((student) => {
-    return student.Program === filter3;
+    return student.program === filter3;
   });
 
-  // Function to group students by their status (found university or not)
+  // Function to group students by their application status (Accepted, In Progress, Rejected)
   const countStudentsByProgram = (programData) => {
     const programCounts = programData.reduce((acc, student) => {
-      // Ensure status is exactly matched and handle cases
-      const status =
-        student.Status === "Got into the University"
-          ? "Found University"
-          : "Did Not Find University";
+      // Categorizing status
+      let status;
+      if (student.status === "admitted") {
+        status = "Admitted";
+      } else if (student.status === "in process") {
+        status = "In Progress";
+      } else if (student.status === "rejected") {
+        status = "Rejected";
+      } else {
+        status = "Unknown"; // Fallback in case of unexpected values
+      }
 
       acc[status] = (acc[status] || 0) + 1;
       return acc;
@@ -174,29 +185,33 @@ const Charts = ({ allStudentsData, placementData, higherStudiesData }) => {
     return programCounts;
   };
 
-  // Get the counts of students in each status (Found University, Did Not Find University)
+  // Get the counts of students in each status (Accepted, In Progress, Rejected)
   const programCounts = countStudentsByProgram(filteredData3);
 
   // Prepare the chart data based on program counts
   const chartData3 = {
-    labels: ["Found University", "Did Not Find University"], // Status labels
+    labels: ["Admitted", "In Progress", "Rejected"], // Updated labels
     datasets: [
       {
         data: [
-          programCounts["Found University"] || 0, // Number of students who found a university
-          programCounts["Did Not Find University"] || 0, // Number of students who did not find a university
+          programCounts["Admitted"] || 0, // Number of students Admitted
+          programCounts["In Progress"] || 0, // Number of students still in progress
+          programCounts["Rejected"] || 0, // Number of students rejected
         ],
-        backgroundColor: ["rgba(75, 192, 192, 0.6)", "rgba(255, 159, 64, 0.6)"],
+        backgroundColor: [
+          "rgba(75, 192, 192, 0.6)", // Greenish for Accepted
+          "rgba(255, 206, 86, 0.6)", // Yellow for In Progress
+          "rgba(255, 99, 132, 0.6)", // Red for Rejected
+        ],
       },
     ],
   };
 
   //chart 4
-
   const carrerChoice = [
     ...new Set(
       allStudentsData
-        .map((student) => student.Career_Choice)
+        .map((student) => student.career_choice)
         .filter((choice) => choice !== "")
     ),
   ];
@@ -220,30 +235,29 @@ const Charts = ({ allStudentsData, placementData, higherStudiesData }) => {
   };
 
   // Chart 5
-  // console.log();
 
   // Modify chart 5 data calculations to filter based on filter5
   const filteredByProgram = allStudentsData.filter(
-    (student) => student.Program === filter5
+    (student) => student.program === filter5
   );
 
   // Function to calculate the count of students by career choice and year
   const countStudentsByYearAndChoice = (data, careerChoice, year) => {
     return data.filter(
       (student) =>
-        student.Enrollment_Year === year &&
-        student.Career_Choice === careerChoice
+        student.enrollment_year === year &&
+        student.career_choice === careerChoice
     ).length;
   };
 
   // Calculate unique years from the filtered data
   const years5 = [
-    ...new Set(filteredByProgram.map((student) => student.Enrollment_Year)),
+    ...new Set(filteredByProgram.map((student) => student.enrollment_year)),
   ].sort();
 
   // Function to calculate total students for a specific year
   const countTotalStudentsByYear = (data, year) => {
-    return data.filter((student) => student.Enrollment_Year === year).length;
+    return data.filter((student) => student.enrollment_year === year).length;
   };
 
   // Create the data arrays in percentages for Placement and Higher Studies

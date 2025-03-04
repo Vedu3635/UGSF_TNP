@@ -52,7 +52,6 @@ const CompanyList = ({ companiesData }) => {
       setIsLoading(false);
     }
   }, [companiesData]);
-  console.log(companiesData);
 
   const divideCompaniesByDate = (data) => {
     const currentDate = new Date();

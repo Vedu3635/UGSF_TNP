@@ -101,7 +101,7 @@ const Dashboard = () => {
     fetchCompaniesData();
     fetchStudentData();
   }, []);
-  console.log(companiesData);
+
   const handleStudentUpdate = () => {
     fetchStudentData();
   };
