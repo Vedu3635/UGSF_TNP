@@ -142,10 +142,24 @@ const StudentCard = ({ item, type, onStudentUpdate, onDelete }) => {
             <span className="font-medium text-xs">Roll Number</span>
             <p className="text-sm">{item.enrollment_id || "N/A"}</p>
           </div>
-          <div>
-            <span className="font-medium text-xs">Program</span>
-            <p className="text-sm">{item.program || "N/A"}</p>
-          </div>
+          {type === "placement" && (
+            <div>
+              <span className="font-medium text-xs">Placement Status</span>
+              <p className="text-sm">{item.status || "N/A"}</p>
+            </div>
+          )}
+          {type === "higherStudies" && (
+            <div>
+              <span className="font-medium text-xs">Application Status</span>
+              <p className="text-sm">{item.status || "N/A"}</p>
+            </div>
+          )}
+          {type === "all" && (
+            <div>
+              <span className="font-medium text-xs">Program</span>
+              <p className="text-sm">{item.program || "N/A"}</p>
+            </div>
+          )}
           {type === "placement" && (
             <div>
               <span className="font-medium text-xs">Company</span>
@@ -158,6 +172,7 @@ const StudentCard = ({ item, type, onStudentUpdate, onDelete }) => {
               <p className="text-sm">{item.course_name || "N/A"}</p>
             </div>
           )}
+
           {type === "all" && (
             <div>
               <span className="font-medium text-xs">Semester</span>

@@ -5,6 +5,7 @@ import {
   Users,
   CheckCircle,
   XCircle,
+  Circle,
 } from "lucide-react";
 import DownloadButton2 from "./DownloadButton2";
 import PaginatedList from "./PaginatedList";
@@ -22,30 +23,30 @@ const StudentList = ({
   const [statusFilter, setStatusFilter] = useState("all"); // "all", "placed", "notPlaced", "found", "notFound"
 
   const [filters, setFilters] = useState({
-    Enrollment_Year: "",
-    Career_Choice: "",
-    Semester: "",
-    year: "",
+    enrollment_year: "",
+    career_choice: "",
+    semester: "",
+    placement_year: "",
     company_name: "",
     position: "",
     university_name: "",
     course_name: "",
-    Program: "",
-    intake_year: "",
+    program: "",
+    admission_year: "",
   });
 
   const resetFilters = () => {
     setFilters({
-      Enrollment_Year: "",
-      Career_Choice: "",
-      Semester: "",
-      year: "",
+      enrollment_year: "",
+      career_choice: "",
+      semester: "",
+      placement_year: "",
       company_name: "",
       position: "",
       university_name: "",
       course_name: "",
-      Program: "",
-      intake_year: "",
+      program: "",
+      admission_year: "",
     });
     setSearchTerm("");
     setStatusFilter("all");
@@ -74,31 +75,33 @@ const StudentList = ({
 
     const options = {
       all: {
-        Enrollment_Year: getTopItems(
-          allStudentsData.map((item) => item.Enrollment_Year || ""),
+        enrollment_year: getTopItems(
+          allStudentsData.map((item) => item.enrollment_year || ""),
           5
         ),
-        Career_Choice: [
+        career_choice: [
           ...new Set(
             allStudentsData
-              .map((item) => item.Career_Choice || "")
+              .map((item) => item.career_choice || "")
               .filter((value) => value !== "" && value !== null)
           ),
         ].sort(),
-        Semester: [
+        semester: [
           ...new Set(
             allStudentsData
-              .map((item) => item.Semester || "")
+              .map((item) => item.semester || "")
               .filter((value) => value !== "" && value !== null)
           ),
         ].sort(),
       },
       placements: {
-        year: [
+        placement_year: [
           ...new Set(
             placementData
-              .map((item) => item.year || "")
-              .filter((value) => value !== "" && value !== null)
+              .map((item) => item.placement_year || "")
+              .filter(
+                (value) => value !== "" && value !== null && value !== "0000"
+              )
           ),
         ].sort(),
 
@@ -116,19 +119,19 @@ const StudentList = ({
               .filter((value) => value !== "" && value !== null)
           ),
         ].sort(),
-        Program: [
+        program: [
           ...new Set(
             placementData
-              .map((item) => item.Program || "")
+              .map((item) => item.program || "")
               .filter((value) => value !== "" && value !== null)
           ),
         ].sort(),
       },
       higherStudies: {
-        intake_year: [
+        admission_year: [
           ...new Set(
             higherStudiesData
-              .map((item) => item.intake_year || "")
+              .map((item) => item.admission_year || "")
               .filter((value) => value !== "" && value !== null)
           ),
         ].sort(),
@@ -147,10 +150,10 @@ const StudentList = ({
               .filter((value) => value !== "" && value !== null)
           ),
         ].sort(),
-        Program: [
+        program: [
           ...new Set(
             placementData
-              .map((item) => item.Program || "")
+              .map((item) => item.program || "")
               .filter((value) => value !== "" && value !== null)
           ),
         ].sort(),
@@ -191,15 +194,17 @@ const StudentList = ({
       let matchesStatus = true;
       if (activeTab === "placements") {
         if (statusFilter === "placed") {
-          matchesStatus = item.Status === "Placed";
+          matchesStatus = item.status === "placed";
         } else if (statusFilter === "notPlaced") {
-          matchesStatus = item.Status !== "Placed";
+          matchesStatus = item.status !== "placed";
         }
       } else if (activeTab === "higherStudies") {
-        if (statusFilter === "found") {
-          matchesStatus = item.Status === "Got into the University";
-        } else if (statusFilter === "notFound") {
-          matchesStatus = item.Status === "Don't get in University";
+        if (statusFilter === "admitted") {
+          matchesStatus = item.status === "admitted";
+        } else if (statusFilter === "in process") {
+          matchesStatus = item.status === "in process";
+        } else if (statusFilter === "rejected") {
+          matchesStatus = item.status === "rejected";
         }
       }
 
@@ -295,26 +300,37 @@ const StudentList = ({
             All
           </button>
           <button
-            onClick={() => setStatusFilter("found")}
+            onClick={() => setStatusFilter("admitted")}
             className={`px-4 py-2 rounded-full flex items-center ${
-              statusFilter === "found"
+              statusFilter === "admitted"
                 ? "bg-green-500 text-white"
                 : "bg-white text-gray-700 hover:bg-gray-100"
             }`}
           >
             <CheckCircle className="w-4 h-4 mr-2" />
-            Found University
+            Admitted
           </button>
           <button
-            onClick={() => setStatusFilter("notFound")}
+            onClick={() => setStatusFilter("in process")}
             className={`px-4 py-2 rounded-full flex items-center ${
-              statusFilter === "notFound"
+              statusFilter === "in process"
+                ? "bg-yellow-500 text-white"
+                : "bg-white text-gray-700 hover:bg-gray-100"
+            }`}
+          >
+            <Circle className="w-4 h-4 mr-2" />
+            In Process
+          </button>
+          <button
+            onClick={() => setStatusFilter("rejected")}
+            className={`px-4 py-2 rounded-full flex items-center ${
+              statusFilter === "rejected"
                 ? "bg-red-500 text-white"
                 : "bg-white text-gray-700 hover:bg-gray-100"
             }`}
           >
             <XCircle className="w-4 h-4 mr-2" />
-            Not Found University
+            Application Rejected
           </button>
         </div>
       );
