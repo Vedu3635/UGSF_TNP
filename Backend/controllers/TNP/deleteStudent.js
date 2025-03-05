@@ -8,13 +8,12 @@ const deleteStudent = async (req, res) => {
     await pool.query("START TRANSACTION");
 
     // Delete from placement details
-    const placementDeleteSql =
-      "DELETE FROM placement_details WHERE student_id = ?";
+    const placementDeleteSql = "DELETE FROM placements WHERE student_id = ?";
     const placementResult = await pool.query(placementDeleteSql, [studentId]);
 
     // Delete from higher studies details
     const higherStudiesDeleteSql =
-      "DELETE FROM higher_studies_details WHERE student_id = ?";
+      "DELETE FROM higher_studies WHERE student_id = ?";
     const higherStudiesResult = await pool.query(higherStudiesDeleteSql, [
       studentId,
     ]);

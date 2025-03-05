@@ -95,11 +95,11 @@ const CompanyList = ({ companiesData }) => {
   };
 
   const handleDeleteConfirm = async () => {
-    if (!companyToDelete?.Id) return;
+    if (!companyToDelete?.company_id) return;
     const token = localStorage.getItem("token");
     try {
       const response = await fetch(
-        `http://localhost:5000/api/delete-company/${companyToDelete.Id}`,
+        `http://localhost:5000/api/delete-company/${companyToDelete.company_id}`,
         {
           method: "DELETE",
           headers: {

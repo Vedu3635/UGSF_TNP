@@ -5,6 +5,7 @@ import UpdateForm from "./UpdateForm";
 
 const StudentCard = ({ item, type, onStudentUpdate, onDelete }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [studentToDelete, setStudentToDelete] = useState(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const handleUpdate = (updatedData) => {
@@ -12,10 +13,15 @@ const StudentCard = ({ item, type, onStudentUpdate, onDelete }) => {
     setIsModalOpen(false); // Close the modal
   };
 
-  const handleDelete = async () => {
-    try {
-      const token = localStorage.getItem("token");
+  const handleDeleteClick = (item) => {
+    setStudentToDelete(item);
+    setShowDeleteConfirm(true);
+  };
 
+  const handleDelete = async () => {
+    if (!item?.student_id) return;
+    const token = localStorage.getItem("token");
+    try {
       const response = await fetch(
         `http://localhost:5000/api/deleteStudent/${item.student_id}`,
         {
@@ -198,7 +204,7 @@ const StudentCard = ({ item, type, onStudentUpdate, onDelete }) => {
                 Update
               </button>
               <button
-                onClick={() => setShowDeleteConfirm(true)}
+                onClick={() => handleDeleteClick(item)}
                 className="bg-red-500 hover:bg-red-600 text-xs text-white font-medium px-2 py-1 rounded shadow-sm transition-colors duration-200 transform hover:scale-105"
               >
                 Delete

@@ -27,7 +27,7 @@ app.use(
 
 // Routes
 app.use("/auth", authRoutes);
-app.use("/api/file", fileRoutes);
+app.use("/api/file", fileRoutes); //file Upload
 app.use("/api/students", studentRoutes);
 app.use("/api", excelRoutes);
 app.use("/api/edit-student", editStudentRoutes);

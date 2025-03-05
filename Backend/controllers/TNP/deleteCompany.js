@@ -6,7 +6,7 @@ const deleteCompany = async (req, res) => {
   try {
     // Check if company exists
     const [checkCompany] = await pool.query(
-      "SELECT * FROM companies WHERE Id = ?",
+      "SELECT * FROM companies WHERE company_id = ?",
       [id]
     );
 
@@ -18,7 +18,7 @@ const deleteCompany = async (req, res) => {
     }
 
     // Delete the company
-    await pool.query("DELETE FROM companies WHERE Id = ?", [id]);
+    await pool.query("DELETE FROM companies WHERE company_id = ?", [id]);
 
     res.status(200).json({
       success: true,
