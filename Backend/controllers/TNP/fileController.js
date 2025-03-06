@@ -3,12 +3,10 @@ const xlsx = require("xlsx");
 const pool = require("../../config/pool"); // Update this path if pool.js is in a different location
 
 exports.uploadFile = (req, res) => {
-  console.log("File received:", req.file);
   if (!req.file) {
     return res.status(400).json({ error: "No file uploaded." });
   }
   const filePath = req.file.path;
-  console.log("File path:", filePath); // Debugging
   uploadExcel(filePath, (error) => {
     if (error) {
       console.error("Excel upload error:", error);
@@ -21,11 +19,8 @@ exports.uploadFile = (req, res) => {
 function uploadExcel(path, callback) {
   try {
     if (!fs.existsSync(path)) {
-      console.error("File not found:", path);
       return callback(new Error("File not found"));
     }
-
-    console.log("Reading Excel file:", path);
 
     const workbook = xlsx.readFile(path);
     const sheetName = workbook.SheetNames[0];
@@ -44,7 +39,6 @@ function uploadExcel(path, callback) {
     const studentsData = excelData
       .map((row) => {
         if (row.length < 12) {
-          console.error("Row has missing values:", row);
           return null; // Skip invalid rows
         }
 
@@ -90,7 +84,6 @@ function uploadExcel(path, callback) {
           return callback(error);
         }
 
-        console.log("Inserted Rows:", result.affectedRows);
         fs.unlinkSync(path);
         callback(null);
       });
