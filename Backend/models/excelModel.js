@@ -34,7 +34,7 @@ class ExcelModel {
 
         case "students":
         default:
-          sqlQuery = `SELECT first_name, middle_name, last_name, email, enrollment_id, enrollment_year, phone_no, program, career_choice, semester, class, batch FROM students`;
+          sqlQuery = `SELECT first_name, middle_name, last_name, email, enrollment_id, enrollment_year, phone_no, program, career_choice, semester, section, batch FROM students`;
           break;
       }
 

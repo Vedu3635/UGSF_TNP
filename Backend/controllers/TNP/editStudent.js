@@ -1,57 +1,69 @@
 const pool = require("../../config/pool");
 
 const updateStudentDetails = async (req, res) => {
-  const { studentId } = req.params;
+  console.log("Received request with params:", req.params);
+
+  const { student_id } = req.params;
+  console.log(student_id);
   const {
-    FirstName,
-    LastName,
-    Email,
-    Enrollment_Id,
-    Enrollment_Year,
-    PhoneNo,
-    Program,
-    Career_Choice,
-    Semester,
-    Class,
-    Batch,
+    first_name,
+    middle_name,
+    last_name,
+    email,
+    enrollment_id,
+    enrollment_year,
+    phone_no,
+    program,
+    career_choice,
+    semester,
+    section,
+    batch,
   } = req.body;
 
   try {
+    const data = await pool.query(
+      "SELECT student_id FROM students WHERE student_id = ?",
+      [student_id]
+    );
+    console.log(data);
+
     const sql = `
       UPDATE students 
       SET 
-        FirstName = ?,
-        LastName = ?,
-        Email = ?,
-        Enrollment_Id = ?,
-        Enrollment_Year = ?,
-        PhoneNo = ?,
-        Program = ?,
-        Career_Choice = ?,
-        Semester = ?,
-        Class = ?,
-        Batch = ?,
+        first_name = ?,
+        middle_name = ?,
+        last_name = ?,
+        email = ?,
+        enrollment_id = ?,
+        enrollment_year = ?,
+        phone_no = ?,
+        program = ?,
+        career_choice = ?,
+        semester = ?,
+        section = ?,
+        batch = ?,
         updated_at = NOW()
       WHERE student_id = ?
     `;
 
     const values = [
-      FirstName,
-      LastName,
-      Email,
-      Enrollment_Id,
-      Enrollment_Year,
-      PhoneNo,
-      Program,
-      Career_Choice,
-      Semester,
-      Class,
-      Batch,
-      studentId,
+      first_name,
+      middle_name,
+      last_name,
+      email,
+      enrollment_id,
+      enrollment_year,
+      phone_no,
+      program,
+      career_choice,
+      semester,
+      section,
+      batch,
+      student_id,
     ];
 
     const result = await pool.query(sql, values);
-
+    console.log(result);
     if (result.affectedRows === 0) {
       return res.status(404).json({
         success: false,
@@ -74,66 +86,61 @@ const updateStudentDetails = async (req, res) => {
 };
 
 const updatePlacementDetails = async (req, res) => {
-  const { studentId } = req.params;
+  const { student_id } = req.params;
   const {
-    // Placement details
     company_name,
     package,
     position,
     status,
     notes,
-    // Student details
-    FirstName,
-    LastName,
-    Email,
-    Enrollment_Id,
-    Enrollment_Year,
-    PhoneNo,
-    Program,
+    first_name,
+    middle_name,
+    last_name,
+    email,
+    enrollment_id,
+    enrollment_year,
+    phone_no,
+    program,
   } = req.body;
 
   try {
-    // Start transaction
+    console.log("Received student_id:", student_id);
+    console.log("Received body data:", req.body);
+
     await pool.query("START TRANSACTION");
 
     // Update student details
     const studentSql = `
       UPDATE students 
       SET 
-        FirstName = ?,
-        LastName = ?,
-        Email = ?,
-        Enrollment_Id = ?,
-        Enrollment_Year = ?,
-        PhoneNo = ?,
-        Program = ?,
-        updated_at = NOW()
+        first_name = ?, middle_name = ?, last_name = ?, 
+        email = ?, enrollment_id = ?, enrollment_year = ?, 
+        phone_no = ?, program = ?, updated_at = NOW()
       WHERE student_id = ?
     `;
 
     const studentValues = [
-      FirstName,
-      LastName,
-      Email,
-      Enrollment_Id,
-      Enrollment_Year,
-      PhoneNo,
-      Program,
-      studentId,
+      first_name,
+      middle_name,
+      last_name,
+      email,
+      enrollment_id,
+      enrollment_year,
+      phone_no,
+      program,
+      student_id,
     ];
 
     const studentResult = await pool.query(studentSql, studentValues);
+    console.log("Student update result:", studentResult);
 
     // Update placement details
     const placementSql = `
-      UPDATE placement_details 
+      UPDATE placements 
       SET 
-        company_name = ?,
-        package = ?,
-        position = ?,
-        status = ?,
-        notes = ?,
-        year = YEAR(CURRENT_DATE())
+        company_name = ?, package = ?, position = ?, 
+        status = ?, notes = ?, placement_year = YEAR(CURRENT_DATE()), 
+        placement_date = CURRENT_DATE()
       WHERE student_id = ?
     `;
 
@@ -143,19 +150,21 @@ const updatePlacementDetails = async (req, res) => {
       position,
       status,
       notes,
-      studentId,
+      student_id,
     ];
 
     const placementResult = await pool.query(placementSql, placementValues);
+    console.log("Placement update result:", placementResult);
 
+    // Check if any rows were updated
     if (
-      studentResult.affectedRows === 0 ||
-      placementResult.affectedRows === 0
+      (studentResult.affectedRows || 0) === 0 ||
+      (placementResult.affectedRows || 0) === 0
     ) {
       await pool.query("ROLLBACK");
       return res.status(404).json({
         success: false,
-        message: "Student or placement details not found",
+        message: "Failed to update student or placement details",
       });
     }
 
@@ -176,21 +185,22 @@ const updatePlacementDetails = async (req, res) => {
 };
 
 const updateHigherStudiesDetails = async (req, res) => {
-  const { studentId } = req.params;
+  const { student_id } = req.params;
   const {
     // Higher studies details
     university_name,
     course_name,
-    intake_year,
+    admission_year,
     status,
     // Student details
-    FirstName,
-    LastName,
-    Email,
-    Enrollment_Id,
-    Enrollment_Year,
-    PhoneNo,
-    Program,
+    first_name,
+    middle_name,
+    last_name,
+    email,
+    enrollment_id,
+    enrollment_year,
+    phone_no,
+    program,
   } = req.body;
 
   try {
@@ -201,37 +211,39 @@ const updateHigherStudiesDetails = async (req, res) => {
     const studentSql = `
       UPDATE students 
       SET 
-        FirstName = ?,
-        LastName = ?,
-        Email = ?,
-        Enrollment_Id = ?,
-        Enrollment_Year = ?,
-        PhoneNo = ?,
-        Program = ?,
+        first_name = ?,
+        middle_name =?,
+        last_name = ?,
+        email = ?,
+        enrollment_id = ?,
+        enrollment_year = ?,
+        phone_no = ?,
+        program = ?,
         updated_at = NOW()
       WHERE student_id = ?
     `;
 
     const studentValues = [
-      FirstName,
-      LastName,
-      Email,
-      Enrollment_Id,
-      Enrollment_Year,
-      PhoneNo,
-      Program,
-      studentId,
+      first_name,
+      middle_name,
+      last_name,
+      email,
+      enrollment_id,
+      enrollment_year,
+      phone_no,
+      program,
+      student_id,
     ];
 
     const studentResult = await pool.query(studentSql, studentValues);
 
     // Update higher studies details
     const higherStudiesSql = `
-      UPDATE higher_studies_details
+      UPDATE higher_studies
       SET 
         university_name = ?,
         course_name = ?,
-        intake_year = ?,
+        admission_year = ?,
         status = ?
       WHERE student_id = ?
     `;
@@ -239,9 +251,9 @@ const updateHigherStudiesDetails = async (req, res) => {
     const higherStudiesValues = [
       university_name,
       course_name,
-      intake_year,
+      admission_year,
       status,
-      studentId,
+      student_id,
     ];
 
     const higherStudiesResult = await pool.query(

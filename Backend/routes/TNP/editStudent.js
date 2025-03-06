@@ -17,15 +17,18 @@ const router = express.Router();
 const studentController = require("../../controllers/TNP/editStudent");
 
 // Student update routes
-router.put("/updateStudent/:studentId", studentController.updateStudentDetails);
+router.put(
+  "/updateStudent/:student_id",
+  studentController.updateStudentDetails
+);
 
 router.put(
-  "/updatePlacement/:studentId",
+  "/updatePlacement/:student_id",
   studentController.updatePlacementDetails
 );
 
 router.put(
-  "/updateHigherStudies/:studentId",
+  "/updateHigherStudies/:student_id",
   studentController.updateHigherStudiesDetails
 );
 
