@@ -4,6 +4,8 @@ import CompanyCard from "./CompanyCard";
 import { Pencil, Trash2 } from "lucide-react";
 import { jwtDecode } from "jwt-decode";
 import CompanyUpdateForm from "./CompanyUpdateForm";
+import CompanyFilter from "./CompanyFilter"; // Import the filter component
+
 const Dialog = ({ isOpen, onClose, children }) => {
   if (!isOpen) return null;
 
@@ -21,6 +23,10 @@ const CompanyList = ({ companiesData }) => {
   const [companies, setCompanies] = useState({
     upcoming: companiesData ? [] : [],
     visited: companiesData ? [] : [],
+  });
+  const [filteredCompanies, setFilteredCompanies] = useState({
+    upcoming: [],
+    visited: [],
   });
   const [isLoading, setIsLoading] = useState(true);
   const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
@@ -45,10 +51,13 @@ const CompanyList = ({ companiesData }) => {
     hiring_date: "",
     mode_hiring: "",
   });
+  const [activeTab, setActiveTab] = useState("upcoming");
 
   useEffect(() => {
     if (companiesData) {
-      setCompanies(divideCompaniesByDate(companiesData));
+      const dividedCompanies = divideCompaniesByDate(companiesData);
+      setCompanies(dividedCompanies);
+      setFilteredCompanies(dividedCompanies);
       setIsLoading(false);
     }
   }, [companiesData]);
@@ -77,7 +86,9 @@ const CompanyList = ({ companiesData }) => {
         },
       });
       if (!response.ok) throw new Error("Failed to fetch updated companies");
-      setCompanies(divideCompaniesByDate(await response.json()));
+      const dividedCompanies = divideCompaniesByDate(await response.json());
+      setCompanies(dividedCompanies);
+      setFilteredCompanies(dividedCompanies);
     } catch (error) {
       console.error("Error fetching companies:", error);
     }
@@ -147,8 +158,46 @@ const CompanyList = ({ companiesData }) => {
     }
   };
 
-  //Update button
+  // Handle filter changes
+  const handleFilterChange = (filters) => {
+    const filtered = {
+      upcoming: companies.upcoming.filter(company => filterCompany(company, filters)),
+      visited: companies.visited.filter(company => filterCompany(company, filters))
+    };
+    
+    setFilteredCompanies(filtered);
+  };
 
+  // Filter company based on filter criteria
+  const filterCompany = (company, filters) => {
+    // Industry domain filter
+    if (filters.industry && !company.industry_domain.toLowerCase().includes(filters.industry.toLowerCase())) {
+      return false;
+    }
+    
+    // Company name filter (replacing package range filter)
+    if (filters.companyName && !company.company_name.toLowerCase().includes(filters.companyName.toLowerCase())) {
+      return false;
+    }
+    
+    // Job role filter
+    if (filters.jobRole && !company.job_roles.toLowerCase().includes(filters.jobRole.toLowerCase())) {
+      return false;
+    }
+    
+    // Hiring date filter
+    if (filters.hiringDate) {
+      const filterDate = new Date(filters.hiringDate);
+      const companyDate = new Date(company.hiring_date);
+      if (filterDate.getTime() !== companyDate.getTime()) {
+        return false;
+      }
+    }
+    
+    return true;
+  };
+
+  //Update button
   const ActionButtons = ({ company }) => {
     let userRole = "";
     const token = localStorage.getItem("token");
@@ -205,7 +254,13 @@ const CompanyList = ({ companiesData }) => {
           Placement Insights
         </h1>
 
-        <Tabs defaultTab="upcoming">
+        {/* Add CompanyFilter component here */}
+        <CompanyFilter onFilterChange={handleFilterChange} />
+
+        <Tabs 
+          defaultTab="upcoming" 
+          onTabChange={(tab) => setActiveTab(tab)}
+        >
           <TabList>
             <TabTrigger value="upcoming">Upcoming Companies</TabTrigger>
             <TabTrigger value="visited">Visited Companies</TabTrigger>
@@ -213,8 +268,8 @@ const CompanyList = ({ companiesData }) => {
 
           <TabContent value="upcoming">
             <div className="space-y-6">
-              {companies.upcoming.length > 0 ? (
-                companies.upcoming.map((company, index) => (
+              {filteredCompanies.upcoming.length > 0 ? (
+                filteredCompanies.upcoming.map((company, index) => (
                   <div key={index} className="relative">
                     <CompanyCard company={company} type="upcoming" />
                     <ActionButtons company={company} />
@@ -223,7 +278,9 @@ const CompanyList = ({ companiesData }) => {
               ) : (
                 <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-6">
                   <p className="text-center text-blue-600">
-                    No upcoming placement drives at the moment
+                    {companies.upcoming.length > 0 
+                      ? "No companies match your filter criteria" 
+                      : "No upcoming placement drives at the moment"}
                   </p>
                 </div>
               )}
@@ -232,8 +289,8 @@ const CompanyList = ({ companiesData }) => {
 
           <TabContent value="visited">
             <div className="space-y-6">
-              {companies.visited.length > 0 ? (
-                companies.visited.map((company, index) => (
+              {filteredCompanies.visited.length > 0 ? (
+                filteredCompanies.visited.map((company, index) => (
                   <div key={index} className="relative">
                     <CompanyCard company={company} type="visited" />
                     <ActionButtons company={company} />
@@ -242,7 +299,9 @@ const CompanyList = ({ companiesData }) => {
               ) : (
                 <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-6">
                   <p className="text-center text-green-600">
-                    No companies visited this year
+                    {companies.visited.length > 0 
+                      ? "No companies match your filter criteria" 
+                      : "No companies visited this year"}
                   </p>
                 </div>
               )}
