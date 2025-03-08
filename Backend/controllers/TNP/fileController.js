@@ -74,7 +74,7 @@ function uploadExcel(path, callback) {
 
       const query = `
         INSERT INTO students 
-        (first_name, middle_name, last_name, email, enrollment_id, enrollment_year, phone_no, program, career_choice, semester, class, batch, created_at, updated_at) 
+        (first_name, middle_name, last_name, email, enrollment_id, enrollment_year, phone_no, program, career_choice, semester, section, batch, created_at, updated_at) 
         VALUES ?`;
 
       connection.query(query, [studentsData], (error, result) => {
