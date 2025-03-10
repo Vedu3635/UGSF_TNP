@@ -9,8 +9,8 @@ const StudentCard = ({ item, type, onStudentUpdate, onDelete }) => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const handleUpdate = (updatedData) => {
-    onStudentUpdate(updatedData); // Notify parent component of the update
-    setIsModalOpen(false); // Close the modal
+    onStudentUpdate(updatedData);
+    setIsModalOpen(false);
   };
 
   const handleDeleteClick = (item) => {
@@ -34,14 +34,13 @@ const StudentCard = ({ item, type, onStudentUpdate, onDelete }) => {
       );
 
       if (response.ok) {
-        onDelete(item.id); // Callback to parent to update the UI
+        onDelete(item.id);
         setShowDeleteConfirm(false);
       } else {
         throw new Error("Failed to delete student");
       }
     } catch (error) {
       console.error("Error deleting student:", error);
-      // You might want to show an error message to the user here
     }
   };
 
@@ -130,20 +129,21 @@ const StudentCard = ({ item, type, onStudentUpdate, onDelete }) => {
   return (
     <>
       <div
-        className={`${getBackgroundColor()} p-4 rounded-xl shadow-md hover:shadow-lg transition-all duration-300`}
+        className={`${getBackgroundColor()} p-3 sm:p-4 rounded-xl shadow-md hover:shadow-lg transition-all duration-300`}
       >
-        <div className="flex justify-between items-center">
-          <h2 className="text-xl font-bold text-gray-800">
-            {item.first_name} {item.middle_name} {item.last_name}
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center">
+          <h2 className="text-lg sm:text-xl font-bold text-gray-800 mb-2 sm:mb-0">
+            {item.first_name}
+            {item.middle_name} {item.last_name}
           </h2>
           <span
-            className={`text-sm font-semibold bg-white px-3 py-1 rounded-full ${getStatusColor()}`}
+            className={`text-xs sm:text-sm font-semibold bg-white px-2 py-1 sm:px-3 sm:py-1 rounded-full ${getStatusColor()} self-start sm:self-auto mb-2 sm:mb-0`}
           >
             {getStatusText()}
           </span>
         </div>
 
-        <div className="grid grid-cols-3 gap-2 text-gray-600 mt-2">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-gray-600 mt-2">
           <div>
             <span className="font-medium text-xs">Roll Number</span>
             <p className="text-sm">{item.enrollment_id || "N/A"}</p>
@@ -187,8 +187,8 @@ const StudentCard = ({ item, type, onStudentUpdate, onDelete }) => {
           )}
         </div>
 
-        <div className="flex justify-between items-center mt-4">
-          <span className="text-xs bg-white text-gray-700 px-2 py-1 rounded-full">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mt-4">
+          <span className="text-xs bg-white text-gray-700 px-2 py-1 rounded-full mb-2 sm:mb-0 self-start">
             {type === "placement"
               ? item.position || "N/A"
               : type === "higherStudies"
@@ -196,7 +196,7 @@ const StudentCard = ({ item, type, onStudentUpdate, onDelete }) => {
               : item.batch || "N/A"}
           </span>
           {canUpdate() && (
-            <div className="space-x-2">
+            <div className="space-x-2 self-end sm:self-auto">
               <button
                 onClick={() => setIsModalOpen(true)}
                 className={`${getButtonColor()} text-xs text-white font-medium px-2 py-1 rounded shadow-sm transition-colors duration-200 transform hover:scale-105`}
@@ -221,14 +221,14 @@ const StudentCard = ({ item, type, onStudentUpdate, onDelete }) => {
               className="fixed inset-0 bg-black/30 backdrop-blur-sm transition-opacity"
               onClick={() => setIsModalOpen(false)}
             />
-            <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-4xl my-8 transform transition-all duration-300 ease-in-out animate-in fade-in slide-in-from-bottom-4">
+            <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-4xl my-8 transform transition-all duration-300 ease-in-out animate-in fade-in slide-in-from-bottom-4 overflow-y-auto max-h-screen">
               <div className="sticky top-0 z-50 bg-white rounded-t-2xl border-b border-gray-100">
-                <div className="flex justify-between items-center p-6">
+                <div className="flex justify-between items-center p-4 sm:p-6">
                   <div>
-                    <h3 className="text-2xl font-bold text-gray-900">
+                    <h3 className="text-xl sm:text-2xl font-bold text-gray-900">
                       Update Student Information
                     </h3>
-                    <p className="mt-1 text-sm text-gray-500">
+                    <p className="mt-1 text-xs sm:text-sm text-gray-500">
                       Make changes to student details below
                     </p>
                   </div>
@@ -244,7 +244,7 @@ const StudentCard = ({ item, type, onStudentUpdate, onDelete }) => {
                 item={item}
                 type={type}
                 onClose={() => setIsModalOpen(false)}
-                onStudentUpdate={handleUpdate} // Pass onStudentUpdate to UpdateForm
+                onStudentUpdate={handleUpdate}
               />
             </div>
           </div>
@@ -258,24 +258,25 @@ const StudentCard = ({ item, type, onStudentUpdate, onDelete }) => {
               className="fixed inset-0 bg-black/30 backdrop-blur-sm transition-opacity"
               onClick={() => setShowDeleteConfirm(false)}
             />
-            <div className="relative bg-white rounded-xl shadow-xl w-full max-w-md p-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">
+            <div className="relative bg-white rounded-xl shadow-xl w-full max-w-xs sm:max-w-md p-4 sm:p-6">
+              <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-3 sm:mb-4">
                 Confirm Delete
               </h3>
-              <p className="text-gray-600 mb-6">
-                Are you sure you want to delete {item.firstName} {item.lastName}
+              <p className="text-sm text-gray-600 mb-4 sm:mb-6">
+                Are you sure you want to delete {item.first_name}{" "}
+                {item.last_name}
                 's record? This action cannot be undone.
               </p>
               <div className="flex justify-end space-x-3">
                 <button
                   onClick={() => setShowDeleteConfirm(false)}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+                  className="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleDelete}
-                  className="px-4 py-2 text-sm font-medium text-white bg-red-500 rounded-md hover:bg-red-600"
+                  className="px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-white bg-red-500 rounded-md hover:bg-red-600"
                 >
                   Delete
                 </button>

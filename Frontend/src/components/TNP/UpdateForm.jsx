@@ -1,34 +1,34 @@
 import React, { useState } from "react";
+
 const UpdateForm = ({ item, type, onStudentUpdate, onClose }) => {
   const [formData, setFormData] = useState({
     // Common fields
-
-    first_name: item.first_name || "",
-    middle_name: item.middle_name || "",
-    last_name: item.last_name || "",
-    email: item.email || "",
-    enrollment_id: item.enrollment_id || "",
-    enrollment_year: item.enrollment_year || "",
-    program: item.program || "",
-    phone_no: item.phone_no || "",
+    student_id: item.student_id || "",
+    FirstName: item.FirstName || "",
+    LastName: item.LastName || "",
+    Email: item.Email || "",
+    Enrollment_Id: item.Enrollment_Id || "",
+    Enrollment_Year: item.Enrollment_Year || "",
+    Program: item.Program || "",
+    PhoneNo: item.PhoneNo || "",
 
     // Placement specific fields
     company_name: item.company_name || "",
     position: item.position || "",
     package: item.package || "",
-    status: item.status || "",
-    notes: item.notes || "",
+    Status: item.Status || "",
+    Notes: item.Notes || "",
 
     // Higher studies specific fields
     university_name: item.university_name || "",
     course_name: item.course_name || "",
-    admission_year: item.admission_year || "",
+    intake_year: item.intake_year || "",
 
     // All students specific fields
-    career_choice: item.career_choice || "",
-    semester: item.semester || "",
-    section: item.section || "",
-    batch: item.batch || "",
+    Career_Choice: item.Career_Choice || "",
+    Semester: item.Semester || "",
+    Class: item.Class || "",
+    Batch: item.Batch || "",
   });
 
   const [errors, setErrors] = useState({});
@@ -37,16 +37,16 @@ const UpdateForm = ({ item, type, onStudentUpdate, onClose }) => {
     const newErrors = {};
 
     // Common validations
-    if (!formData.first_name) newErrors.first_name = "First Name is required";
-    if (!formData.last_name) newErrors.last_name = "Last Name is required";
-    if (!formData.email) newErrors.email = "email is required";
-    if (!formData.enrollment_id)
-      newErrors.enrollment_id = "enrollment_id is required";
-    if (!formData.program) newErrors.program = "program is required";
+    if (!formData.FirstName) newErrors.FirstName = "First Name is required";
+    if (!formData.LastName) newErrors.LastName = "Last Name is required";
+    if (!formData.Email) newErrors.Email = "Email is required";
+    if (!formData.Enrollment_Id)
+      newErrors.Enrollment_Id = "Enrollment_Id is required";
+    if (!formData.Program) newErrors.Program = "Program is required";
 
-    // email validation
-    if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "Invalid email format";
+    // Email validation
+    if (formData.Email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.Email)) {
+      newErrors.Email = "Invalid email format";
     }
 
     // Type-specific validations
@@ -62,14 +62,14 @@ const UpdateForm = ({ item, type, onStudentUpdate, onClose }) => {
         newErrors.university_name = "University name is required";
       if (!formData.course_name)
         newErrors.course_name = "Course name is required";
-      if (!formData.admission_year)
-        newErrors.admission_year = "Intake year is required";
+      if (!formData.intake_year)
+        newErrors.intake_year = "Intake year is required";
     }
 
     if (type === "all") {
-      if (!formData.semester) newErrors.semester = "Semester is required";
-      if (!formData.section) newErrors.section = "Section is required";
-      if (!formData.batch) newErrors.batch = "Batch is required";
+      if (!formData.Semester) newErrors.Semester = "Semester is required";
+      if (!formData.Class) newErrors.Class = "Class is required";
+      if (!formData.Batch) newErrors.Batch = "Batch is required";
     }
 
     setErrors(newErrors);
@@ -97,11 +97,11 @@ const UpdateForm = ({ item, type, onStudentUpdate, onClose }) => {
 
     // Determine the API endpoint based on the type of data
     if (type === "placement") {
-      endpoint = `http://localhost:5000/api/edit-student/updatePlacement/${item.student_id}`; // API for placement
+      endpoint = `http://localhost:5000/api/edit-student/updatePlacement/${item.student_id}`;
     } else if (type === "higherStudies") {
-      endpoint = `http://localhost:5000/api/edit-student/updateHigherStudies/${item.student_id}`; // API for higher studies
+      endpoint = `http://localhost:5000/api/edit-student/updateHigherStudies/${item.student_id}`;
     } else {
-      endpoint = `http://localhost:5000/api/edit-student/updateStudent/${item.student_id}`; // API for all students
+      endpoint = `http://localhost:5000/api/edit-student/updateStudent/${item.student_id}`;
     }
 
     try {
@@ -110,16 +110,14 @@ const UpdateForm = ({ item, type, onStudentUpdate, onClose }) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData), // Send form data
+        body: JSON.stringify(formData),
       });
 
       if (!response.ok) {
         throw new Error("Failed to update");
       }
 
-      // const updatedData = await response.json();
-      // onUpdate(updatedData); // Notify parent about the update
-      onClose(); // Close the modal
+      onClose();
       onStudentUpdate();
     } catch (error) {
       console.error("Error updating student:", error);
@@ -128,7 +126,7 @@ const UpdateForm = ({ item, type, onStudentUpdate, onClose }) => {
   };
 
   const renderField = (name, label, type = "text") => (
-    <div className="space-y-2">
+    <div className="space-y-1 w-full">
       <label className="block text-sm font-medium text-gray-700">{label}</label>
       <input
         type={type}
@@ -143,7 +141,7 @@ const UpdateForm = ({ item, type, onStudentUpdate, onClose }) => {
               ? "border-red-300 bg-red-50"
               : "border-gray-200 hover:border-gray-300 focus:border-blue-500"
           }
-          p-3 text-sm`}
+          p-2 sm:p-3 text-sm`}
       />
       {errors[name] && (
         <p className="mt-1 text-xs text-red-600 flex items-center">
@@ -155,74 +153,54 @@ const UpdateForm = ({ item, type, onStudentUpdate, onClose }) => {
   );
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="max-w-full overflow-hidden">
       {/* Main content area with padding for footer */}
-      <div className="p-6 pb-24 space-y-8">
+      <div className="p-4 sm:p-6 pb-24 space-y-6 sm:space-y-8 overflow-y-auto max-h-[calc(100vh-120px)]">
         {/* Section headers for better organization */}
         <div>
-          <h4 className="text-lg font-semibold text-gray-900 mb-4">
+          <h4 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">
             Personal Information
           </h4>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {renderField("first_name", "First Name")}
-            {renderField("middle_name", "Middle Name")}
-            {renderField("last_name", "Last Name")}
-            {renderField("email", "Email", "email")}
-            {renderField("phone_no", "Phone Number", "tel")}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+            {renderField("FirstName", "First Name")}
+            {renderField("LastName", "Last Name")}
+            {renderField("Email", "Email", "email")}
+            {renderField("PhoneNo", "Phone Number", "tel")}
           </div>
         </div>
 
         <div>
-          <h4 className="text-lg font-semibold text-gray-900 mb-4">
+          <h4 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">
             Academic Information
           </h4>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {renderField("enrollment_id", "Enrollment_Id")}
-            {renderField("program", "Program")}
-            {renderField("enrollment_year", "Enrollment Year")}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+            {renderField("Enrollment_Id", "Enrollment ID")}
+            {renderField("Program", "Program")}
+            {renderField("Enrollment_Year", "Enrollment Year")}
           </div>
         </div>
 
         {/* Type-specific fields with section headers */}
         {type === "placement" && (
           <div>
-            <h4 className="text-lg font-semibold text-gray-900 mb-4">
+            <h4 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">
               Placement Details
             </h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
               {renderField("company_name", "Company Name")}
               {renderField("position", "Position")}
               {renderField("package", "Package (₹)", "number")}
-              <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">
-                  Status
-                </label>
-                <select
-                  name="status"
-                  value={formData.status}
-                  onChange={handleChange}
-                  className="mt-1 block w-full rounded-lg border shadow-sm p-3 text-sm"
-                >
-                  <option value="">Select Status</option>
-                  <option value="Placed">Placed</option>
-                  <option value="Pending">Pending</option>
-                  <option value="Rejected">Rejected</option>
-                </select>
-                {errors.status && (
-                  <p className="mt-1 text-xs text-red-600">{errors.status}</p>
-                )}
-              </div>
-
-              <div className="col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+              {renderField("Status", "Status")}
+              <div className="col-span-1 sm:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">
                   Notes
                 </label>
                 <textarea
-                  name="notes"
-                  value={formData.notes}
+                  name="Notes"
+                  value={formData.Notes}
                   onChange={handleChange}
                   rows={3}
-                  className="w-full rounded-lg border-gray-200 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 p-3 text-sm"
+                  className="w-full rounded-lg border-gray-200 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 p-2 sm:p-3 text-sm"
                 />
               </div>
             </div>
@@ -231,37 +209,37 @@ const UpdateForm = ({ item, type, onStudentUpdate, onClose }) => {
 
         {type === "higherStudies" && (
           <div>
-            <h4 className="text-lg font-semibold text-gray-900 mb-4">
+            <h4 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">
               Higher Studies Information
             </h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
               {renderField("university_name", "University Name")}
               {renderField("course_name", "Course Name")}
-              {renderField("admission_year", "Admission year")}
-              {renderField("status", "Status")}
+              {renderField("intake_year", "Intake Year")}
+              {renderField("Status", "Status")}
             </div>
           </div>
         )}
 
         {type === "all" && (
           <div>
-            <h4 className="text-lg font-semibold text-gray-900 mb-4">
+            <h4 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">
               Additional Information
             </h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+              <div className="space-y-1 w-full">
                 <label className="block text-sm font-medium text-gray-700">
                   Career Choice
                 </label>
                 <select
-                  name="career_choice"
-                  value={formData.career_choice}
+                  name="Career_Choice"
+                  value={formData.Career_Choice}
                   onChange={handleChange}
                   className="mt-1 block w-full rounded-lg border shadow-sm 
-      transition-all duration-200 ease-in-out
-      focus:ring-2 focus:ring-offset-0 focus:ring-blue-500 focus:border-transparent
-      border-gray-200 hover:border-gray-300 focus:border-blue-500
-      p-3 text-sm"
+                    transition-all duration-200 ease-in-out
+                    focus:ring-2 focus:ring-offset-0 focus:ring-blue-500 focus:border-transparent
+                    border-gray-200 hover:border-gray-300 focus:border-blue-500
+                    p-2 sm:p-3 text-sm"
                 >
                   <option value="">Select Career Choice</option>
                   <option value="Higher Studies">Higher Studies</option>
@@ -270,34 +248,34 @@ const UpdateForm = ({ item, type, onStudentUpdate, onClose }) => {
                     Entrepreneurial Venture
                   </option>
                 </select>
-                {errors.career_choice && (
+                {errors.Career_Choice && (
                   <p className="mt-1 text-xs text-red-600 flex items-center">
                     <span className="mr-1">⚠️</span>
-                    {errors.career_choice}
+                    {errors.Career_Choice}
                   </p>
                 )}
               </div>
-              {renderField("semester", "Semester")}
-              {renderField("section", "Section")}
-              {renderField("batch", "Batch")}
+              {renderField("Semester", "Semester")}
+              {renderField("Class", "Class")}
+              {renderField("Batch", "Batch")}
             </div>
           </div>
         )}
       </div>
 
       {/* Footer with fixed positioning */}
-      <div className="sticky bottom-0 bg-white border-t border-gray-100 p-6 rounded-b-2xl">
-        <div className="flex justify-end space-x-4">
+      <div className="sticky bottom-0 bg-white border-t border-gray-100 p-4 sm:p-6 rounded-b-2xl shadow-md">
+        <div className="flex flex-col sm:flex-row justify-end gap-3 sm:space-x-4">
           <button
             type="button"
             onClick={onClose}
-            className="px-6 py-3 text-sm font-medium text-gray-700 bg-gray-50 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors"
+            className="px-4 sm:px-6 py-2 sm:py-3 text-sm font-medium text-gray-700 bg-gray-50 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors w-full sm:w-auto"
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="px-6 py-3 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+            className="px-4 sm:px-6 py-2 sm:py-3 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors w-full sm:w-auto"
           >
             Save Changes
           </button>
@@ -306,4 +284,5 @@ const UpdateForm = ({ item, type, onStudentUpdate, onClose }) => {
     </form>
   );
 };
+
 export default UpdateForm;

@@ -6,6 +6,8 @@ import {
   CheckCircle,
   XCircle,
   Circle,
+  Menu,
+  X as XIcon,
 } from "lucide-react";
 import DownloadButton2 from "./DownloadButton2";
 import PaginatedList from "./PaginatedList";
@@ -20,7 +22,8 @@ const StudentList = ({
 }) => {
   const [activeTab, setActiveTab] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all"); // "all", "placed", "notPlaced", "found", "notFound"
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
 
   const [filters, setFilters] = useState({
     enrollment_year: "",
@@ -59,18 +62,40 @@ const StudentList = ({
     }
   }, []);
 
+  // Close mobile nav when clicking outside
+  useEffect(() => {
+    if (!isMobileNavOpen) return;
+
+    const handleClickOutside = (event) => {
+      // If the click was outside the mobile nav and not on the menu button
+      if (
+        isMobileNavOpen &&
+        !event.target.closest(".mobile-nav") &&
+        !event.target.closest(".mobile-menu-button")
+      ) {
+        setIsMobileNavOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isMobileNavOpen]);
+
   const handleSetActiveTab = (tab) => {
     setActiveTab(tab);
-    localStorage.setItem("activeTab", tab); // Save to localStorage
-    resetFilters(); // Reset filters when switching tabs
+    localStorage.setItem("activeTab", tab);
+    resetFilters();
+    setIsMobileNavOpen(false); // Close mobile nav when tab changes
   };
 
-  // Rest of your existing filterOptions code remains the same...
+  // Filter options
   const filterOptions = useMemo(() => {
     const getTopItems = (array, count) =>
       [...new Set(array)]
         .filter((value) => value !== "" && value !== null)
-        .sort((a, b) => b - a) // Assuming years are numeric and in descending order
+        .sort((a, b) => b - a)
         .slice(0, count);
 
     const options = {
@@ -104,7 +129,6 @@ const StudentList = ({
               )
           ),
         ].sort(),
-
         company_name: [
           ...new Set(
             placementData
@@ -135,7 +159,6 @@ const StudentList = ({
               .filter((value) => value !== "" && value !== null)
           ),
         ].sort(),
-
         university_name: [
           ...new Set(
             higherStudiesData
@@ -223,13 +246,13 @@ const StudentList = ({
   const getTabColor = (tab) => {
     switch (tab) {
       case "all":
-        return "purple"; // Default tab
+        return "purple";
       case "placements":
-        return "blue"; // Placement-specific color
+        return "blue";
       case "higherStudies":
-        return "green"; // Higher Studies-specific color
+        return "green";
       default:
-        return "gray"; // Fallback color
+        return "gray";
     }
   };
 
@@ -249,88 +272,88 @@ const StudentList = ({
   const StatusToggleButtons = () => {
     if (activeTab === "placements") {
       return (
-        <div className="flex justify-center space-x-4 mb-4">
+        <div className="flex flex-wrap justify-center gap-2 mb-4">
           <button
             onClick={() => setStatusFilter("all")}
-            className={`px-4 py-2 rounded-full flex items-center ${
+            className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-full flex items-center text-xs sm:text-sm ${
               statusFilter === "all"
                 ? "bg-blue-500 text-white"
                 : "bg-white text-gray-700 hover:bg-gray-100"
             }`}
           >
-            <Users className="w-4 h-4 mr-2" />
+            <Users className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
             All
           </button>
           <button
             onClick={() => setStatusFilter("placed")}
-            className={`px-4 py-2 rounded-full flex items-center ${
+            className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-full flex items-center text-xs sm:text-sm ${
               statusFilter === "placed"
                 ? "bg-green-500 text-white"
                 : "bg-white text-gray-700 hover:bg-gray-100"
             }`}
           >
-            <CheckCircle className="w-4 h-4 mr-2" />
+            <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
             Placed
           </button>
           <button
             onClick={() => setStatusFilter("notPlaced")}
-            className={`px-4 py-2 rounded-full flex items-center ${
+            className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-full flex items-center text-xs sm:text-sm ${
               statusFilter === "notPlaced"
                 ? "bg-red-500 text-white"
                 : "bg-white text-gray-700 hover:bg-gray-100"
             }`}
           >
-            <XCircle className="w-4 h-4 mr-2" />
+            <XCircle className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
             Not Placed
           </button>
         </div>
       );
     } else if (activeTab === "higherStudies") {
       return (
-        <div className="flex justify-center space-x-4 mb-4">
+        <div className="flex flex-wrap justify-center gap-2 mb-4">
           <button
             onClick={() => setStatusFilter("all")}
-            className={`px-4 py-2 rounded-full flex items-center ${
+            className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-full flex items-center text-xs sm:text-sm ${
               statusFilter === "all"
                 ? "bg-blue-500 text-white"
                 : "bg-white text-gray-700 hover:bg-gray-100"
             }`}
           >
-            <Users className="w-4 h-4 mr-2" />
+            <Users className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
             All
           </button>
           <button
             onClick={() => setStatusFilter("admitted")}
-            className={`px-4 py-2 rounded-full flex items-center ${
+            className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-full flex items-center text-xs sm:text-sm ${
               statusFilter === "admitted"
                 ? "bg-green-500 text-white"
                 : "bg-white text-gray-700 hover:bg-gray-100"
             }`}
           >
-            <CheckCircle className="w-4 h-4 mr-2" />
+            <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
             Admitted
           </button>
           <button
             onClick={() => setStatusFilter("in process")}
-            className={`px-4 py-2 rounded-full flex items-center ${
+            className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-full flex items-center text-xs sm:text-sm ${
               statusFilter === "in process"
                 ? "bg-yellow-500 text-white"
                 : "bg-white text-gray-700 hover:bg-gray-100"
             }`}
           >
-            <Circle className="w-4 h-4 mr-2" />
+            <Circle className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
             In Process
           </button>
           <button
             onClick={() => setStatusFilter("rejected")}
-            className={`px-4 py-2 rounded-full flex items-center ${
+            className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-full flex items-center text-xs sm:text-sm ${
               statusFilter === "rejected"
                 ? "bg-red-500 text-white"
                 : "bg-white text-gray-700 hover:bg-gray-100"
             }`}
           >
-            <XCircle className="w-4 h-4 mr-2" />
-            Application Rejected
+            <XCircle className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+            Rejected
           </button>
         </div>
       );
@@ -338,81 +361,148 @@ const StudentList = ({
     return null;
   };
 
+  // Modified Mobile Navigation Dropdown (not full-screen overlay)
+  const MobileNavOverlay = () => {
+    if (!isMobileNavOpen) return null;
+
+    return (
+      <div className="absolute right-0 top-12 z-40 lg:hidden mobile-nav">
+        <div className="w-48 bg-white rounded-lg shadow-lg p-3">
+          <div className="flex flex-col space-y-2">
+            {["all", "placements", "higherStudies"].map((tab) => (
+              <button
+                key={tab}
+                onClick={() => handleSetActiveTab(tab)}
+                className={`p-2 rounded-lg flex items-center text-sm ${
+                  activeTab === tab
+                    ? `bg-${getTabColor(tab)}-100 text-${getTabColor(
+                        tab
+                      )}-700 font-medium`
+                    : "bg-white text-gray-700 hover:bg-gray-50"
+                }`}
+              >
+                {getTabIcon(tab)}
+                {tab === "all"
+                  ? "All Students"
+                  : tab === "placements"
+                  ? "Placements"
+                  : "Higher Studies"}
+              </button>
+            ))}
+
+            <div className="pt-2 mt-1 border-t">
+              <DownloadButton2 />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
-    <div className="max-w-4xl mx-auto my-8 p-6 bg-gray-100 rounded-xl shadow-lg">
-      <div className="flex items-center justify-center relative mb-6">
-        <div className="absolute left-1/2 transform -translate-x-1/2 flex space-x-4">
-          {["all", "placements", "higherStudies"].map((tab) => (
-            <button
-              key={tab}
-              onClick={() => {
-                handleSetActiveTab(tab);
-                resetFilters();
-              }}
-              className={`px-4 py-2 rounded-full ${
-                activeTab === tab
-                  ? `bg-${getTabColor(tab)}-500 text-white`
-                  : "bg-white text-gray-700 hover:bg-gray-100"
-              }`}
-            >
-              {getTabIcon(tab)}
-              {tab === "all"
-                ? "All Students"
-                : tab === "placements"
-                ? "Placements"
-                : "Higher Studies"}
-            </button>
-          ))}
+    <>
+      <div className="max-w-4xl mx-auto my-4 sm:my-8 p-3 sm:p-6 bg-gray-100 rounded-xl shadow-lg relative">
+        {/* Mobile Header */}
+        <div className="flex items-center justify-between lg:hidden mb-4">
+          <h2
+            className={`text-xl font-bold ${
+              activeTab === "placements"
+                ? "text-blue-700"
+                : activeTab === "higherStudies"
+                ? "text-green-700"
+                : "text-purple-700"
+            } flex items-center`}
+          >
+            {getTabIcon(activeTab)}
+            {activeTab === "all"
+              ? "All Students"
+              : activeTab === "placements"
+              ? "Placements"
+              : "Higher Studies"}
+          </h2>
+          <button
+            onClick={() => setIsMobileNavOpen(!isMobileNavOpen)}
+            className="p-2 rounded-full hover:bg-gray-200 mobile-menu-button"
+          >
+            <Menu className="w-6 h-6" />
+          </button>
+
+          <MobileNavOverlay />
         </div>
-        <div className="ml-auto">
-          <DownloadButton2 />
+
+        {/* Desktop Nav */}
+        <div className="hidden lg:flex items-center justify-center relative mb-6">
+          <div className="flex space-x-4">
+            {["all", "placements", "higherStudies"].map((tab) => (
+              <button
+                key={tab}
+                onClick={() => handleSetActiveTab(tab)}
+                className={`px-4 py-2 rounded-full ${
+                  activeTab === tab
+                    ? `bg-${getTabColor(tab)}-500 text-white`
+                    : "bg-white text-gray-700 hover:bg-gray-100"
+                }`}
+              >
+                {getTabIcon(tab)}
+                {tab === "all"
+                  ? "All Students"
+                  : tab === "placements"
+                  ? "Placements"
+                  : "Higher Studies"}
+              </button>
+            ))}
+          </div>
+          <div className="absolute right-0">
+            <DownloadButton2 />
+          </div>
         </div>
-      </div>
 
-      <StatusToggleButtons />
+        <StatusToggleButtons />
 
-      <FilterComponent
-        activeTab={activeTab}
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-        filters={filters}
-        setFilters={setFilters}
-        filterOptions={filterOptions}
-        resetFilters={resetFilters}
-      />
+        <FilterComponent
+          activeTab={activeTab}
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          filters={filters}
+          setFilters={setFilters}
+          filterOptions={filterOptions}
+          resetFilters={resetFilters}
+        />
 
-      <h2
-        className={`text-2xl font-bold mb-4 ${
-          activeTab === "placements"
-            ? "text-blue-700"
-            : activeTab === "higherStudies"
-            ? "text-green-700"
-            : "text-purple-700"
-        } flex items-center justify-center`}
-      >
-        {getTabIcon(activeTab)}
-        {activeTab === "all"
-          ? "All Students"
-          : activeTab === "placements"
-          ? "Placements"
-          : "Higher Studies"}
-      </h2>
-      <div className="text-sm text-gray-500 mb-4 text-center">
-        Showing {filteredData.length} results
-      </div>
-      <PaginatedList
-        items={filteredData}
-        type={
-          activeTab === "all"
-            ? "all"
+        <h2
+          className="hidden lg:flex text-2xl font-bold mb-4 text-center items-center justify-center
+          ${
+            activeTab === 'placements'
+              ? 'text-blue-700'
+              : activeTab === 'higherStudies'
+              ? 'text-green-700'
+              : 'text-purple-700'
+          }"
+        >
+          {getTabIcon(activeTab)}
+          {activeTab === "all"
+            ? "All Students"
             : activeTab === "placements"
-            ? "placement"
-            : "higherStudies"
-        }
-        onStudentUpdate={onStudentUpdate} // Pass onStudentUpdate to PaginatedList
-        onDelete={onDelete}
-      />
-    </div>
+            ? "Placements"
+            : "Higher Studies"}
+        </h2>
+        <div className="text-xs sm:text-sm text-gray-500 mb-4 text-center">
+          Showing {filteredData.length} results
+        </div>
+        <PaginatedList
+          items={filteredData}
+          type={
+            activeTab === "all"
+              ? "all"
+              : activeTab === "placements"
+              ? "placement"
+              : "higherStudies"
+          }
+          onStudentUpdate={onStudentUpdate}
+          onDelete={onDelete}
+        />
+      </div>
+    </>
   );
 };
 
