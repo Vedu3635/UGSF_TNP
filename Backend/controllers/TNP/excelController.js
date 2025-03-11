@@ -1,19 +1,37 @@
-// controller/excelController.js
+// controllers/TNP/excelController.js
 const ExcelJS = require("exceljs");
+// Fix the import path to match your project structure
 const ExcelModel = require("../../models/excelModel");
 
 exports.downloadExcel = async (req, res) => {
   try {
-    // Get the table name from the query parameter
+    // Get the table name and year from the query parameter
     const tableName = req.query.table;
+    const year = req.query.year;
+    
     if (!tableName) {
       return res
         .status(400)
         .json({ success: false, message: "Table name is required" });
     }
 
-    // Fetch data from the specified table
-    const results = await ExcelModel.getDataFromTable(tableName);
+    // Fetch data based on whether a year filter is provided
+    let results;
+    if (year) {
+      results = await ExcelModel.getDataFromTableByYear(tableName, year);
+    } else {
+      results = await ExcelModel.getDataFromTable(tableName);
+    }
+
+    // Check if there are any results
+    if (!results || results.length === 0) {
+      return res
+        .status(404)
+        .json({ 
+          success: false, 
+          message: `No data found for ${tableName}${year ? ` in year ${year}` : ''}` 
+        });
+    }
 
     // Create a new Excel workbook and worksheet
     const workbook = new ExcelJS.Workbook();
@@ -39,9 +57,15 @@ exports.downloadExcel = async (req, res) => {
       "Content-Type",
       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     );
+    
+    // Create a filename that includes the year if it was filtered
+    const filename = year 
+      ? `${tableName}_${year}.xlsx` 
+      : `${tableName}.xlsx`;
+      
     res.setHeader(
       "Content-Disposition",
-      `attachment; filename=${tableName}.xlsx`
+      `attachment; filename=${filename}`
     );
 
     // Stream the Excel file to the response
@@ -52,6 +76,7 @@ exports.downloadExcel = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Error generating Excel file",
+      error: error.message
     });
   }
 };

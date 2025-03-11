@@ -1,10 +1,8 @@
 const pool = require("../../config/pool");
 
 const updateStudentDetails = async (req, res) => {
-  console.log("Received request with params:", req.params);
-
+  
   const { student_id } = req.params;
-  console.log(student_id);
   const {
     first_name,
     middle_name,
@@ -63,7 +61,6 @@ const updateStudentDetails = async (req, res) => {
     ];
 
     const result = await pool.query(sql, values);
-    console.log(result);
     if (result.affectedRows === 0) {
       return res.status(404).json({
         success: false,
@@ -104,8 +101,6 @@ const updatePlacementDetails = async (req, res) => {
   } = req.body;
 
   try {
-    console.log("Received student_id:", student_id);
-    console.log("Received body data:", req.body);
 
     await pool.query("START TRANSACTION");
 
@@ -154,7 +149,6 @@ const updatePlacementDetails = async (req, res) => {
     ];
 
     const placementResult = await pool.query(placementSql, placementValues);
-    console.log("Placement update result:", placementResult);
 
     // Check if any rows were updated
     if (
