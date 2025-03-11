@@ -3,32 +3,32 @@ import React, { useState } from "react";
 const UpdateForm = ({ item, type, onStudentUpdate, onClose }) => {
   const [formData, setFormData] = useState({
     // Common fields
-    student_id: item.student_id || "",
-    FirstName: item.FirstName || "",
-    LastName: item.LastName || "",
-    Email: item.Email || "",
-    Enrollment_Id: item.Enrollment_Id || "",
-    Enrollment_Year: item.Enrollment_Year || "",
-    Program: item.Program || "",
-    PhoneNo: item.PhoneNo || "",
+    first_name: item.first_name || "",
+    middle_name: item.middle_name || "",
+    last_name: item.last_name || "",
+    email: item.email || "",
+    enrollment_id: item.enrollment_id || "",
+    enrollment_year: item.enrollment_year || "",
+    program: item.program || "",
+    phone_no: item.phone_no || "",
 
     // Placement specific fields
     company_name: item.company_name || "",
     position: item.position || "",
     package: item.package || "",
-    Status: item.Status || "",
-    Notes: item.Notes || "",
+    status: item.status || "",
+    notes: item.notes || "",
 
     // Higher studies specific fields
     university_name: item.university_name || "",
     course_name: item.course_name || "",
-    intake_year: item.intake_year || "",
+    admission_year: item.admission_year || "",
 
     // All students specific fields
-    Career_Choice: item.Career_Choice || "",
-    Semester: item.Semester || "",
-    Class: item.Class || "",
-    Batch: item.Batch || "",
+    career_choice: item.career_choice || "",
+    semester: item.semester || "",
+    section: item.section || "",
+    batch: item.batch || "",
   });
 
   const [errors, setErrors] = useState({});
@@ -37,16 +37,16 @@ const UpdateForm = ({ item, type, onStudentUpdate, onClose }) => {
     const newErrors = {};
 
     // Common validations
-    if (!formData.FirstName) newErrors.FirstName = "First Name is required";
-    if (!formData.LastName) newErrors.LastName = "Last Name is required";
-    if (!formData.Email) newErrors.Email = "Email is required";
-    if (!formData.Enrollment_Id)
-      newErrors.Enrollment_Id = "Enrollment_Id is required";
-    if (!formData.Program) newErrors.Program = "Program is required";
+    if (!formData.first_name) newErrors.first_name = "First Name is required";
+    if (!formData.last_name) newErrors.last_name = "Last Name is required";
+    if (!formData.email) newErrors.email = "email is required";
+    if (!formData.enrollment_id)
+      newErrors.enrollment_id = "enrollment_id is required";
+    if (!formData.program) newErrors.program = "program is required";
 
-    // Email validation
-    if (formData.Email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.Email)) {
-      newErrors.Email = "Invalid email format";
+    // email validation
+    if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = "Invalid email format";
     }
 
     // Type-specific validations
@@ -62,14 +62,14 @@ const UpdateForm = ({ item, type, onStudentUpdate, onClose }) => {
         newErrors.university_name = "University name is required";
       if (!formData.course_name)
         newErrors.course_name = "Course name is required";
-      if (!formData.intake_year)
-        newErrors.intake_year = "Intake year is required";
+      if (!formData.admission_year)
+        newErrors.admission_year = "Intake year is required";
     }
 
     if (type === "all") {
-      if (!formData.Semester) newErrors.Semester = "Semester is required";
-      if (!formData.Class) newErrors.Class = "Class is required";
-      if (!formData.Batch) newErrors.Batch = "Batch is required";
+      if (!formData.semester) newErrors.semester = "Semester is required";
+      if (!formData.section) newErrors.section = "Section is required";
+      if (!formData.batch) newErrors.batch = "Batch is required";
     }
 
     setErrors(newErrors);
@@ -97,11 +97,11 @@ const UpdateForm = ({ item, type, onStudentUpdate, onClose }) => {
 
     // Determine the API endpoint based on the type of data
     if (type === "placement") {
-      endpoint = `http://localhost:5000/api/edit-student/updatePlacement/${item.student_id}`;
+      endpoint = `http://localhost:5000/api/edit-student/updatePlacement/${item.student_id}`; // API for placement
     } else if (type === "higherStudies") {
-      endpoint = `http://localhost:5000/api/edit-student/updateHigherStudies/${item.student_id}`;
+      endpoint = `http://localhost:5000/api/edit-student/updateHigherStudies/${item.student_id}`; // API for higher studies
     } else {
-      endpoint = `http://localhost:5000/api/edit-student/updateStudent/${item.student_id}`;
+      endpoint = `http://localhost:5000/api/edit-student/updateStudent/${item.student_id}`; // API for all students
     }
 
     try {
@@ -110,7 +110,7 @@ const UpdateForm = ({ item, type, onStudentUpdate, onClose }) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(formData), // Send form data
       });
 
       if (!response.ok) {
@@ -161,11 +161,12 @@ const UpdateForm = ({ item, type, onStudentUpdate, onClose }) => {
           <h4 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">
             Personal Information
           </h4>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-            {renderField("FirstName", "First Name")}
-            {renderField("LastName", "Last Name")}
-            {renderField("Email", "Email", "email")}
-            {renderField("PhoneNo", "Phone Number", "tel")}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            {renderField("first_name", "First Name")}
+            {renderField("middle_name", "Middle Name")}
+            {renderField("last_name", "Last Name")}
+            {renderField("email", "Email", "email")}
+            {renderField("phone_no", "Phone Number", "tel")}
           </div>
         </div>
 
@@ -174,9 +175,9 @@ const UpdateForm = ({ item, type, onStudentUpdate, onClose }) => {
             Academic Information
           </h4>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-            {renderField("Enrollment_Id", "Enrollment ID")}
-            {renderField("Program", "Program")}
-            {renderField("Enrollment_Year", "Enrollment Year")}
+            {renderField("enrollment_id", "Enrollment_Id")}
+            {renderField("program", "Program")}
+            {renderField("enrollment_year", "Enrollment Year")}
           </div>
         </div>
 
@@ -190,14 +191,33 @@ const UpdateForm = ({ item, type, onStudentUpdate, onClose }) => {
               {renderField("company_name", "Company Name")}
               {renderField("position", "Position")}
               {renderField("package", "Package (₹)", "number")}
-              {renderField("Status", "Status")}
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-700">
+                  Status
+                </label>
+                <select
+                  name="status"
+                  value={formData.status}
+                  onChange={handleChange}
+                  className="mt-1 block w-full rounded-lg border shadow-sm p-3 text-sm"
+                >
+                  <option value="">Select Status</option>
+                  <option value="Placed">Placed</option>
+                  <option value="Pending">Pending</option>
+                  <option value="Rejected">Rejected</option>
+                </select>
+                {errors.status && (
+                  <p className="mt-1 text-xs text-red-600">{errors.status}</p>
+                )}
+              </div>
+
               <div className="col-span-1 sm:col-span-2">
                 <label className="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">
                   Notes
                 </label>
                 <textarea
-                  name="Notes"
-                  value={formData.Notes}
+                  name="notes"
+                  value={formData.notes}
                   onChange={handleChange}
                   rows={3}
                   className="w-full rounded-lg border-gray-200 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 p-2 sm:p-3 text-sm"
@@ -215,8 +235,8 @@ const UpdateForm = ({ item, type, onStudentUpdate, onClose }) => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
               {renderField("university_name", "University Name")}
               {renderField("course_name", "Course Name")}
-              {renderField("intake_year", "Intake Year")}
-              {renderField("Status", "Status")}
+              {renderField("admission_year", "Admission year")}
+              {renderField("status", "Status")}
             </div>
           </div>
         )}
@@ -232,8 +252,8 @@ const UpdateForm = ({ item, type, onStudentUpdate, onClose }) => {
                   Career Choice
                 </label>
                 <select
-                  name="Career_Choice"
-                  value={formData.Career_Choice}
+                  name="career_choice"
+                  value={formData.career_choice}
                   onChange={handleChange}
                   className="mt-1 block w-full rounded-lg border shadow-sm 
                     transition-all duration-200 ease-in-out
@@ -248,16 +268,16 @@ const UpdateForm = ({ item, type, onStudentUpdate, onClose }) => {
                     Entrepreneurial Venture
                   </option>
                 </select>
-                {errors.Career_Choice && (
+                {errors.career_choice && (
                   <p className="mt-1 text-xs text-red-600 flex items-center">
                     <span className="mr-1">⚠️</span>
-                    {errors.Career_Choice}
+                    {errors.career_choice}
                   </p>
                 )}
               </div>
-              {renderField("Semester", "Semester")}
-              {renderField("Class", "Class")}
-              {renderField("Batch", "Batch")}
+              {renderField("semester", "Semester")}
+              {renderField("section", "Section")}
+              {renderField("batch", "Batch")}
             </div>
           </div>
         )}

@@ -8,19 +8,25 @@ import {
   FaEnvelope,
   FaLock,
   FaQuoteLeft,
+  FaUser,
 } from "react-icons/fa";
+
+// Import the images properly
+import charusatLogo from "/images/CHARUSAT_logo.png"; // Use absolute path from root
+import depstarLogo from "/images/depstar_logo.png"; // Use absolute path from root
+import depstarEntrance from "/images/depstar_entrance.jpeg";
 
 const Login = () => {
   const { login } = useAuth();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false); // New loading state
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setLoading(true); // Start loading
+    setLoading(true);
 
     try {
       const response = await fetch("http://localhost:5000/auth/login", {
@@ -34,116 +40,213 @@ const Login = () => {
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.message || "Login failed"); // Handle non-200 responses
+        throw new Error(result.message || "Login failed");
       }
 
       if (result.token) {
-        // Pass the token to the login function from context
-        login(result.token); // Notify context of successful login
-        navigate("/"); // Navigate to dashboard on success
+        login(result.token);
+        navigate("/");
       } else {
         setError("Invalid username or password");
       }
     } catch (error) {
-      setError(error.message); // Display error message
+      setError(error.message);
     } finally {
-      setLoading(false); // Stop loading
+      setLoading(false);
     }
   };
 
   return (
     <div className="flex min-h-screen bg-gray-50">
       {/* Left side */}
-      <div className="w-full md:w-1/2 flex flex-col justify-center px-8 md:px-20 lg:px-32">
-        <h2 className="text-3xl font-bold text-gray-800 text-center md:text-left mb-8">
-          Login to Your Account.
-        </h2>
-        <p className="text-gray-500 mb-6 text-center md:text-left">
-          Secure login to continue to your account.
-        </p>
-        <form
-          className="bg-white shadow-md rounded-lg p-8 mb-4"
-          onSubmit={handleLogin}
-        >
-          <div className="mb-4 relative">
-            <label
-              htmlFor="username"
-              className="block text-sm font-medium text-gray-700 text-left"
-            >
-              Username
-            </label>
-            <input
-              type="text" // Changed to "text" for proper input type
-              id="username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="block w-full pl-4 pr-12 py-2 border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              placeholder="example@mail.com"
-              required // Added required validation
-            />
-            <div className="absolute inset-y-0 right-0 pr-3 mt-4 flex items-center pointer-events-none">
-              <FaEnvelope className="text-gray-400" size="20" />
+      <div className="w-full md:w-1/2 flex flex-col justify-center items-center px-8 md:px-16 lg:px-24 py-10 relative">
+        {/* Decorative background elements */}
+        <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0 opacity-5">
+          <div className="absolute -top-20 -left-20 w-64 h-64 rounded-full bg-blue-400"></div>
+          <div className="absolute bottom-10 right-10 w-48 h-48 rounded-full bg-blue-600"></div>
+          <div className="absolute top-1/3 right-5 w-32 h-32 rounded-full bg-blue-300"></div>
+        </div>
+
+        {/* Content wrapper with proper z-index */}
+        <div className="w-full max-w-md relative z-10">
+          {/* CHARUSAT Logo with improved styling */}
+          <div className="mb-10 flex justify-center">
+            <div className="bg-white p-5 rounded-xl shadow-lg flex items-center justify-center w-full h-28 border border-gray-100">
+              <img
+                src={charusatLogo}
+                alt="CHARUSAT Logo"
+                className="max-h-full max-w-full object-contain"
+              />
             </div>
           </div>
-          <div className="mb-6 relative">
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-700 text-left"
-            >
-              Password
-            </label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="block w-full pl-4 pr-12 py-2 border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-              placeholder="6+ strong characters"
-              required // Added required validation
-            />
-            <div className="absolute inset-y-0 right-0 pr-3 mt-4 flex items-center pointer-events-none">
-              <FaLock className="text-gray-400" size="20" />
-            </div>
+
+          {/* Welcome text */}
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-gray-800">Welcome Back</h1>
+            <p className="text-gray-500 mt-2">
+              Sign in to continue to CareerVista
+            </p>
           </div>
-          {/* Display error message if present */}
-          {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
-          <button
-            type="submit"
-            className={`w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-300 ${
-              loading ? "opacity-50 cursor-not-allowed" : ""
-            }`} // Disable button during loading
-            disabled={loading} // Disable button while loading
+
+          {/* Login form with improved styling */}
+          <form
+            className="bg-white shadow-lg rounded-xl p-8 mb-8 w-full border border-gray-100"
+            onSubmit={handleLogin}
           >
-            {loading ? "Logging In..." : "Log In"}
-          </button>
-          {/* <p className="mt-6 text-center text-sm text-gray-500">
-            Or sign up with
-          </p>
-          <div className="flex justify-center mt-4 space-x-2">
-            <button className="bg-white p-2 rounded-full border border-gray-300 hover:shadow-lg">
-              <FaGoogle className="text-blue-500" size="24" />
+            <div className="mb-6 relative">
+              <label
+                htmlFor="username"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
+                Username
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <FaUser className="text-blue-500" size="16" />
+                </div>
+                <input
+                  type="text"
+                  id="username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  className="block w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50"
+                  placeholder="username"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="mb-6 relative">
+              <div className="flex justify-between items-center mb-1">
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Password
+                </label>
+                <a
+                  href="#"
+                  className="text-sm text-blue-600 hover:text-blue-800 font-medium"
+                >
+                  Forgot Password?
+                </a>
+              </div>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <FaLock className="text-blue-500" size="16" />
+                </div>
+                <input
+                  type="password"
+                  id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="block w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50"
+                  placeholder="6+ strong characters"
+                  required
+                />
+              </div>
+            </div>
+
+            {error && (
+              <div className="mb-6 p-3 bg-red-50 border-l-4 border-red-500 text-red-700 rounded">
+                <p className="text-sm">{error}</p>
+              </div>
+            )}
+
+            <button
+              type="submit"
+              className={`w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-300 shadow-md ${
+                loading ? "opacity-70 cursor-not-allowed" : ""
+              }`}
+              disabled={loading}
+            >
+              {loading ? (
+                <span className="flex items-center justify-center">
+                  <svg
+                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                  Logging In...
+                </span>
+              ) : (
+                "Sign In"
+              )}
             </button>
-            <button className="bg-white p-2 rounded-full border border-gray-300 hover:shadow-lg">
-              <FaFacebookF className="text-blue-600" size="24" />
-            </button>
-            <button className="bg-white p-2 rounded-full border border-gray-300 hover:shadow-lg">
-              <FaApple className="text-black" size="24" />
-            </button>
-          </div> */}
-        </form>
+          </form>
+        </div>
       </div>
 
-      {/* Right side */}
-      <div className="hidden md:flex md:w-1/2 bg-[#0066b3] text-white items-center justify-center">
-        <div className="text-center px-8 py-12 md:px-16 lg:px-24">
-          <FaQuoteLeft size="36" className="mx-auto mb-4 text-white" />
-          <h1 className="text-5xl font-bold mb-4">
-            Empowering Academic Excellence.
+      {/* Right side - Enhanced version */}
+      <div className="hidden md:block md:w-1/2 relative overflow-hidden">
+        {/* School Entrance Photo Background */}
+        <div className="absolute inset-0 z-0">
+          <img
+            src={depstarEntrance}
+            alt="DEPSTAR Institute Entrance"
+            className="w-full h-full object-cover"
+          />
+          {/* Improved overlay with gradient */}
+          <div className="absolute inset-0 bg-gradient-to-b from-blue-900/40 via-blue-800/60 to-blue-900/80"></div>
+        </div>
+
+        {/* Enhanced wave pattern with better positioning */}
+        <div className="absolute inset-0 opacity-20 z-10">
+          <svg viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M-363.33,297.42 C-292.29,210.58 -113.48,258.76 -43.05,193.79 C27.37,128.82 -22.14,16.52 104.15,1.62 C230.44,-13.28 281.31,124.15 357.63,147.54 C433.95,170.93 477.71,110.35 570.43,155.48 C663.16,200.62 759.7,349.13 710.26,455.99 C660.82,562.86 535.54,510.83 467.55,585.21 C399.55,659.59 457.25,825.91 357.63,799.49 C258.01,773.08 295.04,676.22 218.68,614.23 C142.32,552.24 14.42,596.37 -56.05,511.12 C-126.52,425.87 -95.01,338.28 -160.67,285.12 C-226.33,231.96 -434.37,384.25 -363.33,297.42"
+              fill="#FFFFFF"
+            />
+          </svg>
+        </div>
+
+        <div className="flex flex-col items-center justify-center h-full px-8 py-12 relative z-20">
+          {/* Improved logo container with better shadow and glow */}
+          <div className="w-48 h-48 rounded-full bg-white flex items-center justify-center shadow-2xl mb-10 relative">
+            <div className="absolute inset-0 rounded-full bg-blue-400 opacity-20 blur-md"></div>
+            <div className="absolute -inset-1 rounded-full bg-blue-100 opacity-10 blur-lg animate-pulse"></div>
+            <img
+              src={depstarLogo}
+              alt="DEPSTAR Logo"
+              className="w-36 h-36 rounded-full object-contain"
+            />
+          </div>
+
+          {/* Enhanced text with animation and better typography */}
+          <h1 className="text-5xl font-bold mb-8 text-white text-center leading-tight tracking-tight drop-shadow-lg">
+            <span className="block transform transition-transform hover:scale-105 duration-300">
+              Empowering
+            </span>
+            <span className="block transform transition-transform hover:scale-105 duration-300 delay-75">
+              Academic
+            </span>
+            <span className="block transform transition-transform hover:scale-105 duration-300 delay-150">
+              Excellence.
+            </span>
           </h1>
-          <p className="text-lg mb-8">
-            "CareerVista helps you stay connected with student outcomes, track
-            placement trends, and prepare for upcoming graduations."
-          </p>
+
+          {/* Improved description container with better blur effect */}
+          <div className="bg-white bg-opacity-10 rounded-lg p-6 max-w-md backdrop-blur-md shadow-lg border border-white/10">
+            <p className="text-lg text-white leading-relaxed text-center drop-shadow">
+              "CareerVista helps you stay connected with student outcomes, track
+              placement trends, and prepare for upcoming graduations."
+            </p>
+          </div>
         </div>
       </div>
     </div>

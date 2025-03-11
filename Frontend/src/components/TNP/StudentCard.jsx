@@ -133,8 +133,7 @@ const StudentCard = ({ item, type, onStudentUpdate, onDelete }) => {
       >
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center">
           <h2 className="text-lg sm:text-xl font-bold text-gray-800 mb-2 sm:mb-0">
-            {item.first_name}
-            {item.middle_name} {item.last_name}
+            {item.first_name} {item.middle_name} {item.last_name}
           </h2>
           <span
             className={`text-xs sm:text-sm font-semibold bg-white px-2 py-1 sm:px-3 sm:py-1 rounded-full ${getStatusColor()} self-start sm:self-auto mb-2 sm:mb-0`}
