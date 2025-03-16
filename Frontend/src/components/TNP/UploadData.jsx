@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { FileUp, FileDown } from "lucide-react";
+import axios from "axios";
 
 const UploadData = () => {
   const [fileName, setFileName] = useState("");
@@ -14,34 +15,33 @@ const UploadData = () => {
     }
 
     setIsUploading(true);
+    const formData = new FormData();
+    formData.append("file", file);
+
     try {
-      // Fetch presigned URL from your backend
-      const response = await fetch("/api/get-presigned-url", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          fileName: file.name,
-          fileType: file.type, // Will be Excel MIME type
-        }),
-      });
+      const token = localStorage.getItem("token");
+      const response = await axios.post(
+        "http://localhost:5000/api/file/import-excel",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-      if (!response.ok) throw new Error("Failed to get presigned URL");
-      const { url } = await response.json();
-
-      // Upload file to cloud storage (e.g., S3)
-      const uploadResponse = await fetch(url, {
-        method: "PUT",
-        body: file,
-        headers: { "Content-Type": file.type },
-      });
-
-      if (!uploadResponse.ok) throw new Error("Upload failed");
-      alert("File uploaded successfully!");
+      // Expecting a success message, not a presigned URL
+      alert(response.data.message || "File uploaded successfully!");
       setFileName("");
       setFile(null);
     } catch (error) {
       console.error("Upload error:", error);
-      alert("Failed to upload file. Please try again.");
+      if (error.response) {
+        alert(`Upload failed: ${error.response.data.error || "Server error"}`);
+      } else {
+        alert("Upload failed: Network error or server unreachable.");
+      }
     } finally {
       setIsUploading(false);
     }
@@ -56,8 +56,8 @@ const UploadData = () => {
 
   const tabs = [
     { key: "student", label: "Student Data" },
-    { key: "placement", label: "Placement Data" },
-    { key: "higherStudies", label: "Higher Studies" },
+    // { key: "placement", label: "Placement Data" },
+    // { key: "higherStudies", label: "Higher Studies" },
   ];
 
   // Heading and description based on tab
@@ -70,20 +70,20 @@ const UploadData = () => {
             "Upload student data including enrollment details, contact info, and academic data.",
           template: "/templates/student-template.xlsx",
         };
-      case "placement":
-        return {
-          heading: "Placement Records",
-          description:
-            "Upload placement data including offers, packages, and recruiter details.",
-          template: "/templates/placement-template.xlsx",
-        };
-      case "higherStudies":
-        return {
-          heading: "Higher Studies Records",
-          description:
-            "Upload higher studies data including university admissions and scholarships.",
-          template: "/templates/higher-studies-template.xlsx",
-        };
+      // case "placement":
+      //   return {
+      //     heading: "Placement Records",
+      //     description:
+      //       "Upload placement data including offers, packages, and recruiter details.",
+      //     template: "/templates/placement-template.xlsx",
+      //   };
+      // case "higherStudies":
+      //   return {
+      //     heading: "Higher Studies Records",
+      //     description:
+      //       "Upload higher studies data including university admissions and scholarships.",
+      //     template: "/templates/higher-studies-template.xlsx",
+      //   };
       default:
         return {};
     }
@@ -141,7 +141,7 @@ const UploadData = () => {
             </span>
           </p>
         )}
-        {uploadTab === "placement" && (
+        {/* {uploadTab === "placement" && (
           <p className="text-gray-500 mb-4 text-sm">
             Required fields:{" "}
             <span className="font-medium">
@@ -157,7 +157,7 @@ const UploadData = () => {
               Admission Year
             </span>
           </p>
-        )}
+        )} */}
 
         <label htmlFor="fileInput">
           <div className="border-2 border-dashed border-gray-300 p-8 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-gray-50">
