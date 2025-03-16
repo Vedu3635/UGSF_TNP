@@ -81,7 +81,7 @@ const LeftSlider2 = ({
       name: "Upload File",
       icon: <Upload className="w-5 h-5" />,
       section: "upload",
-      onClick: onUploadClick,
+      onClick: () => handleButtonClick("upload"),
       role: "tnpfaculty",
     },
     {

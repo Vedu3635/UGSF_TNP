@@ -167,18 +167,18 @@ const Charts = ({ allStudentsData, placementData, higherStudiesData }) => {
   const countStudentsByProgram = (programData) => {
     const programCounts = programData.reduce((acc, student) => {
       // Categorizing status
-      let status;
-      if (student.status === "admitted") {
-        status = "Admitted";
-      } else if (student.status === "in process") {
-        status = "In Progress";
-      } else if (student.status === "rejected") {
-        status = "Rejected";
+      let higher_studies_status;
+      if (student.higher_studies_status === "admitted") {
+        higher_studies_status = "Admitted";
+      } else if (student.higher_studies_status === "in process") {
+        higher_studies_status = "In Progress";
+      } else if (student.higher_studies_status === "rejected") {
+        higher_studies_status = "Rejected";
       } else {
-        status = "Unknown"; // Fallback in case of unexpected values
+        higher_studies_status = "Unknown"; // Fallback in case of unexpected values
       }
 
-      acc[status] = (acc[status] || 0) + 1;
+      acc[higher_studies_status] = (acc[higher_studies_status] || 0) + 1;
       return acc;
     }, {});
 

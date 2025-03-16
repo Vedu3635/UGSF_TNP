@@ -217,17 +217,17 @@ const StudentList = ({
       let matchesStatus = true;
       if (activeTab === "placements") {
         if (statusFilter === "placed") {
-          matchesStatus = item.status === "placed";
+          matchesStatus = item.placement_status === "placed";
         } else if (statusFilter === "notPlaced") {
-          matchesStatus = item.status !== "placed";
+          matchesStatus = item.placement_status !== "placed";
         }
       } else if (activeTab === "higherStudies") {
         if (statusFilter === "admitted") {
-          matchesStatus = item.status === "admitted";
+          matchesStatus = item.higher_studies_status === "admitted";
         } else if (statusFilter === "in process") {
-          matchesStatus = item.status === "in process";
+          matchesStatus = item.higher_studies_status === "in process";
         } else if (statusFilter === "rejected") {
-          matchesStatus = item.status === "rejected";
+          matchesStatus = item.higher_studies_status === "rejected";
         }
       }
 

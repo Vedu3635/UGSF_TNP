@@ -1,7 +1,6 @@
 const pool = require("../../config/pool");
 
 const updateStudentDetails = async (req, res) => {
-  
   const { student_id } = req.params;
   const {
     first_name,
@@ -88,8 +87,8 @@ const updatePlacementDetails = async (req, res) => {
     company_name,
     package,
     position,
-    status,
-    notes,
+    placement_status,
+    placement_notes,
     first_name,
     middle_name,
     last_name,
@@ -101,7 +100,6 @@ const updatePlacementDetails = async (req, res) => {
   } = req.body;
 
   try {
-
     await pool.query("START TRANSACTION");
 
     // Update student details
@@ -134,7 +132,7 @@ const updatePlacementDetails = async (req, res) => {
       UPDATE placements 
       SET 
         company_name = ?, package = ?, position = ?, 
-        status = ?, notes = ?, placement_year = YEAR(CURRENT_DATE()), 
+        placement_status = ?, placement_notes = ?, placement_year = YEAR(CURRENT_DATE()), 
         placement_date = CURRENT_DATE()
       WHERE student_id = ?
     `;
@@ -143,8 +141,8 @@ const updatePlacementDetails = async (req, res) => {
       company_name,
       package,
       position,
-      status,
-      notes,
+      placement_status,
+      placement_notes,
       student_id,
     ];
 
@@ -185,7 +183,7 @@ const updateHigherStudiesDetails = async (req, res) => {
     university_name,
     course_name,
     admission_year,
-    status,
+    higher_studies_status,
     // Student details
     first_name,
     middle_name,
@@ -238,7 +236,7 @@ const updateHigherStudiesDetails = async (req, res) => {
         university_name = ?,
         course_name = ?,
         admission_year = ?,
-        status = ?
+        higher_studies_status = ?
       WHERE student_id = ?
     `;
 
@@ -246,7 +244,7 @@ const updateHigherStudiesDetails = async (req, res) => {
       university_name,
       course_name,
       admission_year,
-      status,
+      higher_studies_status,
       student_id,
     ];
 

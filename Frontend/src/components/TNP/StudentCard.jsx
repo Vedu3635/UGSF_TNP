@@ -150,13 +150,13 @@ const StudentCard = ({ item, type, onStudentUpdate, onDelete }) => {
           {type === "placement" && (
             <div>
               <span className="font-medium text-xs">Placement Status</span>
-              <p className="text-sm">{item.status || "N/A"}</p>
+              <p className="text-sm">{item.placement_status || "N/A"}</p>
             </div>
           )}
           {type === "higherStudies" && (
             <div>
               <span className="font-medium text-xs">Application Status</span>
-              <p className="text-sm">{item.status || "N/A"}</p>
+              <p className="text-sm">{item.higher_studies_status || "N/A"}</p>
             </div>
           )}
           {type === "all" && (

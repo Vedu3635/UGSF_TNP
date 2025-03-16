@@ -5,7 +5,7 @@ import NumberBox from "../../components/TNP/NumberBox";
 import Charts from "../../components/TNP/Charts";
 import CompanyList from "../../components/TNP/CompanyList";
 import StudentList from "../../components/TNP/StudentList";
-import FileUploadModal from "../../components/TNP/FileUploadModal";
+import EducationDataManager from "../../components/TNP/EducationDataManager";
 import CompanyRegistrationForm from "../../components/TNP/CompanyRegistrationForm";
 import {
   X,
@@ -14,6 +14,7 @@ import {
   ChevronLeft,
   ChevronLeftIcon,
 } from "lucide-react";
+// import DataUpload from "../../components/TNP/DataUpload";
 const Dashboard = () => {
   const [activeSection, setActiveSection] = useState(
     localStorage.getItem("activeSection") || "dashboard"
@@ -277,20 +278,22 @@ const Dashboard = () => {
               {activeSection === "companiesReg" && (
                 <CompanyRegistrationForm onSubmitSuccess={fetchCompaniesData} />
               )}
+              {activeSection === "upload" && <EducationDataManager />}
             </div>
           )}
         </main>
       </div>
 
       {/* Upload Modal */}
-      <FileUploadModal
+
+      {/* <FileUploadModal
         isOpen={isUploadModalOpen}
         onClose={() => setIsUploadModalOpen(false)}
         onUploadSuccess={() => {
           fetchStudentData();
           fetchCompaniesData();
         }}
-      />
+      /> */}
     </div>
   );
 };

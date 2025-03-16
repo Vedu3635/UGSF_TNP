@@ -16,8 +16,8 @@ const getJobPlacementStudents = (req, res) => {
     s.program, 
     p.company_name, 
     p.position, 
-    p.status, 
-    p.notes, 
+    p.placement_status, 
+    p.placement_notes, 
     p.package, 
     p.placement_year  
 FROM students s  
@@ -62,7 +62,7 @@ const getHigherStudiesStudents = (req, res) => {
     h.university_name, 
     h.course_name, 
     h.admission_year, 
-    h.status
+    h.higher_studies_status
 FROM students s
 INNER JOIN higher_studies h ON s.student_id = h.student_id
 WHERE s.career_choice = 'Higher Studies';

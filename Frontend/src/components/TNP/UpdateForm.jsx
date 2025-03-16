@@ -16,8 +16,8 @@ const UpdateForm = ({ item, type, onStudentUpdate, onClose }) => {
     company_name: item.company_name || "",
     position: item.position || "",
     package: item.package || "",
-    status: item.status || "",
-    notes: item.notes || "",
+    placement_status: item.placement_status || "",
+    placement_notes: item.placement_notes || "",
 
     // Higher studies specific fields
     university_name: item.university_name || "",
@@ -196,8 +196,8 @@ const UpdateForm = ({ item, type, onStudentUpdate, onClose }) => {
                   Status
                 </label>
                 <select
-                  name="status"
-                  value={formData.status}
+                  name="placement_status"
+                  value={formData.placement_status}
                   onChange={handleChange}
                   className="mt-1 block w-full rounded-lg border shadow-sm p-3 text-sm"
                 >
@@ -206,8 +206,10 @@ const UpdateForm = ({ item, type, onStudentUpdate, onClose }) => {
                   <option value="Pending">Pending</option>
                   <option value="Rejected">Rejected</option>
                 </select>
-                {errors.status && (
-                  <p className="mt-1 text-xs text-red-600">{errors.status}</p>
+                {errors.placement_status && (
+                  <p className="mt-1 text-xs text-red-600">
+                    {errors.placement_status}
+                  </p>
                 )}
               </div>
 
@@ -216,8 +218,8 @@ const UpdateForm = ({ item, type, onStudentUpdate, onClose }) => {
                   Notes
                 </label>
                 <textarea
-                  name="notes"
-                  value={formData.notes}
+                  name="placement_notes"
+                  value={formData.placement_notes}
                   onChange={handleChange}
                   rows={3}
                   className="w-full rounded-lg border-gray-200 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 p-2 sm:p-3 text-sm"
@@ -236,7 +238,7 @@ const UpdateForm = ({ item, type, onStudentUpdate, onClose }) => {
               {renderField("university_name", "University Name")}
               {renderField("course_name", "Course Name")}
               {renderField("admission_year", "Admission year")}
-              {renderField("status", "Status")}
+              {renderField("higher_studies_status", "Status")}
             </div>
           </div>
         )}
