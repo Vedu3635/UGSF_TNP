@@ -1,20 +1,16 @@
 import React, { useState, useEffect } from "react";
 
 import LeftSlider2 from "../../components/TNP/LeftSlider2";
+import LoadingPage from "../LoadingPage";
 import NumberBox from "../../components/TNP/NumberBox";
 import Charts from "../../components/TNP/Charts";
-import CompanyList from "../../components/TNP/CompanyList";
-import StudentList from "../../components/TNP/StudentList";
-import EducationDataManager from "../../components/TNP/EducationDataManager";
-import CompanyRegistrationForm from "../../components/TNP/CompanyRegistrationForm";
-import {
-  X,
-  Menu,
-  ChevronRightIcon,
-  ChevronLeft,
-  ChevronLeftIcon,
-} from "lucide-react";
+import CompanyList from "../../components/TNP/company/CompanyList";
+import StudentList from "../../components/TNP/student/StudentList";
+import EducationDataManager from "../../components/TNP/file/EducationDataManager";
+import CompanyRegistrationForm from "../../components/TNP/company/CompanyRegistrationForm";
+import { X, Menu, ChevronRightIcon, ChevronLeftIcon } from "lucide-react";
 // import DataUpload from "../../components/TNP/DataUpload";
+
 const Dashboard = () => {
   const [activeSection, setActiveSection] = useState(
     localStorage.getItem("activeSection") || "dashboard"
@@ -182,101 +178,109 @@ const Dashboard = () => {
   const placedStudentsCount = getPlacedStudentsCount(placementData);
 
   return (
-    <div className="bg-gray-100 min-h-screen flex flex-col">
-      <div className="flex flex-col md:flex-row min-h-[calc(100vh-64px)] relative">
-        {/* Desktop Toggle Button */}
-        <button
-          className={`fixed top-20 z-50 hidden md:flex bg-white text-black p-2 rounded-md shadow-lg hover:bg-blue-800 transition-all duration-300 ease-in-out
+    <>
+      {isLoading ? (
+        <LoadingPage /> // Replace inline spinner with Loading component
+      ) : (
+        <div className="bg-gray-100 min-h-screen flex flex-col">
+          <div className="flex flex-col md:flex-row min-h-[calc(100vh-64px)] relative">
+            {/* Desktop Toggle Button */}
+            <button
+              className={`fixed top-20 z-50 hidden md:flex bg-white text-black p-2 rounded-md shadow-lg hover:bg-blue-800 transition-all duration-300 ease-in-out
   ${isSidebarExpanded ? "left-48" : "left-3 "}
 `}
-          onClick={toggleSidebar}
-          aria-label={isSidebarExpanded ? "Collapse sidebar" : "Expand sidebar"}
-        >
-          {isSidebarExpanded ? (
-            <ChevronLeftIcon size={20} />
-          ) : (
-            <ChevronRightIcon size={20} />
-          )}
-        </button>
+              onClick={toggleSidebar}
+              aria-label={
+                isSidebarExpanded ? "Collapse sidebar" : "Expand sidebar"
+              }
+            >
+              {isSidebarExpanded ? (
+                <ChevronLeftIcon size={20} />
+              ) : (
+                <ChevronRightIcon size={20} />
+              )}
+            </button>
 
-        {/* Mobile Toggle Button */}
-        <button
-          className="fixed top-20 z-50 flex md:hidden bg-white text-black p-2 rounded-md shadow-lg hover:bg-blue-800 transition-all duration-300 ease-in-out left-3"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
-        >
-          {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
-        </button>
+            {/* Mobile Toggle Button */}
+            <button
+              className="fixed top-20 z-50 flex md:hidden bg-white text-black p-2 rounded-md shadow-lg hover:bg-blue-800 transition-all duration-300 ease-in-out left-3"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+            >
+              {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
 
-        {/* Sidebar */}
-        <aside
-          className={`fixed top-16 left-0 bottom-0 z-30 transition-all duration-300 ease-in-out 
+            {/* Sidebar */}
+            <aside
+              className={`fixed top-16 left-0 bottom-0 z-30 transition-all duration-300 ease-in-out 
     ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"} 
     md:translate-x-0 md:z-auto flex-shrink-0
     ${isSidebarExpanded || isHovering ? "w-64" : "w-16"} 
     bg-white border-r border-gray-200 shadow-lg md:shadow-none`}
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-        >
-          <LeftSlider2
-            isExpanded={isSidebarExpanded || isHovering}
-            setIsExpanded={setIsSidebarExpanded}
-            setActiveSection={handleSetActiveSection}
-            activeSection={activeSection}
-            onUploadClick={handleUploadClick}
-          />
-        </aside>
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
+            >
+              <LeftSlider2
+                isExpanded={isSidebarExpanded || isHovering}
+                setIsExpanded={setIsSidebarExpanded}
+                setActiveSection={handleSetActiveSection}
+                activeSection={activeSection}
+                onUploadClick={handleUploadClick}
+              />
+            </aside>
 
-        {/* Main Content */}
-        <main
-          className={`flex-1 p-2 sm:p-4 lg:p-6 bg-[#bed5e7] overflow-auto transition-all duration-300 pt-16 md:pt-4
+            {/* Main Content */}
+            <main
+              className={`flex-1 p-2 sm:p-4 lg:p-6 bg-[#bed5e7] overflow-auto transition-all duration-300 pt-16 md:pt-4
     ${isSidebarExpanded || isHovering ? "md:ml-64" : "md:ml-16"} `}
-        >
-          {isLoading ? (
-            <div className="flex justify-center items-center h-64">
-              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-            </div>
-          ) : (
-            <div className="max-w-7xl mx-auto">
-              {activeSection === "dashboard" && (
-                <div className="space-y-4 md:space-y-6">
-                  <NumberBox
-                    studentsCount={allStudentsData.length}
-                    averagePackage={averagePackage}
-                    placedStudentsCount={placedStudentsCount}
-                    companiesCount={companiesData.length}
-                  />
-                  <Charts
-                    allStudentsData={allStudentsData}
-                    placementData={placementData}
-                    higherStudiesData={higherStudiesData}
-                  />
-                  <CompanyList companiesData={companiesData} />
+            >
+              {isLoading ? (
+                <div className="flex justify-center items-center h-64">
+                  <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+                </div>
+              ) : (
+                <div className="max-w-7xl mx-auto">
+                  {activeSection === "dashboard" && (
+                    <div className="space-y-4 md:space-y-6">
+                      <NumberBox
+                        studentsCount={allStudentsData.length}
+                        averagePackage={averagePackage}
+                        placedStudentsCount={placedStudentsCount}
+                        companiesCount={companiesData.length}
+                      />
+                      <Charts
+                        allStudentsData={allStudentsData}
+                        placementData={placementData}
+                        higherStudiesData={higherStudiesData}
+                      />
+                      <CompanyList companiesData={companiesData} />
+                    </div>
+                  )}
+
+                  {activeSection === "studentList" && (
+                    <StudentList
+                      allStudentsData={allStudentsData}
+                      placementData={placementData}
+                      higherStudiesData={higherStudiesData}
+                      onStudentUpdate={handleStudentUpdate}
+                      onDelete={onDeleteStudent}
+                    />
+                  )}
+
+                  {activeSection === "companiesReg" && (
+                    <CompanyRegistrationForm
+                      onSubmitSuccess={fetchCompaniesData}
+                    />
+                  )}
+                  {activeSection === "upload" && <EducationDataManager />}
                 </div>
               )}
+            </main>
+          </div>
 
-              {activeSection === "studentList" && (
-                <StudentList
-                  allStudentsData={allStudentsData}
-                  placementData={placementData}
-                  higherStudiesData={higherStudiesData}
-                  onStudentUpdate={handleStudentUpdate}
-                  onDelete={onDeleteStudent}
-                />
-              )}
+          {/* Upload Modal */}
 
-              {activeSection === "companiesReg" && (
-                <CompanyRegistrationForm onSubmitSuccess={fetchCompaniesData} />
-              )}
-              {activeSection === "upload" && <EducationDataManager />}
-            </div>
-          )}
-        </main>
-      </div>
-
-      {/* Upload Modal */}
-
-      {/* <FileUploadModal
+          {/* <FileUploadModal
         isOpen={isUploadModalOpen}
         onClose={() => setIsUploadModalOpen(false)}
         onUploadSuccess={() => {
@@ -284,7 +288,9 @@ const Dashboard = () => {
           fetchCompaniesData();
         }}
       /> */}
-    </div>
+        </div>
+      )}
+    </>
   );
 };
 

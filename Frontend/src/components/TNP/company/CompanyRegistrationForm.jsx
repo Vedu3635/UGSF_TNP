@@ -94,20 +94,22 @@ const Select = ({ label, icon: Icon, options, ...props }) => (
 const CompanyRegistrationForm = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    Company_Name: "",
-    Industry_Domain: "",
-    Website_URL: "",
-    Contact_Name: "",
-    Contact_Email: "",
-    Contact_Phone: "",
-    Job_Roles: "",
-    Positions: "",
-    Job_Location: "",
-    Employment_Type: "",
-    Eligibility_Criteria: "",
-    Selection_Rounds: "",
-    Hiring_Date: "",
-    Mode_Hiring: "",
+    company_name: "",
+    industry_domain: "",
+    website_url: "",
+    contact_name: "",
+    contact_email: "",
+    contact_phone: "",
+    job_roles: "",
+    positions: "",
+    package_min: "",
+    package_max: "",
+    job_location: "",
+    employment_type: "",
+    eligibility_criteria: "",
+    selection_rounds: "",
+    hiring_date: "",
+    mode_hiring: "",
   });
 
   const handleInputChange = (e) => {
@@ -117,56 +119,60 @@ const CompanyRegistrationForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     const token = localStorage.getItem("token");
     if (!token) {
       alert("User not authenticated. Please log in.");
       return;
     }
-  
+
     // Map form fields to match backend expectations
     const mappedData = {
-      Company_Name: formData.companyName,
-      Industry_Domain: formData.industryDomain,
-      Website_URL: formData.websiteUrl,
-      Contact_Name: formData.contactPersonName,
-      Contact_Email: formData.contactEmail,
-      Contact_Phone: formData.contactPhone,
-      Job_Roles: formData.jobRoles,
-      Positions: formData.openPositions,
-      Package_Min: formData.minSalary,
-      Package_Max: formData.maxSalary,
-      Employment_Type: formData.employmentType,
-      Eligibility_Criteria: formData.eligibilityCriteria,
-      Selection_Rounds: formData.selectionRounds,
-      Hiring_Date: formData.driveDates,
-      Mode_Hiring: formData.hiringMode
+      company_name: formData.company_name,
+      industry_domain: formData.industry_domain,
+      website_url: formData.website_url,
+      contact_name: formData.contact_name,
+      contact_email: formData.contact_email,
+      contact_phone: formData.contact_phone,
+      job_roles: formData.job_roles,
+      positions: formData.positions,
+      package_min: formData.package_min,
+      package_max: formData.package_max,
+      job_location: formData.job_location,
+      employment_type: formData.employment_type,
+      eligibility_criteria: formData.eligibility_criteria,
+      selection_rounds: formData.selection_rounds,
+      hiring_date: formData.hiring_date,
+      mode_hiring: formData.mode_hiring,
     };
-  
+
     try {
       const response = await fetch("http://localhost:5000/api/addcompanies", {
         method: "POST",
         body: JSON.stringify(mappedData),
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
       });
-  
+
       if (response.ok) {
         // After successful registration
         alert("Company registration successful!");
-        
+
         // Fetch updated company list to ensure data is fresh
-        const companiesResponse = await fetch("http://localhost:5000/api/companies", {
-          headers: {
-            "Authorization": `Bearer ${token}`
+        const companiesResponse = await fetch(
+          "http://localhost:5000/api/companies",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           }
-        });
-        
+        );
+
         if (companiesResponse.ok) {
           // Navigate to the company list page
-          navigate("/companies");
+          navigate("/");
         } else {
           console.error("Failed to fetch updated companies");
         }
@@ -178,7 +184,6 @@ const CompanyRegistrationForm = () => {
       alert("An error occurred while submitting the form.");
     }
   };
-  
 
   return (
     <form
@@ -196,8 +201,8 @@ const CompanyRegistrationForm = () => {
         <FormInput
           label="Company Name"
           icon={Building2}
-          name="companyName"
-          value={formData.companyName}
+          name="company_name"
+          value={formData.company_name}
           onChange={handleInputChange}
           required
         />
@@ -205,43 +210,43 @@ const CompanyRegistrationForm = () => {
         <FormInput
           label="Industry Domain"
           icon={Briefcase}
-          name="industryDomain"
-          value={formData.industryDomain}
+          name="industry_domain"
+          value={formData.industry_domain}
           onChange={handleInputChange}
           required
         />
         <FormInput
           label="Website URL"
           icon={Globe}
-          name="websiteUrl"
+          name="website_url"
           type="url"
-          value={formData.websiteUrl}
+          value={formData.website_url}
           onChange={handleInputChange}
           required
         />
         <FormInput
           label="Contact Person Name"
           icon={User}
-          name="contactPersonName"
-          value={formData.contactPersonName}
+          name="contact_name"
+          value={formData.contact_name}
           onChange={handleInputChange}
           required
         />
         <FormInput
           label="Contact Email"
           icon={Mail}
-          name="contactEmail"
+          name="contact_email"
           type="email"
-          value={formData.contactEmail}
+          value={formData.contact_email}
           onChange={handleInputChange}
           required
         />
         <FormInput
           label="Contact Phone"
           icon={Phone}
-          name="contactPhone"
+          name="contact_phone"
           type="tel"
-          value={formData.contactPhone}
+          value={formData.contact_phone}
           onChange={handleInputChange}
           required
         />
@@ -275,54 +280,54 @@ const CompanyRegistrationForm = () => {
         <FormInput
           label="Job Roles"
           icon={Briefcase}
-          name="jobRoles"
-          value={formData.jobRoles}
+          name="job_roles"
+          value={formData.job_roles}
           onChange={handleInputChange}
           required
         />
         <FormInput
           label="Number of Positions"
           icon={Users}
-          name="openPositions"
+          name="positions"
           type="number"
           min="1"
-          value={formData.openPositions}
+          value={formData.positions}
           onChange={handleInputChange}
           required
         />
         <FormInput
           label="Minimum Salary"
           icon={DollarSign}
-          name="minSalary"
+          name="package_min"
           type="number"
           min="0"
-          value={formData.minSalary}
+          value={formData.package_min}
           onChange={handleInputChange}
           required
         />
         <FormInput
           label="Maximum Salary"
           icon={DollarSign}
-          name="maxSalary"
+          name="package_max"
           type="number"
           min="0"
-          value={formData.maxSalary}
+          value={formData.package_max}
           onChange={handleInputChange}
           required
         />
         <FormInput
           label="Job Location"
           icon={MapPin}
-          name="jobLocation"
-          value={formData.jobLocation}
+          name="job_location"
+          value={formData.job_location}
           onChange={handleInputChange}
           required
         />
         <Select
           label="Employment Type"
           icon={Briefcase}
-          name="employmentType"
-          value={formData.employmentType}
+          name="employment_type"
+          value={formData.employment_type}
           onChange={handleInputChange}
           options={[
             { value: "internship", label: "Internship" },
@@ -334,8 +339,8 @@ const CompanyRegistrationForm = () => {
         <FormInput
           label="Eligibility Criteria"
           icon={GraduationCap}
-          name="eligibilityCriteria"
-          value={formData.eligibilityCriteria}
+          name="eligibility_criteria"
+          value={formData.eligibility_criteria}
           onChange={handleInputChange}
           required
         />
@@ -345,25 +350,25 @@ const CompanyRegistrationForm = () => {
         <FormInput
           label="Selection Rounds"
           icon={CheckCircle2}
-          name="selectionRounds"
-          value={formData.selectionRounds}
+          name="selection_rounds"
+          value={formData.selection_rounds}
           onChange={handleInputChange}
           required
         />
         <FormInput
           label="Preferred Drive Dates"
           icon={Calendar}
-          name="driveDates"
+          name="hiring_date"
           type="date"
-          value={formData.driveDates}
+          value={formData.hiring_date}
           onChange={handleInputChange}
           required
         />
         <Select
           label="Mode of Hiring"
           icon={Building2}
-          name="hiringMode"
-          value={formData.hiringMode}
+          name="mode_hiring"
+          value={formData.mode_hiring}
           onChange={handleInputChange}
           options={[
             { value: "online", label: "Online" },

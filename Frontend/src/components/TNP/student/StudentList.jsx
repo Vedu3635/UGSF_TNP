@@ -7,9 +7,9 @@ import {
   XCircle,
   Circle,
   Menu,
-  X as XIcon,
+  X,
 } from "lucide-react";
-import DownloadButton2 from "./DownloadButton2";
+
 import PaginatedList from "./PaginatedList";
 import FilterComponent from "./FilterComponent";
 

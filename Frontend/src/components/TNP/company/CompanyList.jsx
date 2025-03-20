@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Tabs, TabList, TabTrigger, TabContent } from "./CompanyTabs";
-import CompanyCard from "./CompanyCard";
 import { Pencil, Trash2 } from "lucide-react";
 import { jwtDecode } from "jwt-decode";
+import CompanyCard from "./CompanyCard";
 import CompanyUpdateForm from "./CompanyUpdateForm";
-import CompanyFilter from "./CompanyFilter"; // Import the filter component
+import CompanyFilter from "./CompanyFilter";
+import PaginationCompany from "./PaginationCompany";
+import { Tabs, TabList, TabTrigger, TabContent } from "./CompanyTabs";
 
 const Dialog = ({ isOpen, onClose, children }) => {
   if (!isOpen) return null;
@@ -21,8 +22,8 @@ const Dialog = ({ isOpen, onClose, children }) => {
 
 const CompanyList = ({ companiesData }) => {
   const [companies, setCompanies] = useState({
-    upcoming: companiesData ? [] : [],
-    visited: companiesData ? [] : [],
+    upcoming: [],
+    visited: [],
   });
   const [filteredCompanies, setFilteredCompanies] = useState({
     upcoming: [],
@@ -52,6 +53,8 @@ const CompanyList = ({ companiesData }) => {
     mode_hiring: "",
   });
   const [activeTab, setActiveTab] = useState("upcoming");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(5);
 
   useEffect(() => {
     if (companiesData) {
@@ -59,12 +62,16 @@ const CompanyList = ({ companiesData }) => {
       setCompanies(dividedCompanies);
       setFilteredCompanies(dividedCompanies);
       setIsLoading(false);
+      setCurrentPage(1);
     }
   }, [companiesData]);
 
   const divideCompaniesByDate = (data) => {
     const currentDate = new Date();
-    return data.reduce(
+    const sortedData = data.sort(
+      (a, b) => new Date(b.hiring_date) - new Date(a.hiring_date)
+    );
+    return sortedData.reduce(
       (acc, company) => {
         const hiringDate = new Date(company.hiring_date);
         hiringDate >= currentDate
@@ -89,6 +96,7 @@ const CompanyList = ({ companiesData }) => {
       const dividedCompanies = divideCompaniesByDate(await response.json());
       setCompanies(dividedCompanies);
       setFilteredCompanies(dividedCompanies);
+      setCurrentPage(1);
     } catch (error) {
       console.error("Error fetching companies:", error);
     }
@@ -158,34 +166,42 @@ const CompanyList = ({ companiesData }) => {
     }
   };
 
-  // Handle filter changes
   const handleFilterChange = (filters) => {
     const filtered = {
-      upcoming: companies.upcoming.filter(company => filterCompany(company, filters)),
-      visited: companies.visited.filter(company => filterCompany(company, filters))
+      upcoming: companies.upcoming.filter((company) =>
+        filterCompany(company, filters)
+      ),
+      visited: companies.visited.filter((company) =>
+        filterCompany(company, filters)
+      ),
     };
-    
     setFilteredCompanies(filtered);
+    setCurrentPage(1);
   };
 
-  // Filter company based on filter criteria
   const filterCompany = (company, filters) => {
-    // Industry domain filter
-    if (filters.industry && !company.industry_domain.toLowerCase().includes(filters.industry.toLowerCase())) {
+    if (
+      filters.industry &&
+      !company.industry_domain
+        .toLowerCase()
+        .includes(filters.industry.toLowerCase())
+    ) {
       return false;
     }
-    
-    // Company name filter (replacing package range filter)
-    if (filters.companyName && !company.company_name.toLowerCase().includes(filters.companyName.toLowerCase())) {
+    if (
+      filters.companyName &&
+      !company.company_name
+        .toLowerCase()
+        .includes(filters.companyName.toLowerCase())
+    ) {
       return false;
     }
-    
-    // Job role filter
-    if (filters.jobRole && !company.job_roles.toLowerCase().includes(filters.jobRole.toLowerCase())) {
+    if (
+      filters.jobRole &&
+      !company.job_roles.toLowerCase().includes(filters.jobRole.toLowerCase())
+    ) {
       return false;
     }
-    
-    // Hiring date filter
     if (filters.hiringDate) {
       const filterDate = new Date(filters.hiringDate);
       const companyDate = new Date(company.hiring_date);
@@ -193,11 +209,20 @@ const CompanyList = ({ companiesData }) => {
         return false;
       }
     }
-    
     return true;
   };
 
-  //Update button
+  const paginateCompanies = (companiesList) => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return companiesList.slice(startIndex, endIndex);
+  };
+
+  const handleItemsPerPageChange = (newItemsPerPage) => {
+    setItemsPerPage(newItemsPerPage);
+    setCurrentPage(1);
+  };
+
   const ActionButtons = ({ company }) => {
     let userRole = "";
     const token = localStorage.getItem("token");
@@ -232,7 +257,6 @@ const CompanyList = ({ companiesData }) => {
         </div>
       );
     }
-
     return null;
   };
 
@@ -254,13 +278,9 @@ const CompanyList = ({ companiesData }) => {
           Placement Insights
         </h1>
 
-        {/* Add CompanyFilter component here */}
         <CompanyFilter onFilterChange={handleFilterChange} />
 
-        <Tabs 
-          defaultTab="upcoming" 
-          onTabChange={(tab) => setActiveTab(tab)}
-        >
+        <Tabs defaultTab="upcoming" onTabChange={(tab) => setActiveTab(tab)}>
           <TabList>
             <TabTrigger value="upcoming">Upcoming Companies</TabTrigger>
             <TabTrigger value="visited">Visited Companies</TabTrigger>
@@ -268,48 +288,65 @@ const CompanyList = ({ companiesData }) => {
 
           <TabContent value="upcoming">
             <div className="space-y-6">
-              {filteredCompanies.upcoming.length > 0 ? (
-                filteredCompanies.upcoming.map((company, index) => (
-                  <div key={index} className="relative">
-                    <CompanyCard company={company} type="upcoming" />
-                    <ActionButtons company={company} />
-                  </div>
-                ))
+              {paginateCompanies(filteredCompanies.upcoming).length > 0 ? (
+                paginateCompanies(filteredCompanies.upcoming).map(
+                  (company, index) => (
+                    <div key={index} className="relative">
+                      <CompanyCard company={company} type="upcoming" />
+                      <ActionButtons company={company} />
+                    </div>
+                  )
+                )
               ) : (
                 <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-6">
                   <p className="text-center text-blue-600">
-                    {companies.upcoming.length > 0 
-                      ? "No companies match your filter criteria" 
+                    {companies.upcoming.length > 0
+                      ? "No companies match your filter criteria"
                       : "No upcoming placement drives at the moment"}
                   </p>
                 </div>
               )}
             </div>
+            <PaginationCompany
+              currentPage={currentPage}
+              totalItems={filteredCompanies.upcoming.length}
+              itemsPerPage={itemsPerPage}
+              onPageChange={setCurrentPage}
+              onItemsPerPageChange={handleItemsPerPageChange}
+            />
           </TabContent>
 
           <TabContent value="visited">
             <div className="space-y-6">
-              {filteredCompanies.visited.length > 0 ? (
-                filteredCompanies.visited.map((company, index) => (
-                  <div key={index} className="relative">
-                    <CompanyCard company={company} type="visited" />
-                    <ActionButtons company={company} />
-                  </div>
-                ))
+              {paginateCompanies(filteredCompanies.visited).length > 0 ? (
+                paginateCompanies(filteredCompanies.visited).map(
+                  (company, index) => (
+                    <div key={index} className="relative">
+                      <CompanyCard company={company} type="visited" />
+                      <ActionButtons company={company} />
+                    </div>
+                  )
+                )
               ) : (
                 <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-6">
                   <p className="text-center text-green-600">
-                    {companies.visited.length > 0 
-                      ? "No companies match your filter criteria" 
+                    {companies.visited.length > 0
+                      ? "No companies match your filter criteria"
                       : "No companies visited this year"}
                   </p>
                 </div>
               )}
             </div>
+            <PaginationCompany
+              currentPage={currentPage}
+              totalItems={filteredCompanies.visited.length}
+              itemsPerPage={itemsPerPage}
+              onPageChange={setCurrentPage}
+              onItemsPerPageChange={handleItemsPerPageChange}
+            />
           </TabContent>
         </Tabs>
 
-        {/* Update Dialog */}
         <Dialog
           isOpen={isUpdateDialogOpen}
           onClose={() => setIsUpdateDialogOpen(false)}
@@ -322,7 +359,6 @@ const CompanyList = ({ companiesData }) => {
           />
         </Dialog>
 
-        {/* Delete Confirmation Dialog */}
         <Dialog
           isOpen={isDeleteDialogOpen}
           onClose={() => setIsDeleteDialogOpen(false)}

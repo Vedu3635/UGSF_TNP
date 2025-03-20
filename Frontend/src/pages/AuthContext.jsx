@@ -20,9 +20,9 @@ export const AuthProvider = ({ children }) => {
   // Logout function
   const logout = () => {
     localStorage.removeItem("token");
-    setIsAuthenticated(false);
+    setIsAuthenticated(false); // Immediately set to false
+    setLoading(false); // Ensure loading is false after logout
   };
-
   // Check token validity on mount and periodically
   useEffect(() => {
     const checkToken = () => {

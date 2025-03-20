@@ -23,61 +23,64 @@ exports.getCompanies = async (req, res) => {
 // Controller to handle adding company details
 exports.addCompany = async (req, res) => {
   const {
-    Company_Name,
-    Industry_Domain,
-    Website_URL,
-    Contact_Name,
-    Contact_Email,
-    Contact_Phone,
-    Job_Roles,
-    Positions,
-    Package_Min,
-    Package_Max,
-    Employment_Type,
-    Eligibility_Criteria,
-    Selection_Rounds,
-    Hiring_Date,
-    Mode_Hiring,
+    company_name,
+    industry_domain,
+    website_url,
+    contact_name,
+    contact_email,
+    contact_phone,
+    job_roles,
+    positions,
+    package_min,
+    package_max,
+    job_location,
+    employment_type,
+    eligibility_criteria,
+    selection_rounds,
+    hiring_date,
+    mode_hiring,
   } = req.body;
 
   // Validate input data
   if (
-    !Company_Name ||
-    !Industry_Domain ||
-    !Website_URL ||
-    !Contact_Name ||
-    !Contact_Email ||
-    !Contact_Phone ||
-    !Job_Roles ||
-    !Positions ||
-    !Package_Min ||
-    !Package_Max ||
-    !Employment_Type ||
-    !Eligibility_Criteria ||
-    !Selection_Rounds ||
-    !Hiring_Date ||
-    !Mode_Hiring
+    !company_name ||
+    !industry_domain ||
+    !website_url ||
+    !contact_name ||
+    !contact_email ||
+    !contact_phone ||
+    !job_roles ||
+    !positions ||
+    !package_min ||
+    !package_max ||
+    !job_location ||
+    !employment_type ||
+    !eligibility_criteria ||
+    !selection_rounds ||
+    !hiring_date ||
+    !mode_hiring
   ) {
     return res.status(400).json({ message: "All fields are required." });
   }
 
   try {
     await companyModel.addCompany({
-      Company_Name,
-      Industry_Domain,
-      Website_URL,
-      Contact_Name,
-      Contact_Email,
-      Contact_Phone,
-      Job_Roles,
-      Positions,
-      Package_Min,
-      Package_Max,
-      Employment_Type,
-      Eligibility_Criteria,
-      Selection_Rounds,
-      Hiring_Date,
-      Mode_Hiring,
+      company_name,
+      industry_domain,
+      website_url,
+      contact_name,
+      contact_email,
+      contact_phone,
+      job_roles,
+      positions,
+      package_min,
+      package_max,
+      job_location,
+      employment_type,
+      eligibility_criteria,
+      selection_rounds,
+      hiring_date,
+      mode_hiring,
     });
     res.status(201).json({ message: "Company details added successfully." });
   } catch (error) {
