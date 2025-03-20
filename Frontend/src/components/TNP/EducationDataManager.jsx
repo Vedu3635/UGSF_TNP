@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Upload, Download } from "lucide-react";
+import { FileUp, FileDown } from "lucide-react";
 import UploadData from "./UploadData";
 import DownloadData from "./DownloadData";
 const EducationDataManager = () => {
@@ -18,7 +18,7 @@ const EducationDataManager = () => {
               : "bg-white text-gray-700 border"
           }`}
         >
-          <Upload size={20} /> Upload Data
+          <FileUp size={20} /> Upload File
         </button>
         <button
           onClick={() => setActiveTab("download")}
@@ -28,7 +28,7 @@ const EducationDataManager = () => {
               : "bg-white text-gray-700 border"
           }`}
         >
-          <Download size={20} /> Download Data
+          <FileDown size={20} /> Download File
         </button>
       </div>
 

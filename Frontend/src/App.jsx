@@ -1,50 +1,60 @@
 import React from "react";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import "./index.css";
+import { AuthProvider } from "./pages/AuthContext"; // Adjust path
 import Login from "./pages/TNP/Login";
 import Dashboard from "./pages/TNP/Dashboard";
-import PrivateRoute from "./pages/PrivateRoute";
+import ProtectedRoute from "./pages/ProtectedRoute";
 import StudentList from "./components/TNP/StudentList";
-import AlumniManagement from "./components/AlumniPortal/AlumniManagement";
-import Navbar from "./components/Navbar";
 import AlumniDashboard from "./pages/AlumniPortal/AlumniDashboard";
+import PublicRoute from "./pages/PublicRoute";
+import RootPage from "./pages/RootPage"; // Adjust path to where RootPage.jsx is located
 
 const router = createBrowserRouter([
   {
-    path: "/",
-    element: (
-      <PrivateRoute>
-        <Dashboard />
-      </PrivateRoute>
-    ),
-  },
-  {
-    path: "/login",
-    element: <Login />,
-  },
-  {
-    path: "/view-students",
-    element: (
-      <PrivateRoute>
-        <StudentList />
-      </PrivateRoute>
-    ),
-  },
-  {
-    path: "/alumni",
-    element: (
-      <PrivateRoute>
-        <AlumniDashboard />
-      </PrivateRoute>
-    ),
+    element: <RootPage />, // Use RootPage as the layout
+    children: [
+      {
+        path: "/",
+        element: (
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/login",
+        element: (
+          <PublicRoute>
+            <Login />
+          </PublicRoute>
+        ),
+      },
+      {
+        path: "/view-students",
+        element: (
+          <ProtectedRoute>
+            <StudentList />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/alumni",
+        element: (
+          <ProtectedRoute>
+            <AlumniDashboard />
+          </ProtectedRoute>
+        ),
+      },
+    ],
   },
 ]);
 
 function App() {
   return (
-    <RouterProvider router={router}>
-      <Navbar />
-    </RouterProvider>
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
   );
 }
 

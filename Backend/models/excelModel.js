@@ -27,7 +27,7 @@ class ExcelModel {
           sqlQuery = `
             SELECT 
               s.first_name, s.middle_name, s.last_name, s.email, s.enrollment_id, s.enrollment_year, s.phone_no, s.program, s.semester,
-              p.company_name, p.position, p.placement_year, p.placement_date, p.package, p.status, p.placement_notes
+              p.company_name, p.position, p.placement_year, p.placement_date, p.package, p.placement_status, p.placement_notes
             FROM students s
             JOIN placements p ON s.student_id = p.student_id`;
           break;
@@ -76,10 +76,10 @@ class ExcelModel {
           sqlQuery = `
             SELECT 
               s.first_name, s.middle_name, s.last_name, s.email, s.enrollment_id, s.enrollment_year, s.phone_no, s.program, s.semester,
-              h.university_name, h.course_name, h.country, h.admission_year, h.higher_studies_status, h.notes
+              h.university_name, h.course_name, h.country, h.admission_year, h.higher_studies_status, h.higher_studies_notes
             FROM students s
             JOIN higher_studies h ON s.student_id = h.student_id
-            WHERE h.admission_year = ?`;
+            WHERE s.enrollment_year = ?`;
           break;
 
         case "placements":
@@ -89,7 +89,7 @@ class ExcelModel {
               p.company_name, p.position, p.placement_year, p.placement_date, p.package, p.placement_status, p.placement_notes
             FROM students s
             JOIN placements p ON s.student_id = p.student_id
-            WHERE p.placement_year = ?`;
+            WHERE s.enrollment_year = ?`;
           break;
 
         case "students":

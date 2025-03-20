@@ -438,7 +438,7 @@ const Charts = ({ allStudentsData, placementData, higherStudiesData }) => {
       setFilter: setFilter3,
     },
     {
-      title: "Student Placement",
+      title: "Student Carrer Choice",
       type: "pie",
       data: chartData4,
       options: pieChartOptions,
@@ -446,7 +446,7 @@ const Charts = ({ allStudentsData, placementData, higherStudiesData }) => {
       setFilter: setFilter4,
     },
     {
-      title: "Placement vs Higher Studies",
+      title: "Placement vs Higher Studies Yearyl",
       type: "line",
       data: chartData5,
       options: lineChartOptions,

@@ -8,7 +8,7 @@ exports.downloadExcel = async (req, res) => {
     // Get the table name and year from the query parameter
     const tableName = req.query.table;
     const year = req.query.year;
-    
+
     if (!tableName) {
       return res
         .status(400)
@@ -25,12 +25,12 @@ exports.downloadExcel = async (req, res) => {
 
     // Check if there are any results
     if (!results || results.length === 0) {
-      return res
-        .status(404)
-        .json({ 
-          success: false, 
-          message: `No data found for ${tableName}${year ? ` in year ${year}` : ''}` 
-        });
+      return res.status(404).json({
+        success: false,
+        message: `No data found for ${tableName}${
+          year ? ` in year ${year}` : ""
+        }`,
+      });
     }
 
     // Create a new Excel workbook and worksheet
@@ -57,16 +57,11 @@ exports.downloadExcel = async (req, res) => {
       "Content-Type",
       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     );
-    
+
     // Create a filename that includes the year if it was filtered
-    const filename = year 
-      ? `${tableName}_${year}.xlsx` 
-      : `${tableName}.xlsx`;
-      
-    res.setHeader(
-      "Content-Disposition",
-      `attachment; filename=${filename}`
-    );
+    const filename = year ? `${tableName}_${year}.xlsx` : `${tableName}.xlsx`;
+
+    res.setHeader("Content-Disposition", `attachment; filename=${filename}`);
 
     // Stream the Excel file to the response
     await workbook.xlsx.write(res);
@@ -76,7 +71,7 @@ exports.downloadExcel = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Error generating Excel file",
-      error: error.message
+      error: error.message,
     });
   }
 };

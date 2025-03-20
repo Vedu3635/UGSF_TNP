@@ -1,13 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  LayoutDashboard,
-  Upload,
-  Users,
-  Building2,
-  LogOut,
-  Menu,
-  X,
-} from "lucide-react";
+import { LayoutDashboard, Users, Building2, LogOut, Files } from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 
@@ -78,8 +70,8 @@ const LeftSlider2 = ({
       role: "all",
     },
     {
-      name: "Upload File",
-      icon: <Upload className="w-5 h-5" />,
+      name: "File Management",
+      icon: <Files className="w-5 h-5" />,
       section: "upload",
       onClick: () => handleButtonClick("upload"),
       role: "tnpfaculty",

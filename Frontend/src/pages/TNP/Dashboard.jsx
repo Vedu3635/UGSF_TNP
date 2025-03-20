@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Navbar from "../../components/Navbar";
+
 import LeftSlider2 from "../../components/TNP/LeftSlider2";
 import NumberBox from "../../components/TNP/NumberBox";
 import Charts from "../../components/TNP/Charts";
@@ -23,7 +23,7 @@ const Dashboard = () => {
   const [placementData, setPlacementData] = useState([]);
   const [higherStudiesData, setHigherStudiesData] = useState([]);
   const [allStudentsData, setAllStudentsData] = useState([]);
-  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true); // true: expanded, false: collapsed
@@ -37,10 +37,6 @@ const Dashboard = () => {
     setActiveSection(section);
     localStorage.setItem("activeSection", section);
     setIsMobileMenuOpen(false);
-  };
-
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
   const toggleSidebar = () => {
@@ -187,12 +183,6 @@ const Dashboard = () => {
 
   return (
     <div className="bg-gray-100 min-h-screen flex flex-col">
-      {/* Navbar */}
-      <Navbar
-        toggleMobileMenu={toggleMobileMenu}
-        isMobileMenuOpen={isMobileMenuOpen}
-      />
-
       <div className="flex flex-col md:flex-row min-h-[calc(100vh-64px)] relative">
         {/* Desktop Toggle Button */}
         <button

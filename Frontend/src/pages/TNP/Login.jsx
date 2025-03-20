@@ -1,15 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../AuthContext"; // Adjust the path as necessary
-import {
-  FaGoogle,
-  FaFacebookF,
-  FaApple,
-  FaEnvelope,
-  FaLock,
-  FaQuoteLeft,
-  FaUser,
-} from "react-icons/fa";
+import { FaLock, FaUser } from "react-icons/fa";
 
 // Import the images properly
 import charusatLogo from "/images/CHARUSAT_logo.png"; // Use absolute path from root

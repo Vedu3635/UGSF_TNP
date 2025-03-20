@@ -1,41 +1,53 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
-import { isTokenExpired } from "../utils/tokenUtils.js"; // Import the function
+import { isTokenExpired } from "../utils/tokenUtils.js"; // Ensure this is implemented
 
+// Create the context
 const AuthContext = createContext();
 
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
-  // Initial state: token exists and isn't expired
-  const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    const token = localStorage.getItem("token");
-    if ((token && !isTokenExpired(token)) == false) {
-      localStorage.removeItem("token");
-    }
-    return token && !isTokenExpired(token); // Check token and expiration
-  });
+  // Initialize isAuthenticated based on token validity
+  const [isAuthenticated, setIsAuthenticated] = useState(false); // Default to false
+  const [loading, setLoading] = useState(true); // Add loading state, default to true
 
+  // Login function
   const login = (token) => {
-    localStorage.setItem("token", token); // Store the token in local storage
-    setIsAuthenticated(true); // Update authentication state
+    localStorage.setItem("token", token);
+    setIsAuthenticated(true);
   };
 
+  // Logout function
   const logout = () => {
     localStorage.removeItem("token");
     setIsAuthenticated(false);
   };
 
+  // Check token validity on mount and periodically
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token || isTokenExpired(token)) {
-      setIsAuthenticated(false); // Token is invalid or expired
-    } else {
-      setIsAuthenticated(true); // Token is valid
-    }
-  }, []);
+    const checkToken = () => {
+      const token = localStorage.getItem("token");
+      if (!token || isTokenExpired(token)) {
+        localStorage.removeItem("token"); // Clean up expired token
+        setIsAuthenticated(false);
+      } else {
+        setIsAuthenticated(true); // Confirm token is still valid
+      }
+      setLoading(false); // Set loading to false once check is complete
+    };
+
+    // Run immediately on mount
+    checkToken();
+
+    // Set up periodic check
+    const intervalId = setInterval(checkToken, 60000); // Store interval ID
+
+    // Cleanup interval on unmount
+    return () => clearInterval(intervalId); // Use the stored interval ID
+  }, []); // Empty dependency array to run only on mount
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, login, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );

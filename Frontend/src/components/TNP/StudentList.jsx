@@ -390,9 +390,9 @@ const StudentList = ({
               </button>
             ))}
 
-            <div className="pt-2 mt-1 border-t">
+            {/* <div className="pt-2 mt-1 border-t">
               <DownloadButton2 />
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
@@ -452,9 +452,9 @@ const StudentList = ({
               </button>
             ))}
           </div>
-          <div className="absolute right-0">
+          {/* <div className="absolute right-0">
             <DownloadButton2 />
-          </div>
+          </div> */}
         </div>
 
         <StatusToggleButtons />

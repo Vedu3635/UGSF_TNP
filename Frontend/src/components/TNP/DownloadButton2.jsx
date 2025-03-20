@@ -9,6 +9,13 @@ const DownloadButton2 = () => {
     type: "",
     message: "",
   });
+  // aa rite fetch karj frontend ma =>
+  // .. let url = http://localhost:5000/api/download/excel?table=${tableType};
+  //   if (year) {
+  //     url += &year=${year};
+  //   }
+  //table parameter only: http://localhost:5000/api/download/excel?table=students
+  //table and year parameters: http://localhost:5000/api/download/excel?table=students&year=2022
   const handleDownload = async (type) => {
     const token = localStorage.getItem("token");
     try {
