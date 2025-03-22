@@ -4,7 +4,8 @@ import Navbar from "../components/Navbar";
 
 const RootPage = () => {
   const location = useLocation();
-  const hideNavbar = location.pathname === "/login"; // Add other paths if needed
+  const hideNavbar =
+    location.pathname === "/login" || location.pathname === "/forgot-password"; // Add other paths if needed
 
   return (
     <>

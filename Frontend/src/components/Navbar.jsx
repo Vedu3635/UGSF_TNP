@@ -1,15 +1,16 @@
 import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
-  HomeIcon,
-  CalendarIcon,
-  AcademicCapIcon,
-  DocumentMagnifyingGlassIcon,
-  UserCircleIcon,
-  UsersIcon,
-  XMarkIcon,
-  Bars3Icon,
-} from "@heroicons/react/24/outline";
+  Home,
+  Calendar,
+  Bird,
+  GraduationCap,
+  FileSearch,
+  User,
+  Users,
+  X,
+  Menu,
+} from "lucide-react";
 
 const Navbar = ({ userProfile }) => {
   const [open, setOpen] = useState(false);
@@ -23,27 +24,27 @@ const Navbar = ({ userProfile }) => {
     {
       name: "CareerMarg",
       path: "/",
-      icon: <HomeIcon className="w-5 h-5 mr-2" />,
+      icon: <Home className="w-5 h-5 mr-2" />,
     },
     {
       name: "EVENTS",
-      path: "/events",
-      icon: <CalendarIcon className="w-5 h-5 mr-2" />,
+      path: "http://172.16.11.55:3005/",
+      icon: <Bird className="w-5 h-5 mr-2" />,
     },
     {
-      name: "QUIZ",
-      path: "/quiz",
-      icon: <AcademicCapIcon className="w-5 h-5 mr-2" />,
+      name: "PlaceStar",
+      path: "http://172.16.11.55:5173/",
+      icon: <GraduationCap className="w-5 h-5 mr-2" />,
     },
     {
       name: "RESEARCH",
       path: "/research",
-      icon: <DocumentMagnifyingGlassIcon className="w-5 h-5 mr-2" />,
+      icon: <FileSearch className="w-5 h-5 mr-2" />,
     },
     {
       name: "Alumni",
       path: "/alumni",
-      icon: <UsersIcon className="w-5 h-5 mr-2" />,
+      icon: <User className="w-5 h-5 mr-2" />,
     },
   ];
 
@@ -56,8 +57,8 @@ const Navbar = ({ userProfile }) => {
             className="flex items-center cursor-pointer"
             onClick={() => navigate("/")}
           >
-            <UserCircleIcon className="w-8 h-8 text-blue-600 mr-2" />
-            <span className="text-xl font-bold text-blue-800">CareerVista</span>
+            <Users className="w-8 h-8 text-blue-600 mr-2" />
+            <span className="text-xl font-bold text-blue-800">CareerMarg</span>
           </div>
 
           {/* Desktop Navigation Menu */}
@@ -145,11 +146,7 @@ const Navbar = ({ userProfile }) => {
               onClick={() => setOpen(!open)}
               aria-label="Toggle menu"
             >
-              {open ? (
-                <XMarkIcon className="w-6 h-6" />
-              ) : (
-                <Bars3Icon className="w-6 h-6" />
-              )}
+              {open ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
           </div>
         </div>

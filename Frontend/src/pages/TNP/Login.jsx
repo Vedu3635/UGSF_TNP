@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../AuthContext"; // Adjust the path as necessary
 import { FaLock, FaUser } from "react-icons/fa";
 
@@ -76,7 +76,7 @@ const Login = () => {
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold text-gray-800">Welcome Back</h1>
             <p className="text-gray-500 mt-2">
-              Sign in to continue to CareerVista
+              Sign in to continue to CareerMarg
             </p>
           </div>
 
@@ -104,6 +104,7 @@ const Login = () => {
                   className="block w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50"
                   placeholder="username"
                   required
+                  disabled={loading} // Disable input during loading
                 />
               </div>
             </div>
@@ -116,12 +117,12 @@ const Login = () => {
                 >
                   Password
                 </label>
-                <a
-                  href="#"
+                <Link
+                  to="/forgot-password"
                   className="text-sm text-blue-600 hover:text-blue-800 font-medium"
                 >
                   Forgot Password?
-                </a>
+                </Link>
               </div>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -135,6 +136,7 @@ const Login = () => {
                   className="block w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50"
                   placeholder="6+ strong characters"
                   required
+                  disabled={loading} // Disable input during loading
                 />
               </div>
             </div>
@@ -167,12 +169,12 @@ const Login = () => {
                       r="10"
                       stroke="currentColor"
                       strokeWidth="4"
-                    ></circle>
+                    />
                     <path
                       className="opacity-75"
                       fill="currentColor"
                       d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    ></path>
+                    />
                   </svg>
                   Logging In...
                 </span>
@@ -235,7 +237,7 @@ const Login = () => {
           {/* Improved description container with better blur effect */}
           <div className="bg-white bg-opacity-10 rounded-lg p-6 max-w-md backdrop-blur-md shadow-lg border border-white/10">
             <p className="text-lg text-white leading-relaxed text-center drop-shadow">
-              "CareerVista helps you stay connected with student outcomes, track
+              "CareerMarg helps you stay connected with student outcomes, track
               placement trends, and prepare for upcoming graduations."
             </p>
           </div>
