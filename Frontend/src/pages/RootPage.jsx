@@ -1,11 +1,14 @@
 import React from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import Navbar from "../components/Navbar";
 
 const RootPage = () => {
+  const location = useLocation();
+  const hideNavbar = location.pathname === "/login"; // Add other paths if needed
+
   return (
     <>
-      <Navbar />
+      {!hideNavbar && <Navbar />}
       <div>
         <Outlet />
       </div>

@@ -243,7 +243,7 @@ const CompanyUpdateForm = ({
                     <input
                       type="date"
                       name="hiring_date"
-                      value={formData.hiring_date}
+                      value={formData.hiring_date || ""}
                       onChange={handleChange}
                       className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     />

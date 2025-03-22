@@ -113,9 +113,9 @@ const LeftSlider2 = ({
         {/* Logo or Brand Area */}
         <div className="p-4 border-b border-blue-800 flex items-center justify-center h-16">
           {isExpanded ? (
-            <span className="font-bold text-lg">TNP Portal</span>
+            <span className="font-bold text-lg">CareerMarg</span>
           ) : (
-            <span className="font-bold text-lg">TNP</span>
+            <span className="font-bold text-lg"></span>
           )}
         </div>
 

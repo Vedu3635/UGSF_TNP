@@ -21,7 +21,7 @@ const Navbar = ({ userProfile }) => {
   // Navigation items with icons
   const navItems = [
     {
-      name: "TNP",
+      name: "CareerMarg",
       path: "/",
       icon: <HomeIcon className="w-5 h-5 mr-2" />,
     },

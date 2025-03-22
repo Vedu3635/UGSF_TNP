@@ -1,24 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Pencil, Trash2 } from "lucide-react";
-import { jwtDecode } from "jwt-decode";
-import CompanyCard from "./CompanyCard";
-import CompanyUpdateForm from "./CompanyUpdateForm";
+import { format, parseISO, parse, isValid } from "date-fns";
 import CompanyFilter from "./CompanyFilter";
-import PaginationCompany from "./PaginationCompany";
+import CompanyUpdateForm from "./CompanyUpdateForm";
+import CompanyTabContent from "./CompanyTabContent";
+import CompanyDelete from "./CompanyDelete";
 import { Tabs, TabList, TabTrigger, TabContent } from "./CompanyTabs";
-
-const Dialog = ({ isOpen, onClose, children }) => {
-  if (!isOpen) return null;
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className="fixed inset-0 bg-black/50" onClick={onClose} />
-      <div className="relative z-50 bg-white rounded-3xl shadow-xl max-w-xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-        {children}
-      </div>
-    </div>
-  );
-};
 
 const CompanyList = ({ companiesData }) => {
   const [companies, setCompanies] = useState({
@@ -69,11 +55,13 @@ const CompanyList = ({ companiesData }) => {
   const divideCompaniesByDate = (data) => {
     const currentDate = new Date();
     const sortedData = data.sort(
-      (a, b) => new Date(b.hiring_date) - new Date(a.hiring_date)
+      (b, a) => new Date(b.hiring_date) - new Date(a.hiring_date)
     );
     return sortedData.reduce(
       (acc, company) => {
-        const hiringDate = new Date(company.hiring_date);
+        const hiringDate = company.hiring_date
+          ? parseISO(company.hiring_date)
+          : new Date();
         hiringDate >= currentDate
           ? acc.upcoming.push(company)
           : acc.visited.push(company);
@@ -81,6 +69,93 @@ const CompanyList = ({ companiesData }) => {
       },
       { upcoming: [], visited: [] }
     );
+  };
+
+  const handleUpdateClick = (company) => {
+    setSelectedCompany(company);
+    const safeCompany = Object.fromEntries(
+      Object.entries(company).map(([key, value]) => [
+        key,
+        value === null || value === undefined ? "" : value,
+      ])
+    );
+    const formattedDate = safeCompany.hiring_date
+      ? format(parseISO(safeCompany.hiring_date), "dd-MM-yyyy")
+      : "";
+    setFormData({
+      ...safeCompany,
+      hiring_date: formattedDate,
+    });
+    setIsUpdateDialogOpen(true);
+  };
+
+  const handleDeleteClick = (company) => {
+    setCompanyToDelete(company);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value ?? "",
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const token = localStorage.getItem("token");
+    try {
+      let apiFormData = { ...formData };
+      if (formData.hiring_date) {
+        let parsedDate;
+        const possibleFormats = [
+          "dd-MM-yyyy",
+          "yyyy-MM-dd",
+          "dd/MM/yyyy",
+          "yyyy/MM/dd",
+        ];
+
+        for (const formatString of possibleFormats) {
+          try {
+            parsedDate = parse(formData.hiring_date, formatString, new Date());
+            if (isValid(parsedDate)) break;
+          } catch (error) {
+            continue;
+          }
+        }
+
+        if (!isValid(parsedDate)) {
+          parsedDate = parseISO(formData.hiring_date);
+        }
+
+        if (!isValid(parsedDate)) {
+          console.error("Invalid date format:", formData.hiring_date);
+          return;
+        }
+
+        apiFormData.hiring_date = format(parsedDate, "yyyy-MM-dd");
+      }
+
+      const response = await fetch(
+        `http://localhost:5000/api/edit-company/${selectedCompany.company_id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(apiFormData),
+        }
+      );
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Failed to update company: ${errorText}`);
+      }
+      await fetchUpdatedCompanies();
+      setIsUpdateDialogOpen(false);
+    } catch (error) {
+      console.error("Error updating company:", error);
+    }
   };
 
   const fetchUpdatedCompanies = async () => {
@@ -100,17 +175,6 @@ const CompanyList = ({ companiesData }) => {
     } catch (error) {
       console.error("Error fetching companies:", error);
     }
-  };
-
-  const handleUpdateClick = (company) => {
-    setSelectedCompany(company);
-    setFormData({ ...company });
-    setIsUpdateDialogOpen(true);
-  };
-
-  const handleDeleteClick = (company) => {
-    setCompanyToDelete(company);
-    setIsDeleteDialogOpen(true);
   };
 
   const handleDeleteConfirm = async () => {
@@ -133,36 +197,6 @@ const CompanyList = ({ companiesData }) => {
       setCompanyToDelete(null);
     } catch (error) {
       console.error("Error deleting company:", error);
-    }
-  };
-
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const token = localStorage.getItem("token");
-    try {
-      const response = await fetch(
-        `http://localhost:5000/api/edit-company/${selectedCompany.company_id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(formData),
-        }
-      );
-      if (!response.ok) throw new Error("Failed to update company");
-      await fetchUpdatedCompanies();
-      setIsUpdateDialogOpen(false);
-    } catch (error) {
-      console.error("Error updating company:", error);
     }
   };
 
@@ -204,60 +238,19 @@ const CompanyList = ({ companiesData }) => {
     }
     if (filters.hiringDate) {
       const filterDate = new Date(filters.hiringDate);
-      const companyDate = new Date(company.hiring_date);
-      if (filterDate.getTime() !== companyDate.getTime()) {
+      const companyDate = parseISO(company.hiring_date);
+      if (
+        format(filterDate, "yyyy-MM-dd") !== format(companyDate, "yyyy-MM-dd")
+      ) {
         return false;
       }
     }
     return true;
   };
 
-  const paginateCompanies = (companiesList) => {
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    return companiesList.slice(startIndex, endIndex);
-  };
-
   const handleItemsPerPageChange = (newItemsPerPage) => {
     setItemsPerPage(newItemsPerPage);
     setCurrentPage(1);
-  };
-
-  const ActionButtons = ({ company }) => {
-    let userRole = "";
-    const token = localStorage.getItem("token");
-
-    if (token) {
-      try {
-        const decodedToken = jwtDecode(token);
-        userRole = decodedToken.user.role || "";
-      } catch (error) {
-        console.error("Invalid token:", error);
-        userRole = null;
-      }
-    }
-
-    if (userRole === "tnpfaculty") {
-      return (
-        <div className="absolute top-4 right-4 flex items-center gap-2">
-          <button
-            onClick={() => handleUpdateClick(company)}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/80 backdrop-blur-sm hover:bg-white border border-gray-200 text-gray-700 text-sm font-medium transition-all duration-300 hover:shadow-md"
-          >
-            <Pencil className="w-4 h-4" />
-            Update
-          </button>
-          <button
-            onClick={() => handleDeleteClick(company)}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-50/80 backdrop-blur-sm hover:bg-red-50 border border-red-200 text-red-600 text-sm font-medium transition-all duration-300 hover:shadow-md"
-          >
-            <Trash2 className="w-4 h-4" />
-            Delete
-          </button>
-        </div>
-      );
-    }
-    return null;
   };
 
   if (isLoading) {
@@ -287,109 +280,59 @@ const CompanyList = ({ companiesData }) => {
           </TabList>
 
           <TabContent value="upcoming">
-            <div className="space-y-6">
-              {paginateCompanies(filteredCompanies.upcoming).length > 0 ? (
-                paginateCompanies(filteredCompanies.upcoming).map(
-                  (company, index) => (
-                    <div key={index} className="relative">
-                      <CompanyCard company={company} type="upcoming" />
-                      <ActionButtons company={company} />
-                    </div>
-                  )
-                )
-              ) : (
-                <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-6">
-                  <p className="text-center text-blue-600">
-                    {companies.upcoming.length > 0
-                      ? "No companies match your filter criteria"
-                      : "No upcoming placement drives at the moment"}
-                  </p>
-                </div>
-              )}
-            </div>
-            <PaginationCompany
-              currentPage={currentPage}
+            <CompanyTabContent
+              companies={filteredCompanies.upcoming}
+              type="upcoming"
+              onFilterEmptyMessage={(length) =>
+                length > 0
+                  ? "No companies match your filter criteria"
+                  : "No upcoming placement drives at the moment"
+              }
               totalItems={filteredCompanies.upcoming.length}
+              currentPage={currentPage}
               itemsPerPage={itemsPerPage}
               onPageChange={setCurrentPage}
               onItemsPerPageChange={handleItemsPerPageChange}
+              onUpdateClick={handleUpdateClick}
+              onDeleteClick={handleDeleteClick}
             />
           </TabContent>
 
           <TabContent value="visited">
-            <div className="space-y-6">
-              {paginateCompanies(filteredCompanies.visited).length > 0 ? (
-                paginateCompanies(filteredCompanies.visited).map(
-                  (company, index) => (
-                    <div key={index} className="relative">
-                      <CompanyCard company={company} type="visited" />
-                      <ActionButtons company={company} />
-                    </div>
-                  )
-                )
-              ) : (
-                <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-6">
-                  <p className="text-center text-green-600">
-                    {companies.visited.length > 0
-                      ? "No companies match your filter criteria"
-                      : "No companies visited this year"}
-                  </p>
-                </div>
-              )}
-            </div>
-            <PaginationCompany
-              currentPage={currentPage}
+            <CompanyTabContent
+              companies={filteredCompanies.visited}
+              type="visited"
+              onFilterEmptyMessage={(length) =>
+                length > 0
+                  ? "No companies match your filter criteria"
+                  : "No companies visited this year"
+              }
               totalItems={filteredCompanies.visited.length}
+              currentPage={currentPage}
               itemsPerPage={itemsPerPage}
               onPageChange={setCurrentPage}
               onItemsPerPageChange={handleItemsPerPageChange}
+              onUpdateClick={handleUpdateClick}
+              onDeleteClick={handleDeleteClick}
             />
           </TabContent>
         </Tabs>
 
-        <Dialog
-          isOpen={isUpdateDialogOpen}
-          onClose={() => setIsUpdateDialogOpen(false)}
-        >
+        {isUpdateDialogOpen && (
           <CompanyUpdateForm
             formData={formData}
             handleChange={handleChange}
             handleSubmit={handleSubmit}
             onClose={() => setIsUpdateDialogOpen(false)}
           />
-        </Dialog>
+        )}
 
-        <Dialog
+        <CompanyDelete
           isOpen={isDeleteDialogOpen}
           onClose={() => setIsDeleteDialogOpen(false)}
-        >
-          <div className="p-6">
-            <h2 className="text-2xl font-bold text-red-600 mb-4">
-              Confirm Deletion
-            </h2>
-            <p className="text-gray-600 mb-6">
-              Are you sure you want to delete{" "}
-              <span className="font-semibold">
-                {companyToDelete?.company_name}
-              </span>
-              ? This action cannot be undone.
-            </p>
-            <div className="flex justify-end space-x-2">
-              <button
-                onClick={() => setIsDeleteDialogOpen(false)}
-                className="px-4 py-2 rounded-xl border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors duration-300"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleDeleteConfirm}
-                className="px-4 py-2 rounded-xl bg-red-600 text-white hover:bg-red-700 transition-colors duration-300"
-              >
-                Delete Company
-              </button>
-            </div>
-          </div>
-        </Dialog>
+          companyToDelete={companyToDelete}
+          onDeleteConfirm={handleDeleteConfirm}
+        />
       </div>
     </div>
   );

@@ -187,9 +187,11 @@ const Dashboard = () => {
             {/* Desktop Toggle Button */}
             <button
               className={`fixed top-20 z-50 hidden md:flex bg-white text-black p-2 rounded-md shadow-lg hover:bg-blue-800 transition-all duration-300 ease-in-out
-  ${isSidebarExpanded ? "left-48" : "left-3 "}
+  ${isSidebarExpanded ? "left-52" : "left-3 "}
 `}
               onClick={toggleSidebar}
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
               aria-label={
                 isSidebarExpanded ? "Collapse sidebar" : "Expand sidebar"
               }
