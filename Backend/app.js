@@ -9,6 +9,7 @@ const companyRoutes = require("./routes/TNP/companyRoutes");
 const editCompanyRoutes = require("./routes/TNP/editCompanyRoutes");
 const deleteCompnayRoutes = require("./routes/TNP/deleteCompany");
 const deleteStudentRoutes = require("./routes/TNP/deleteStudent");
+const companyListDownloadRoutes = require('./routes/TNP/companyListDownload');
 const dotenv = require("dotenv");
 
 dotenv.config();
@@ -35,6 +36,7 @@ app.use("/api", companyRoutes);
 app.use("/api/edit-company", editCompanyRoutes);
 app.use("/api", deleteCompnayRoutes);
 app.use("/api", deleteStudentRoutes);
+app.use('/api/download', companyListDownloadRoutes);
 
 // Server
 const PORT = process.env.PORT || 5000;
