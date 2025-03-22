@@ -1,11 +1,12 @@
 import React, { useState } from "react";
+import axios from "axios";
 import { Filter } from "lucide-react";
 
 const DownloadData = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [filters, setFilters] = useState({
     dataType: "students", // Default table name
-    year: "", // Optional year filter
+    year: "", // Optional year filter for students
   });
   const [isLoading, setIsLoading] = useState(false);
 
@@ -17,53 +18,92 @@ const DownloadData = () => {
     }));
   };
 
-  const handleDownload = async () => {
+  // Common download utility function
+  const triggerDownload = (blob, filename) => {
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  };
+
+  // Axios instance configuration
+  const apiClient = axios.create({
+    baseURL: "http://localhost:5000/api",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+    responseType: "blob", // Important for downloading files
+  });
+
+  const handleStudentDownload = async () => {
     setIsLoading(true);
-    const token = localStorage.getItem("token");
     try {
-      // Construct query parameters based on available filters
-      const queryParams = new URLSearchParams({
+      const params = {
         table: filters.dataType,
-        ...(filters.year && { year: filters.year }), // Only include year if it exists
-      }).toString();
+        ...(filters.year && { year: filters.year }),
+      };
 
-      const response = await fetch(
-        `http://localhost:5000/api/download/excel?${queryParams}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-            // Add any necessary authorization headers here if needed
-          },
-        }
-      );
+      const response = await apiClient.get("/download/excel", { params });
 
-      if (!response.ok) {
-        throw new Error("Download failed");
-      }
-
-      // Get filename from headers or generate default
       const filename =
-        response.headers.get("Content-Disposition")?.split("filename=")[1] ||
+        response.headers["content-disposition"]?.split("filename=")[1] ||
         `${filters.dataType}-${filters.year || "all"}.xlsx`;
 
-      // Convert response to blob and trigger download
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = filename;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
+      triggerDownload(response.data, filename);
     } catch (error) {
-      console.error("Error downloading file:", error);
-      alert("Failed to download data. Please try again.");
+      console.error("Error downloading student data:", error);
+      alert("Failed to download student data. Please try again.");
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleCompanyDownload = async () => {
+    setIsLoading(true);
+    try {
+      const companyType =
+        filters.dataType === "upcoming_companies" ? "upcoming" : "visited";
+      const response = await apiClient.get("/download/companies", {
+        params: { type: companyType },
+      });
+
+      const filename =
+        response.headers["content-disposition"]?.split("filename=")[1] ||
+        `${filters.dataType}.xlsx`;
+
+      triggerDownload(response.data, filename);
+    } catch (error) {
+      console.error("Error downloading company data:", error);
+      alert("Failed to download company data. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDownload = () => {
+    if (
+      ["students", "placements", "higher_studies"].includes(filters.dataType)
+    ) {
+      handleStudentDownload();
+    } else if (
+      ["upcoming_companies", "visited_companies"].includes(filters.dataType)
+    ) {
+      handleCompanyDownload();
+    }
+  };
+
+  const getButtonText = () => {
+    if (
+      ["students", "placements", "higher_studies"].includes(filters.dataType)
+    ) {
+      return isLoading ? "Downloading..." : "Download Students Data";
+    }
+    return isLoading ? "Downloading..." : "Download Companies Data";
   };
 
   return (
@@ -72,7 +112,9 @@ const DownloadData = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <div>
-          <label className="block text-sm font-medium mb-1">Data Type</label>
+          <label className="block text-sm font-medium mb-1">
+            Students Data
+          </label>
           <select
             name="dataType"
             value={filters.dataType}
@@ -84,6 +126,20 @@ const DownloadData = () => {
             <option value="higher_studies">Higher Studies Details</option>
           </select>
         </div>
+        <div>
+          <label className="block text-sm font-medium mb-1">
+            Companies Data
+          </label>
+          <select
+            name="dataType"
+            value={filters.dataType}
+            onChange={handleFilterChange}
+            className="w-full border px-3 py-2 rounded"
+          >
+            <option value="upcoming_companies">Upcoming Companies</option>
+            <option value="visited_companies">Visited Companies</option>
+          </select>
+        </div>
       </div>
 
       <button
@@ -93,33 +149,34 @@ const DownloadData = () => {
         <Filter size={18} /> {showFilters ? "Hide Filters" : "Show Filters"}
       </button>
 
-      {showFilters && (
-        <div className="border rounded-lg p-4 mb-6 bg-gray-50">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <select
-              name="year"
-              value={filters.year}
-              onChange={handleFilterChange}
-              className="border px-3 py-2 rounded"
-            >
-              <option value="">Select Graduation Year</option>
-              <option value="2021">2021</option>
-              <option value="2022">2022</option>
-              <option value="2023">2023</option>
-              <option value="2024">2024</option>
-              {/* Add more years as needed */}
-            </select>
-            {/* You can keep other filters in the UI if you plan to expand the API later */}
+      {showFilters &&
+        ["students", "placements", "higher_studies"].includes(
+          filters.dataType
+        ) && (
+          <div className="border rounded-lg p-4 mb-6 bg-gray-50">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <select
+                name="year"
+                value={filters.year}
+                onChange={handleFilterChange}
+                className="border px-3 py-2 rounded"
+              >
+                <option value="">Select Enrollment Year</option>
+                <option value="2021">2021</option>
+                <option value="2022">2022</option>
+                <option value="2023">2023</option>
+                <option value="2024">2024</option>
+              </select>
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
       <button
         className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 w-full disabled:bg-blue-300"
         onClick={handleDownload}
         disabled={isLoading}
       >
-        {isLoading ? "Downloading..." : "Download Students Data"}
+        {getButtonText()}
       </button>
     </div>
   );
