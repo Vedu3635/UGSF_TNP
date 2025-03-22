@@ -9,6 +9,7 @@ import AlumniDashboard from "./pages/AlumniPortal/AlumniDashboard";
 import PublicRoute from "./pages/PublicRoute";
 import RootPage from "./pages/RootPage"; // Adjust path to where RootPage.jsx is located
 import NotFound from "./pages/NotFound";
+import PasswordReset from "./components/TNP/PasswordReset";
 // import StudentList from "./components/TNP/student/StudentList";
 const router = createBrowserRouter([
   {
@@ -27,6 +28,14 @@ const router = createBrowserRouter([
         element: (
           <PublicRoute>
             <Login />
+          </PublicRoute>
+        ),
+      },
+      {
+        path: "/forgot-password",
+        element: (
+          <PublicRoute>
+            <PasswordReset />
           </PublicRoute>
         ),
       },

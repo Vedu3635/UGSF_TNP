@@ -9,7 +9,7 @@ const companyRoutes = require("./routes/TNP/companyRoutes");
 const editCompanyRoutes = require("./routes/TNP/editCompanyRoutes");
 const deleteCompnayRoutes = require("./routes/TNP/deleteCompany");
 const deleteStudentRoutes = require("./routes/TNP/deleteStudent");
-const companyListDownloadRoutes = require('./routes/TNP/companyListDownload');
+const companyListDownloadRoutes = require("./routes/TNP/companyListDownload");
 const dotenv = require("dotenv");
 
 dotenv.config();
@@ -22,7 +22,11 @@ app.use(express.json());
 // Use CORS and allow requests from 'http://localhost:5173'
 app.use(
   cors({
-    origin: ["http://localhost:5000", "http://localhost:5173"],
+    origin: [
+      "http://localhost:5000",
+      "http://localhost:5173",
+      "http://localhost:4173",
+    ],
   })
 );
 
@@ -36,7 +40,7 @@ app.use("/api", companyRoutes);
 app.use("/api/edit-company", editCompanyRoutes);
 app.use("/api", deleteCompnayRoutes);
 app.use("/api", deleteStudentRoutes);
-app.use('/api/download', companyListDownloadRoutes);
+app.use("/api/download", companyListDownloadRoutes);
 
 // Server
 const PORT = process.env.PORT || 5000;
