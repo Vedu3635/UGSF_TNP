@@ -9,12 +9,13 @@ const companyRoutes = require("./routes/TNP/companyRoutes");
 const editCompanyRoutes = require("./routes/TNP/editCompanyRoutes");
 const deleteCompnayRoutes = require("./routes/TNP/deleteCompany");
 const deleteStudentRoutes = require("./routes/TNP/deleteStudent");
-const companyListDownloadRoutes = require("./routes/TNP/companyListDownload");
+const companyListDownloadRoutes = require('./routes/TNP/companyListDownload');
+const resetPasswordRoutes = require('./routes/TNP/resetPassword');
 const dotenv = require("dotenv");
 
 dotenv.config();
 
-const app = express();
+const app = express();          
 
 // Middleware
 app.use(express.json());
@@ -40,7 +41,8 @@ app.use("/api", companyRoutes);
 app.use("/api/edit-company", editCompanyRoutes);
 app.use("/api", deleteCompnayRoutes);
 app.use("/api", deleteStudentRoutes);
-app.use("/api/download", companyListDownloadRoutes);
+app.use('/api/download', companyListDownloadRoutes);
+app.use('/api/auth', resetPasswordRoutes);
 
 // Server
 const PORT = process.env.PORT || 5000;
