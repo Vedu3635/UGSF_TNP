@@ -97,11 +97,17 @@ const UpdateForm = ({ item, type, onStudentUpdate, onClose }) => {
 
     // Determine the API endpoint based on the type of data
     if (type === "placement") {
-      endpoint = `http://localhost:5000/api/edit-student/updatePlacement/${item.student_id}`; // API for placement
+      endpoint = `${
+        import.meta.env.VITE_API_URL
+      }/edit-student/updatePlacement/${item.student_id}`; // API for placement
     } else if (type === "higherStudies") {
-      endpoint = `http://localhost:5000/api/edit-student/updateHigherStudies/${item.student_id}`; // API for higher studies
+      endpoint = `${
+        import.meta.env.VITE_API_URL
+      }/edit-student/updateHigherStudies/${item.student_id}`; // API for higher studies
     } else {
-      endpoint = `http://localhost:5000/api/edit-student/updateStudent/${item.student_id}`; // API for all students
+      endpoint = `${import.meta.env.VITE_API_URL}/edit-student/updateStudent/${
+        item.student_id
+      }`; // API for all students
     }
 
     try {

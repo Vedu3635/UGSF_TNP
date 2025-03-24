@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../AuthContext"; // Adjust the path as necessary
-import { FaLock, FaUser } from "react-icons/fa";
+import { LockKeyhole, UserRound } from "lucide-react";
 
 // Import the images properly
 import charusatLogo from "/images/CHARUSAT_logo.png"; // Use absolute path from root
@@ -21,13 +21,16 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:5000/auth/login", {
-        method: "POST",
-        body: JSON.stringify({ username, password }),
-        headers: {
-          "Content-type": "application/json",
-        },
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/auth/login`,
+        {
+          method: "POST",
+          body: JSON.stringify({ username, password }),
+          headers: {
+            "Content-type": "application/json",
+          },
+        }
+      );
 
       const result = await response.json();
 
@@ -65,7 +68,7 @@ const Login = () => {
           <div className="mb-10 flex justify-center">
             <div className="bg-white p-5 rounded-xl shadow-lg flex items-center justify-center w-full h-28 border border-gray-100">
               <img
-                src={charusatLogo}
+                src="/images/CHARUSAT_logo.png"
                 alt="CHARUSAT Logo"
                 className="max-h-full max-w-full object-contain"
               />
@@ -94,7 +97,7 @@ const Login = () => {
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <FaUser className="text-blue-500" size="16" />
+                  <UserRound className="text-blue-500" size="16" />
                 </div>
                 <input
                   type="text"
@@ -126,7 +129,7 @@ const Login = () => {
               </div>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <FaLock className="text-blue-500" size="16" />
+                  <LockKeyhole className="text-blue-500" size="16" />
                 </div>
                 <input
                   type="password"
@@ -134,7 +137,7 @@ const Login = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="block w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50"
-                  placeholder="6+ strong characters"
+                  placeholder="password"
                   required
                   disabled={loading} // Disable input during loading
                 />
@@ -191,7 +194,7 @@ const Login = () => {
         {/* School Entrance Photo Background */}
         <div className="absolute inset-0 z-0">
           <img
-            src={depstarEntrance}
+            src="/images/depstar_entrance.jpeg"
             alt="DEPSTAR Institute Entrance"
             className="w-full h-full object-cover"
           />
@@ -215,7 +218,7 @@ const Login = () => {
             <div className="absolute inset-0 rounded-full bg-blue-400 opacity-20 blur-md"></div>
             <div className="absolute -inset-1 rounded-full bg-blue-100 opacity-10 blur-lg animate-pulse"></div>
             <img
-              src={depstarLogo}
+              src="/images/depstar_logo.png"
               alt="DEPSTAR Logo"
               className="w-36 h-36 rounded-full object-contain"
             />
@@ -237,8 +240,8 @@ const Login = () => {
           {/* Improved description container with better blur effect */}
           <div className="bg-white bg-opacity-10 rounded-lg p-6 max-w-md backdrop-blur-md shadow-lg border border-white/10">
             <p className="text-lg text-white leading-relaxed text-center drop-shadow">
-              "CareerMarg helps you stay connected with student outcomes, track
-              placement trends, and prepare for upcoming graduations."
+              "From placement insights to graduation readiness—CareerMarg puts
+              student outcomes at your fingertips."
             </p>
           </div>
         </div>

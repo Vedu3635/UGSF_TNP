@@ -22,7 +22,6 @@ const updateStudentDetails = async (req, res) => {
       "SELECT student_id FROM students WHERE student_id = ?",
       [student_id]
     );
-    console.log(data);
 
     const sql = `
       UPDATE students 
@@ -125,7 +124,6 @@ const updatePlacementDetails = async (req, res) => {
     ];
 
     const studentResult = await pool.query(studentSql, studentValues);
-    console.log("Student update result:", studentResult);
 
     // Update placement details
     const placementSql = `

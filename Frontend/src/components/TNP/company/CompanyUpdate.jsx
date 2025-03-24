@@ -47,7 +47,9 @@ const CompanyUpdate = ({
       }
 
       const response = await fetch(
-        `http://localhost:5000/api/edit-company/${selectedCompany.company_id}`,
+        `${import.meta.env.VITE_API_URL}/edit-company/${
+          selectedCompany.company_id
+        }`,
         {
           method: "PUT",
           headers: {

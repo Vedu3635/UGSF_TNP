@@ -23,7 +23,7 @@ const StudentCard = ({ item, type, onStudentUpdate, onDelete }) => {
     const token = localStorage.getItem("token");
     try {
       const response = await fetch(
-        `http://localhost:5000/api/deleteStudent/${item.student_id}`,
+        `${import.meta.env.VITE_API_URL}/deleteStudent/${item.student_id}`,
         {
           method: "DELETE",
           headers: {

@@ -1,6 +1,11 @@
 import React from "react";
-import { PiStudentFill, PiBuildingOfficeFill } from "react-icons/pi";
-import { FaUserTie, FaMoneyBillWave } from "react-icons/fa";
+
+import {
+  Building2,
+  BriefcaseBusiness,
+  Banknote,
+  GraduationCap,
+} from "lucide-react";
 
 const NumberBox = ({
   studentsCount,
@@ -29,25 +34,25 @@ const NumberBox = ({
 
   const items = [
     {
-      icon: PiStudentFill,
+      icon: GraduationCap,
       title: "Students",
       count: studentsCount,
       color: "blue",
     },
     {
-      icon: FaMoneyBillWave,
+      icon: Banknote,
       title: "Average Salary",
       count: `₹${averagePackage.toLocaleString()} LPA`,
       color: "green",
     },
     {
-      icon: PiBuildingOfficeFill,
+      icon: Building2,
       title: "Companies",
       count: companiesCount,
       color: "purple",
     },
     {
-      icon: FaUserTie,
+      icon: BriefcaseBusiness,
       title: "Placed Students",
       count: placedStudentsCount,
       color: "pink",

@@ -21,7 +21,7 @@ const UploadData = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.post(
-        "http://localhost:5000/api/file/import-excel",
+        `${import.meta.env.VITE_API_URL}/file/import-excel`,
         formData,
         {
           headers: {

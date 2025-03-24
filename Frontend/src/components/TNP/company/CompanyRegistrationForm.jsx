@@ -147,14 +147,17 @@ const CompanyRegistrationForm = () => {
     };
 
     try {
-      const response = await fetch("http://localhost:5000/api/addcompanies", {
-        method: "POST",
-        body: JSON.stringify(mappedData),
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/addcompanies`,
+        {
+          method: "POST",
+          body: JSON.stringify(mappedData),
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (response.ok) {
         // After successful registration
@@ -162,7 +165,7 @@ const CompanyRegistrationForm = () => {
 
         // Fetch updated company list to ensure data is fresh
         const companiesResponse = await fetch(
-          "http://localhost:5000/api/companies",
+          `${import.meta.env.VITE_API_URL}/companies`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

@@ -1,15 +1,23 @@
-import React, { useState, useEffect } from "react";
-
+import React, { useState, useEffect, lazy, Suspense } from "react";
 import LeftSlider2 from "../../components/TNP/LeftSlider2";
 import LoadingPage from "../LoadingPage";
-import NumberBox from "../../components/TNP/NumberBox";
-import Charts from "../../components/TNP/Charts";
-import CompanyList from "../../components/TNP/company/CompanyList";
-import StudentList from "../../components/TNP/student/StudentList";
-import EducationDataManager from "../../components/TNP/file/EducationDataManager";
-import CompanyRegistrationForm from "../../components/TNP/company/CompanyRegistrationForm";
 import { X, Menu, ChevronRightIcon, ChevronLeftIcon } from "lucide-react";
-// import DataUpload from "../../components/TNP/DataUpload";
+
+// Lazy-load components that depend on activeSection
+const NumberBox = lazy(() => import("../../components/TNP/NumberBox"));
+const Charts = lazy(() => import("../../components/TNP/Charts"));
+const CompanyList = lazy(() =>
+  import("../../components/TNP/company/CompanyList")
+);
+const StudentList = lazy(() =>
+  import("../../components/TNP/student/StudentList")
+);
+const EducationDataManager = lazy(() =>
+  import("../../components/TNP/file/EducationDataManager")
+);
+const CompanyRegistrationForm = lazy(() =>
+  import("../../components/TNP/company/CompanyRegistrationForm")
+);
 
 const Dashboard = () => {
   const [activeSection, setActiveSection] = useState(
@@ -19,15 +27,10 @@ const Dashboard = () => {
   const [placementData, setPlacementData] = useState([]);
   const [higherStudiesData, setHigherStudiesData] = useState([]);
   const [allStudentsData, setAllStudentsData] = useState([]);
-
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [isSidebarExpanded, setIsSidebarExpanded] = useState(true); // true: expanded, false: collapsed
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
   const [isHovering, setIsHovering] = useState(false);
-
-  const handleUploadClick = () => {
-    setIsUploadModalOpen(true);
-  };
 
   const handleSetActiveSection = (section) => {
     setActiveSection(section);
@@ -40,27 +43,26 @@ const Dashboard = () => {
   };
 
   const handleMouseEnter = () => {
-    if (!isSidebarExpanded) {
-      setIsHovering(true);
-    }
+    if (!isSidebarExpanded) setIsHovering(true);
   };
 
   const handleMouseLeave = () => {
-    if (!isSidebarExpanded) {
-      setIsHovering(false);
-    }
+    if (!isSidebarExpanded) setIsHovering(false);
   };
 
   const fetchCompaniesData = async () => {
     const token = localStorage.getItem("token");
     try {
-      const response = await fetch("http://localhost:5000/api/companies", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/companies`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       if (response.ok) {
         const data = await response.json();
         setCompaniesData(data);
@@ -75,26 +77,22 @@ const Dashboard = () => {
   const fetchStudentData = async () => {
     setIsLoading(true);
     const token = localStorage.getItem("token");
-
     try {
       const [placementResponse, higherStudiesResponse, allStudentsResponse] =
         await Promise.all([
-          fetch("http://localhost:5000/api/students/job-placement", {
-            method: "GET",
+          fetch(`${import.meta.env.VITE_API_URL}/students/job-placement`, {
             headers: {
               "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,
             },
           }),
-          fetch("http://localhost:5000/api/students/higher-studies", {
-            method: "GET",
+          fetch(`${import.meta.env.VITE_API_URL}/students/higher-studies`, {
             headers: {
               "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,
             },
           }),
-          fetch("http://localhost:5000/api/students/all", {
-            method: "GET",
+          fetch(`${import.meta.env.VITE_API_URL}/students/all`, {
             headers: {
               "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,
@@ -130,65 +128,48 @@ const Dashboard = () => {
       await Promise.all([fetchCompaniesData(), fetchStudentData()]);
       setIsLoading(false);
     };
-
     fetchAllData();
 
     const handleResize = () => {
-      if (window.innerWidth >= 768) {
-        setIsMobileMenuOpen(false);
-      }
+      if (window.innerWidth >= 768) setIsMobileMenuOpen(false);
     };
-
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const handleStudentUpdate = () => {
-    fetchStudentData();
-  };
+  const handleStudentUpdate = () => fetchStudentData();
+  const onDeleteStudent = () => fetchStudentData();
 
-  const onDeleteStudent = () => {
-    fetchStudentData();
-  };
-
-  const calculateAveragePackage = (data) => {
-    if (!data || data.length === 0) return 0;
-
-    const filteredData = data.filter(
-      (student) => student && student.package && student.package > 0
-    );
-    const totalPackage = filteredData.reduce(
-      (sum, student) => sum + student.package,
-      0
-    );
-    return filteredData.length > 0
-      ? Math.round(totalPackage / filteredData.length / 100000)
+  const calculateAveragePackage = (data) =>
+    data?.length
+      ? Math.round(
+          data
+            .filter((student) => student?.package > 0)
+            .reduce((sum, student) => sum + student.package, 0) /
+            data.filter((student) => student?.package > 0).length /
+            100000
+        ) || 0
       : 0;
-  };
 
   const averagePackage = calculateAveragePackage(placementData);
 
-  const getPlacedStudentsCount = (data) => {
-    if (!data) return 0;
-    return data.filter(
-      (student) => student && student.package > 0 && student.company_name
-    ).length;
-  };
+  const getPlacedStudentsCount = (data) =>
+    data?.filter((student) => student?.package > 0 && student.company_name)
+      .length || 0;
 
   const placedStudentsCount = getPlacedStudentsCount(placementData);
 
   return (
     <>
       {isLoading ? (
-        <LoadingPage /> // Replace inline spinner with Loading component
+        <LoadingPage /> // Show LoadingPage while fetching data
       ) : (
         <div className="bg-gray-100 min-h-screen flex flex-col">
           <div className="flex flex-col md:flex-row min-h-[calc(100vh-64px)] relative">
             {/* Desktop Toggle Button */}
             <button
               className={`fixed top-20 z-50 hidden md:flex bg-white text-black p-2 rounded-md shadow-lg hover:bg-blue-800 transition-all duration-300 ease-in-out
-  ${isSidebarExpanded ? "left-52" : "left-3 "}
-`}
+                ${isSidebarExpanded ? "left-52" : "left-3"}`}
               onClick={toggleSidebar}
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
@@ -215,10 +196,10 @@ const Dashboard = () => {
             {/* Sidebar */}
             <aside
               className={`fixed top-16 left-0 bottom-0 z-30 transition-all duration-300 ease-in-out 
-    ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"} 
-    md:translate-x-0 md:z-auto flex-shrink-0
-    ${isSidebarExpanded || isHovering ? "w-64" : "w-16"} 
-    bg-white border-r border-gray-200 shadow-lg md:shadow-none`}
+                ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"} 
+                md:translate-x-0 md:z-auto flex-shrink-0
+                ${isSidebarExpanded || isHovering ? "w-64" : "w-16"} 
+                bg-white border-r border-gray-200 shadow-lg md:shadow-none`}
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
             >
@@ -227,20 +208,16 @@ const Dashboard = () => {
                 setIsExpanded={setIsSidebarExpanded}
                 setActiveSection={handleSetActiveSection}
                 activeSection={activeSection}
-                onUploadClick={handleUploadClick}
+                onUploadClick={() => {}} // Placeholder, update if needed
               />
             </aside>
 
             {/* Main Content */}
             <main
               className={`flex-1 p-2 sm:p-4 lg:p-6 bg-[#bed5e7] overflow-auto transition-all duration-300 pt-16 md:pt-4
-    ${isSidebarExpanded || isHovering ? "md:ml-64" : "md:ml-16"} `}
+                ${isSidebarExpanded || isHovering ? "md:ml-64" : "md:ml-16"}`}
             >
-              {isLoading ? (
-                <div className="flex justify-center items-center h-64">
-                  <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-                </div>
-              ) : (
+              <Suspense fallback={<LoadingPage />}>
                 <div className="max-w-7xl mx-auto">
                   {activeSection === "dashboard" && (
                     <div className="space-y-4 md:space-y-6">
@@ -274,22 +251,12 @@ const Dashboard = () => {
                       onSubmitSuccess={fetchCompaniesData}
                     />
                   )}
+
                   {activeSection === "upload" && <EducationDataManager />}
                 </div>
-              )}
+              </Suspense>
             </main>
           </div>
-
-          {/* Upload Modal */}
-
-          {/* <FileUploadModal
-        isOpen={isUploadModalOpen}
-        onClose={() => setIsUploadModalOpen(false)}
-        onUploadSuccess={() => {
-          fetchStudentData();
-          fetchCompaniesData();
-        }}
-      /> */}
         </div>
       )}
     </>

@@ -1,6 +1,9 @@
-import React from "react";
+import React, { lazy, Suspense } from "react";
 import { Outlet, useLocation } from "react-router-dom";
-import Navbar from "../components/Navbar";
+// import LoadingPage from "../LoadingPage"; // Adjust path to your LoadingPage component
+
+// Lazy-load Navbar only when needed
+const Navbar = lazy(() => import("../components/Navbar"));
 
 const RootPage = () => {
   const location = useLocation();
@@ -9,7 +12,11 @@ const RootPage = () => {
 
   return (
     <>
-      {!hideNavbar && <Navbar />}
+      {!hideNavbar && (
+        <Suspense>
+          <Navbar />
+        </Suspense>
+      )}
       <div>
         <Outlet />
       </div>

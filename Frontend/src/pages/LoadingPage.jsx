@@ -120,7 +120,7 @@ const LoadingPage = ({ onLoadComplete, minDisplayTime = 2500 }) => {
               transitionDelay: "0.2s",
             }}
           >
-            <span className="font-semibold">Career</span>Vista
+            <span className="font-semibold">Career</span>Marg
           </h1>
 
           <div

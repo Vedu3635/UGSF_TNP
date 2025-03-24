@@ -137,7 +137,9 @@ const CompanyList = ({ companiesData }) => {
       }
 
       const response = await fetch(
-        `http://localhost:5000/api/edit-company/${selectedCompany.company_id}`,
+        `${import.meta.env.VITE_API_URL}/edit-company/${
+          selectedCompany.company_id
+        }`,
         {
           method: "PUT",
           headers: {
@@ -161,12 +163,15 @@ const CompanyList = ({ companiesData }) => {
   const fetchUpdatedCompanies = async () => {
     const token = localStorage.getItem("token");
     try {
-      const response = await fetch("http://localhost:5000/api/companies", {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/companies`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       if (!response.ok) throw new Error("Failed to fetch updated companies");
       const dividedCompanies = divideCompaniesByDate(await response.json());
       setCompanies(dividedCompanies);
@@ -182,7 +187,9 @@ const CompanyList = ({ companiesData }) => {
     const token = localStorage.getItem("token");
     try {
       const response = await fetch(
-        `http://localhost:5000/api/delete-company/${companyToDelete.company_id}`,
+        `${import.meta.env.VITE_API_URL}/delete-company/${
+          companyToDelete.company_id
+        }`,
         {
           method: "DELETE",
           headers: {

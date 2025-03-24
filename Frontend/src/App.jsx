@@ -1,19 +1,24 @@
-import React from "react";
+import React, { lazy, Suspense } from "react";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import "./index.css";
 import { AuthProvider } from "./pages/AuthContext"; // Adjust path
-import Login from "./pages/TNP/Login";
-import Dashboard from "./pages/TNP/Dashboard";
-import ProtectedRoute from "./pages/ProtectedRoute";
-import AlumniDashboard from "./pages/AlumniPortal/AlumniDashboard";
+import Login from "./pages/TNP/Login"; // Eagerly load Login since it’s the entry point
 import PublicRoute from "./pages/PublicRoute";
-import RootPage from "./pages/RootPage"; // Adjust path to where RootPage.jsx is located
-import NotFound from "./pages/NotFound";
-import PasswordReset from "./components/TNP/PasswordReset";
-// import StudentList from "./components/TNP/student/StudentList";
+import ProtectedRoute from "./pages/ProtectedRoute";
+import RootPage from "./pages/RootPage"; // Adjust path
+import NotFound from "./pages/NotFound"; // Eagerly load NotFound (small component)
+
+// Lazy-load other pages/components
+const Dashboard = lazy(() => import("./pages/TNP/Dashboard"));
+const AlumniDashboard = lazy(() =>
+  import("./pages/AlumniPortal/AlumniDashboard")
+);
+const PasswordReset = lazy(() => import("./components/TNP/PasswordReset"));
+// const StudentList = lazy(() => import("./components/TNP/student/StudentList"));
+
 const router = createBrowserRouter([
   {
-    element: <RootPage />, // Use RootPage as the layout
+    element: <RootPage />, // RootPage as the layout
     children: [
       {
         path: "/",
@@ -66,7 +71,9 @@ const router = createBrowserRouter([
 function App() {
   return (
     <AuthProvider>
-      <RouterProvider router={router} />
+      <Suspense fallback={<div>Loading...</div>}>
+        <RouterProvider router={router} />
+      </Suspense>
     </AuthProvider>
   );
 }
