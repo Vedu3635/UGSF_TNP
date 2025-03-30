@@ -14,6 +14,7 @@ const CompanyTabContent = ({
   onItemsPerPageChange,
   onUpdateClick,
   onDeleteClick,
+  onDetailsClick,
 }) => {
   const paginateCompanies = (list) => {
     const startIndex = (currentPage - 1) * itemsPerPage;
@@ -32,6 +33,7 @@ const CompanyTabContent = ({
                 company={company}
                 onUpdateClick={onUpdateClick}
                 onDeleteClick={onDeleteClick}
+                onDetailsClick={onDetailsClick}
               />
             </div>
           ))

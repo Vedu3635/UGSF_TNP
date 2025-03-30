@@ -1,8 +1,12 @@
 import React from "react";
-import { Pencil, Trash2 } from "lucide-react";
 import { jwtDecode } from "jwt-decode";
 
-const CompanyActions = ({ company, onUpdateClick, onDeleteClick }) => {
+const CompanyActions = ({
+  company,
+  onUpdateClick,
+  onDeleteClick,
+  onDetailsClick,
+}) => {
   let userRole = "";
   const token = localStorage.getItem("token");
 
@@ -19,19 +23,23 @@ const CompanyActions = ({ company, onUpdateClick, onDeleteClick }) => {
   if (userRole !== "tnpfaculty") return null;
 
   return (
-    <div className="absolute top-4 right-4 flex items-center gap-2">
+    <div className="absolute top-4 right-4 flex gap-2">
+      <button
+        onClick={() => onDetailsClick(company)}
+        className="bg-indigo-50 text-indigo-600 px-3 py-1 rounded-full text-sm font-medium hover:bg-indigo-100 transition-colors"
+      >
+        More Details
+      </button>
       <button
         onClick={() => onUpdateClick(company)}
-        className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/80 backdrop-blur-sm hover:bg-white border border-gray-200 text-gray-700 text-sm font-medium transition-all duration-300 hover:shadow-md"
+        className="bg-blue-50 text-blue-600 px-3 py-1 rounded-full text-sm font-medium hover:bg-blue-100 transition-colors"
       >
-        <Pencil className="w-4 h-4" />
         Update
       </button>
       <button
         onClick={() => onDeleteClick(company)}
-        className="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-50/80 backdrop-blur-sm hover:bg-red-50 border border-red-200 text-red-600 text-sm font-medium transition-all duration-300 hover:shadow-md"
+        className="bg-red-50 text-red-600 px-3 py-1 rounded-full text-sm font-medium hover:bg-red-100 transition-colors"
       >
-        <Trash2 className="w-4 h-4" />
         Delete
       </button>
     </div>

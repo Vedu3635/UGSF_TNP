@@ -7,6 +7,7 @@ const StudentCard = ({ item, type, onStudentUpdate, onDelete }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [studentToDelete, setStudentToDelete] = useState(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showMoreDetails, setShowMoreDetails] = useState(false);
 
   const handleUpdate = (updatedData) => {
     onStudentUpdate(updatedData);
@@ -72,13 +73,13 @@ const StudentCard = ({ item, type, onStudentUpdate, onDelete }) => {
   const getButtonColor = () => {
     switch (type) {
       case "all":
-        return "bg-purple-500 hover:bg-purple-600";
+        return "bg-purple-400 hover:bg-purple-600";
       case "placement":
-        return "bg-blue-500 hover:bg-blue-600";
+        return "bg-blue-400 hover:bg-blue-600";
       case "higherStudies":
-        return "bg-green-500 hover:bg-green-600";
+        return "bg-green-400 hover:bg-green-600";
       default:
-        return "bg-gray-500 hover:bg-gray-600";
+        return "bg-gray-400 hover:bg-gray-600";
     }
   };
 
@@ -124,6 +125,74 @@ const StudentCard = ({ item, type, onStudentUpdate, onDelete }) => {
       }
     }
     return false;
+  };
+
+  const renderDetailFields = () => {
+    if (type === "placement") {
+      return [
+        { label: "Company", value: item.company_name },
+        { label: "Email", value: item.email },
+        { label: "Enrollment ID", value: item.enrollment_id },
+        { label: "Enrollment Year", value: item.enrollment_year },
+        {
+          label: "Full Name",
+          value: `${item.first_name} ${item.middle_name || ""} ${
+            item.last_name
+          }`,
+        },
+        {
+          label: "Package",
+          value: item.package
+            ? `${(item.package / 100000).toFixed(1)} LPA`
+            : "N/A",
+        },
+        { label: "Phone", value: item.phone_no },
+        { label: "Notes", value: item.placement_notes },
+        { label: "Status", value: item.placement_status },
+        { label: "Year", value: item.placement_year },
+        { label: "Position", value: item.position },
+        { label: "Program", value: item.program },
+        { label: "Student ID", value: item.student_id },
+      ];
+    } else if (type === "higherStudies") {
+      return [
+        { label: "Admission Year", value: item.admission_year },
+        { label: "Course", value: item.course_name },
+        { label: "Email", value: item.email },
+        { label: "Enrollment ID", value: item.enrollment_id },
+        { label: "Enrollment Year", value: item.enrollment_year },
+        {
+          label: "Full Name",
+          value: `${item.first_name} ${item.middle_name || ""} ${
+            item.last_name
+          }`,
+        },
+        { label: "Status", value: item.higher_studies_status },
+        { label: "Phone", value: item.phone_no },
+        { label: "Program", value: item.program },
+        { label: "Student ID", value: item.student_id },
+        { label: "University", value: item.university_name },
+      ];
+    } else {
+      return [
+        { label: "Batch", value: item.batch },
+        { label: "Career Choice", value: item.career_choice },
+        { label: "Email", value: item.email },
+        { label: "Enrollment ID", value: item.enrollment_id },
+        { label: "Enrollment Year", value: item.enrollment_year },
+        {
+          label: "Full Name",
+          value: `${item.first_name} ${item.middle_name || ""} ${
+            item.last_name
+          }`,
+        },
+        { label: "Phone", value: item.phone_no },
+        { label: "Program", value: item.program },
+        { label: "Section", value: item.section },
+        { label: "Semester", value: item.semester },
+        { label: "Student ID", value: item.student_id },
+      ];
+    }
   };
 
   return (
@@ -194,22 +263,30 @@ const StudentCard = ({ item, type, onStudentUpdate, onDelete }) => {
               ? item.admission_year || "N/A"
               : item.batch || "N/A"}
           </span>
-          {canUpdate() && (
-            <div className="space-x-2 self-end sm:self-auto">
-              <button
-                onClick={() => setIsModalOpen(true)}
-                className={`${getButtonColor()} text-xs text-white font-medium px-2 py-1 rounded shadow-sm transition-colors duration-200 transform hover:scale-105`}
-              >
-                Update
-              </button>
-              <button
-                onClick={() => handleDeleteClick(item)}
-                className="bg-red-500 hover:bg-red-600 text-xs text-white font-medium px-2 py-1 rounded shadow-sm transition-colors duration-200 transform hover:scale-105"
-              >
-                Delete
-              </button>
-            </div>
-          )}
+          <div className="space-x-2 self-end sm:self-auto">
+            <button
+              onClick={() => setShowMoreDetails(true)}
+              className={`${getButtonColor()} text-xs text-white font-medium px-2 py-1 rounded shadow-sm transition-colors duration-200 transform hover:scale-105`}
+            >
+              More Details
+            </button>
+            {canUpdate() && (
+              <>
+                <button
+                  onClick={() => setIsModalOpen(true)}
+                  className={`${getButtonColor()} text-xs text-white font-medium px-2 py-1 rounded shadow-sm transition-colors duration-200 transform hover:scale-105`}
+                >
+                  Update
+                </button>
+                <button
+                  onClick={() => handleDeleteClick(item)}
+                  className="bg-red-500 hover:bg-red-600 text-xs text-white font-medium px-2 py-1 rounded shadow-sm transition-colors duration-200 transform hover:scale-105"
+                >
+                  Delete
+                </button>
+              </>
+            )}
+          </div>
         </div>
       </div>
 
@@ -279,6 +356,62 @@ const StudentCard = ({ item, type, onStudentUpdate, onDelete }) => {
                 >
                   Delete
                 </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showMoreDetails && (
+        <div className="fixed inset-0 z-50 overflow-y-auto">
+          <div className="flex items-center justify-center min-h-screen p-4">
+            <div
+              className="fixed inset-0 bg-black/30 backdrop-blur-sm transition-opacity"
+              onClick={() => setShowMoreDetails(false)}
+            />
+            <div className="relative bg-white rounded-lg shadow-md w-full max-w-2xl my-4 overflow-y-auto max-h-screen">
+              <div className="flex justify-between items-center p-3 border-b">
+                <h3 className="text-lg font-semibold text-gray-800">
+                  Student Information
+                </h3>
+                <button
+                  onClick={() => setShowMoreDetails(false)}
+                  className="text-gray-400 hover:text-gray-500"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              <div className="p-4">
+                <div className="border-b pb-2 mb-4">
+                  <h4 className="font-medium text-gray-700 mb-2">
+                    {item.first_name} {item.middle_name} {item.last_name}
+                  </h4>
+                  <p className="text-sm text-gray-500">
+                    ID: {item.student_id || "N/A"}
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 gap-2">
+                  {renderDetailFields().map((field, index) => (
+                    <div key={index} className="flex border-b py-2">
+                      <span className="w-1/3 text-sm font-medium text-gray-600">
+                        {field.label}:
+                      </span>
+                      <span className="w-2/3 text-sm">
+                        {field.value || "N/A"}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="flex justify-end mt-4">
+                  <button
+                    onClick={() => setShowMoreDetails(false)}
+                    className={`${getButtonColor()} text-xs text-white font-medium px-3 py-1.5 rounded transition-colors`}
+                  >
+                    Close
+                  </button>
+                </div>
               </div>
             </div>
           </div>

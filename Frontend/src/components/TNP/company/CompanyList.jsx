@@ -4,6 +4,7 @@ import CompanyFilter from "./CompanyFilter";
 import CompanyUpdateForm from "./CompanyUpdateForm";
 import CompanyTabContent from "./CompanyTabContent";
 import CompanyDelete from "./CompanyDelete";
+import CompanyDetailsModal from "./CompanyDetailsModal";
 import { Tabs, TabList, TabTrigger, TabContent } from "./CompanyTabs";
 
 const CompanyList = ({ companiesData }) => {
@@ -20,6 +21,8 @@ const CompanyList = ({ companiesData }) => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedCompany, setSelectedCompany] = useState(null);
   const [companyToDelete, setCompanyToDelete] = useState(null);
+  const [companyToView, setCompanyToView] = useState(null);
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     company_id: "",
     company_name: "",
@@ -92,6 +95,11 @@ const CompanyList = ({ companiesData }) => {
   const handleDeleteClick = (company) => {
     setCompanyToDelete(company);
     setIsDeleteDialogOpen(true);
+  };
+
+  const handleDetailsClick = (company) => {
+    setCompanyToView(company);
+    setIsDetailsModalOpen(true);
   };
 
   const handleChange = (e) => {
@@ -302,6 +310,7 @@ const CompanyList = ({ companiesData }) => {
               onItemsPerPageChange={handleItemsPerPageChange}
               onUpdateClick={handleUpdateClick}
               onDeleteClick={handleDeleteClick}
+              onDetailsClick={handleDetailsClick}
             />
           </TabContent>
 
@@ -321,6 +330,7 @@ const CompanyList = ({ companiesData }) => {
               onItemsPerPageChange={handleItemsPerPageChange}
               onUpdateClick={handleUpdateClick}
               onDeleteClick={handleDeleteClick}
+              onDetailsClick={handleDetailsClick}
             />
           </TabContent>
         </Tabs>
@@ -340,6 +350,16 @@ const CompanyList = ({ companiesData }) => {
           companyToDelete={companyToDelete}
           onDeleteConfirm={handleDeleteConfirm}
         />
+
+        {isDetailsModalOpen && companyToView && (
+          <CompanyDetailsModal
+            company={companyToView}
+            onClose={() => {
+              setIsDetailsModalOpen(false);
+              setCompanyToView(null);
+            }}
+          />
+        )}
       </div>
     </div>
   );

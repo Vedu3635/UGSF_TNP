@@ -96,7 +96,7 @@ const CompanyFilter = ({ onFilterChange }) => {
             className="w-full px-4 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
         </div>
-        {/* 
+
         <div className="group/item transition-all duration-300 hover:bg-gray-50 p-4 rounded-xl">
           <label className="block text-base text-gray-500 font-medium mb-2">
             Hiring Date
@@ -108,7 +108,7 @@ const CompanyFilter = ({ onFilterChange }) => {
             onChange={handleInputChange}
             className="w-full px-4 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
-        </div>   */}
+        </div>
       </div>
     </div>
   );
