@@ -239,8 +239,8 @@ const Login = () => {
 
           {/* Improved description container with better blur effect */}
           <div className="bg-white bg-opacity-10 rounded-lg p-6 max-w-md backdrop-blur-md shadow-lg border border-white/10">
-            <p className="text-lg text-white leading-relaxed text-center drop-shadow">
-              "From placement insights to graduation readiness—CareerMarg puts
+            <p className="text-lg text-gray-600 leading-relaxed text-center drop-shadow">
+              "From placement insights to graduation readiness CareerMarg puts
               student outcomes at your fingertips."
             </p>
           </div>
