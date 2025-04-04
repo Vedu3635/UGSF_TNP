@@ -91,7 +91,7 @@ const Select = ({ label, icon: Icon, options, ...props }) => (
   </div>
 );
 
-const CompanyRegistrationForm = () => {
+const CompanyRegistrationForm = (onSubmitSuccess) => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     company_name: "",

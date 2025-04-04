@@ -138,6 +138,7 @@ const Dashboard = () => {
   }, []);
 
   const handleStudentUpdate = () => fetchStudentData();
+  const onStudentUpload = () => fetchStudentData();
   const onDeleteStudent = () => fetchStudentData();
 
   const calculateAveragePackage = (data) =>
@@ -252,7 +253,9 @@ const Dashboard = () => {
                     />
                   )}
 
-                  {activeSection === "upload" && <EducationDataManager />}
+                  {activeSection === "upload" && (
+                    <EducationDataManager onStudentUpload={onStudentUpload} />
+                  )}
                 </div>
               </Suspense>
             </main>

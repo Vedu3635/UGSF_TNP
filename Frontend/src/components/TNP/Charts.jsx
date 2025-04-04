@@ -80,10 +80,10 @@ const Charts = ({ allStudentsData, placementData, higherStudiesData }) => {
   ].sort();
 
   // Filter and prepare chart data based on the selected program
-
   const filteredData1 = placementData.filter(
     (student) => student.program === filter1
   );
+  console.log("Filtered Data for", filter1, filteredData1);
 
   // Prepare chartData1
   const chartData1 = {
@@ -92,21 +92,41 @@ const Charts = ({ allStudentsData, placementData, higherStudiesData }) => {
       {
         label: filter1, // Dynamically change label based on selected program
         data: years1.map((year) => {
-          const studentsInYearAndProgram = filteredData1.filter(
-            (student) => student.placement_year === year
+          const studentsInYearAndProgram = filteredData1.filter((student) => {
+            return Number(student.placement_year) === Number(year);
+          });
+
+          // Debugging logs
+          console.log(
+            `Year: ${year}, Found Students:`,
+            studentsInYearAndProgram.map((s) => ({
+              id: s.enrollment_no,
+              package: s.package,
+            }))
           );
-          return studentsInYearAndProgram.length > 0
-            ? Math.max(
-                ...studentsInYearAndProgram.map(
-                  (student) => student.package / 100000
-                )
-              )
-            : 0; // If no student data for that year and program, return 0
+
+          if (studentsInYearAndProgram.length > 0) {
+            const maxPackage = Math.max(
+              ...studentsInYearAndProgram
+                .map((student) => student.package)
+                .filter((pkg) => pkg !== null && pkg !== undefined) // Ensure valid package values
+            );
+
+            console.log(
+              `Max Package for ${filter1} in ${year}:`,
+              maxPackage / 100000
+            );
+            return maxPackage / 100000;
+          }
+
+          return 0; // If no student data for that year and program, return 0
         }),
         backgroundColor: "rgba(153, 102, 255, 0.6)", // Customize per program if needed
       },
     ],
   };
+
+  console.log("Final Chart Data:", chartData1);
 
   //chart 2
 

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { FileUp, FileDown } from "lucide-react";
 import axios from "axios";
 
-const UploadData = () => {
+const UploadData = ({ onStudentUpload }) => {
   const [fileName, setFileName] = useState("");
   const [uploadTab, setUploadTab] = useState("student");
   const [file, setFile] = useState(null);
@@ -35,6 +35,9 @@ const UploadData = () => {
       alert(response.data.message || "File uploaded successfully!");
       setFileName("");
       setFile(null);
+      if (onStudentUpload) {
+        onStudentUpload();
+      }
     } catch (error) {
       console.error("Upload error:", error);
       if (error.response) {

@@ -27,7 +27,7 @@ const Navbar = ({ userProfile }) => {
       icon: <Home className="w-5 h-5 mr-2" />,
     },
     {
-      name: "EVENTS",
+      name: "Pankh",
       path: "http://172.16.11.55:3005/",
       icon: <Bird className="w-5 h-5 mr-2" />,
     },

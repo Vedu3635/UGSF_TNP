@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { FileUp, FileDown } from "lucide-react";
 import UploadData from "./UploadData";
 import DownloadData from "./DownloadData";
-const EducationDataManager = () => {
+const EducationDataManager = ({ onStudentUpload }) => {
   const [activeTab, setActiveTab] = useState("upload");
 
   return (
@@ -33,7 +33,11 @@ const EducationDataManager = () => {
       </div>
 
       <div className="w-full max-w-4xl bg-white rounded-lg shadow-md p-6">
-        {activeTab === "upload" ? <UploadData /> : <DownloadData />}
+        {activeTab === "upload" ? (
+          <UploadData onStudentUpload={onStudentUpload} />
+        ) : (
+          <DownloadData />
+        )}
       </div>
     </div>
   );

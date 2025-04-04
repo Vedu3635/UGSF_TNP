@@ -101,7 +101,7 @@ function uploadExcel(path, callback) {
         if (careerChoice === "job placement" || careerChoice === "placement") {
           additionalData.placement = {
             company_name: row[headerMap["company_name"]],
-            position: row[headerMap["job_role"] || headerMap["position"]],
+            position: row[headerMap["position"]],
             placement_year: row[headerMap["placement_year"]],
             placement_date: row[headerMap["placement_date"]],
             package: row[headerMap["package"]],
