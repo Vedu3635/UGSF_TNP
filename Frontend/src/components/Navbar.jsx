@@ -67,20 +67,18 @@ const Navbar = ({ userProfile }) => {
             <ul className="flex space-x-1 lg:space-x-4 items-center">
               {navItems.map((item) => (
                 <li key={item.path}>
-                  <NavLink
-                    to={item.path}
-                    className={({ isActive }) => `
-            flex items-center 
-            px-2 py-2 lg:px-3 
-            rounded-lg 
-            transition-all duration-300 
-            relative text-sm lg:text-base
-            ${
-              isActive
-                ? "bg-blue-600 text-white hover:bg-blue-700"
-                : "text-blue-800 hover:bg-blue-200"
-            }
-          `}
+                  <a
+                    href={item.path}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`
+    flex items-center 
+    px-2 py-2 lg:px-3 
+    rounded-lg 
+    transition-all duration-300 
+    relative text-sm lg:text-base
+    text-blue-800 hover:bg-blue-200
+  `}
                   >
                     {item.icon}
                     {item.name}
@@ -89,7 +87,7 @@ const Navbar = ({ userProfile }) => {
                         {item.badge}
                       </span>
                     )}
-                  </NavLink>
+                  </a>
                 </li>
               ))}
             </ul>
@@ -163,20 +161,18 @@ const Navbar = ({ userProfile }) => {
           <ul className="space-y-2">
             {navItems.map((item) => (
               <li key={item.path}>
-                <NavLink
-                  to={item.path}
-                  className={({ isActive }) => `
-                    flex items-center 
-                    px-3 py-2 
-                    rounded-lg 
-                    transition-all duration-300 
-                    relative
-                    ${
-                      isActive
-                        ? "bg-blue-600 text-white hover:bg-blue-700"
-                        : "text-blue-800 hover:bg-blue-200"
-                    }
-                  `}
+                <a
+                  href={item.path}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`
+    flex items-center 
+    px-3 py-2 
+    rounded-lg 
+    transition-all duration-300 
+    relative
+    text-blue-800 hover:bg-blue-200
+  `}
                   onClick={() => setOpen(false)}
                 >
                   {item.icon}
@@ -186,7 +182,7 @@ const Navbar = ({ userProfile }) => {
                       {item.badge}
                     </span>
                   )}
-                </NavLink>
+                </a>
               </li>
             ))}
           </ul>
