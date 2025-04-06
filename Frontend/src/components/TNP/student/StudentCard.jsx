@@ -134,25 +134,18 @@ const StudentCard = ({ item, type, onStudentUpdate, onDelete }) => {
         { label: "Email", value: item.email },
         { label: "Enrollment ID", value: item.enrollment_id },
         { label: "Enrollment Year", value: item.enrollment_year },
-        {
-          label: "Full Name",
-          value: `${item.first_name} ${item.middle_name || ""} ${
-            item.last_name
-          }`,
-        },
+        { label: "Batch", value: item.batch },
+        { label: "Name", value: item.name },
         {
           label: "Package",
           value: item.package
             ? `${(item.package / 100000).toFixed(1)} LPA`
             : "N/A",
         },
-        { label: "Phone", value: item.phone_no },
-        { label: "Notes", value: item.placement_notes },
         { label: "Status", value: item.placement_status },
-        { label: "Year", value: item.placement_year },
         { label: "Position", value: item.position },
         { label: "Program", value: item.program },
-        { label: "Student ID", value: item.student_id },
+        // { label: "Student ID", value: item.student_id },
       ];
     } else if (type === "higherStudies") {
       return [
@@ -161,36 +154,24 @@ const StudentCard = ({ item, type, onStudentUpdate, onDelete }) => {
         { label: "Email", value: item.email },
         { label: "Enrollment ID", value: item.enrollment_id },
         { label: "Enrollment Year", value: item.enrollment_year },
-        {
-          label: "Full Name",
-          value: `${item.first_name} ${item.middle_name || ""} ${
-            item.last_name
-          }`,
-        },
+        { label: "Batch", value: item.batch },
+        { label: "Name", value: item.name },
         { label: "Status", value: item.higher_studies_status },
-        { label: "Phone", value: item.phone_no },
         { label: "Program", value: item.program },
-        { label: "Student ID", value: item.student_id },
+        // { label: "Student ID", value: item.student_id },
         { label: "University", value: item.university_name },
       ];
     } else {
       return [
-        { label: "Batch", value: item.batch },
         { label: "Career Choice", value: item.career_choice },
         { label: "Email", value: item.email },
         { label: "Enrollment ID", value: item.enrollment_id },
         { label: "Enrollment Year", value: item.enrollment_year },
-        {
-          label: "Full Name",
-          value: `${item.first_name} ${item.middle_name || ""} ${
-            item.last_name
-          }`,
-        },
-        { label: "Phone", value: item.phone_no },
+        { label: "Batch", value: item.batch },
+        { label: "Name", value: item.name },
         { label: "Program", value: item.program },
-        { label: "Section", value: item.section },
         { label: "Semester", value: item.semester },
-        { label: "Student ID", value: item.student_id },
+        // { label: "Student ID", value: item.student_id },
       ];
     }
   };
@@ -202,7 +183,7 @@ const StudentCard = ({ item, type, onStudentUpdate, onDelete }) => {
       >
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center">
           <h2 className="text-lg sm:text-xl font-bold text-gray-800 mb-2 sm:mb-0">
-            {item.first_name} {item.middle_name} {item.last_name}
+            {item.name}
           </h2>
           <span
             className={`text-xs sm:text-sm font-semibold bg-white px-2 py-1 sm:px-3 sm:py-1 rounded-full ${getStatusColor()} self-start sm:self-auto mb-2 sm:mb-0`}
@@ -230,8 +211,8 @@ const StudentCard = ({ item, type, onStudentUpdate, onDelete }) => {
           )}
           {type === "all" && (
             <div>
-              <span className="font-medium text-xs">Program</span>
-              <p className="text-sm">{item.program || "N/A"}</p>
+              <span className="font-medium text-xs">Batch</span>
+              <p className="text-sm">{item.batch || "N/A"}</p>
             </div>
           )}
           {type === "placement" && (
@@ -261,7 +242,7 @@ const StudentCard = ({ item, type, onStudentUpdate, onDelete }) => {
               ? item.position || "N/A"
               : type === "higherStudies"
               ? item.admission_year || "N/A"
-              : item.batch || "N/A"}
+              : item.program || "N/A"}
           </span>
           <div className="space-x-2 self-end sm:self-auto">
             <button
@@ -384,10 +365,10 @@ const StudentCard = ({ item, type, onStudentUpdate, onDelete }) => {
               <div className="p-4">
                 <div className="border-b pb-2 mb-4">
                   <h4 className="font-medium text-gray-700 mb-2">
-                    {item.first_name} {item.middle_name} {item.last_name}
+                    {item.name}
                   </h4>
                   <p className="text-sm text-gray-500">
-                    ID: {item.student_id || "N/A"}
+                    {/* ID: {item.student_id || "N/A"} */}
                   </p>
                 </div>
 

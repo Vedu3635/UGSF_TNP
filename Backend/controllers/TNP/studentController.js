@@ -6,20 +6,16 @@ const getJobPlacementStudents = (req, res) => {
   const query = `
   SELECT 
     s.student_id, 
-    s.first_name, 
-    s.middle_name, 
-    s.last_name, 
+    s.name, 
     s.email, 
     s.enrollment_id, 
-    s.enrollment_year, 
-    s.phone_no, 
+    s.enrollment_year,
+    s.batch, 
     s.program, 
     p.company_name, 
     p.position, 
-    p.placement_status, 
-    p.placement_notes, 
-    p.package, 
-    p.placement_year  
+    p.package,  
+    p.placement_status  
 FROM students s  
 JOIN placements p ON s.student_id = p.student_id  
 WHERE s.career_choice = 'Job Placement';
@@ -51,16 +47,15 @@ const getHigherStudiesStudents = (req, res) => {
   const query = `
     SELECT 
     s.student_id, 
-    s.first_name, 
-    s.middle_name, 
-    s.last_name, 
+    s.name, 
     s.email, 
     s.enrollment_id, 
-    s.enrollment_year, 
-    s.phone_no, 
+    s.enrollment_year,
+    s.batch, 
     s.program, 
     h.university_name, 
     h.course_name, 
+    h.country, 
     h.admission_year, 
     h.higher_studies_status
 FROM students s

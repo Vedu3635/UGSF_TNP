@@ -7,36 +7,36 @@ import "slick-carousel/slick/slick-theme.css";
 
 const Charts = ({ allStudentsData, placementData, higherStudiesData }) => {
   const [students, setStudents] = useState({
-    CE: [],
-    IT: [],
-    CSE: [],
+    DCE: [],
+    DIT: [],
+    DCS: [],
   });
 
-  // console.log(allStudentsData);
+  console.log(allStudentsData);
   // console.log(placementData);
   // console.log(higherStudiesData);
   // console.log(typeof studentsData);
 
-  const [filter1, setFilter1] = useState("CE");
-  const [filter2, setFilter2] = useState("CE");
-  const [filter3, setFilter3] = useState("CE");
-  const [filter4, setFilter4] = useState("CE");
-  const [filter5, setFilter5] = useState("CE");
+  const [filter1, setFilter1] = useState("DCE");
+  const [filter2, setFilter2] = useState("DCE");
+  const [filter3, setFilter3] = useState("DCE");
+  const [filter4, setFilter4] = useState("DCE");
+  const [filter5, setFilter5] = useState("DCE");
 
   useEffect(() => {
     // Categorize students into departments based on the passed prop data
     const categorizedStudents = allStudentsData.reduce(
       (acc, student) => {
-        if (student.Program === "CE") {
-          acc.CE.push(student);
-        } else if (student.Program === "IT") {
-          acc.IT.push(student);
-        } else if (student.Program === "CSE") {
-          acc.CSE.push(student);
+        if (student.program === "DCE") {
+          acc.DCE.push(student);
+        } else if (student.program === "DIT") {
+          acc.DIT.push(student);
+        } else if (student.program === "DCS") {
+          acc.DCS.push(student);
         }
         return acc;
       },
-      { CE: [], IT: [], CSE: [] }
+      { DCE: [], DIT: [], DCS: [] }
     );
 
     setStudents(categorizedStudents);
@@ -74,16 +74,16 @@ const Charts = ({ allStudentsData, placementData, higherStudiesData }) => {
   const years1 = [
     ...new Set(
       placementData
-        .map((student) => student.placement_year)
+        .map((student) => student.batch)
         .filter((year) => year && year !== "0000") // Remove null and "0000"
     ),
   ].sort();
-
+  // console.log(years1);
+  console.log(students);
   // Filter and prepare chart data based on the selected program
   const filteredData1 = placementData.filter(
     (student) => student.program === filter1
   );
-  console.log("Filtered Data for", filter1, filteredData1);
 
   // Prepare chartData1
   const chartData1 = {
@@ -93,17 +93,8 @@ const Charts = ({ allStudentsData, placementData, higherStudiesData }) => {
         label: filter1, // Dynamically change label based on selected program
         data: years1.map((year) => {
           const studentsInYearAndProgram = filteredData1.filter((student) => {
-            return Number(student.placement_year) === Number(year);
+            return Number(student.enrollment_year) === Number(year);
           });
-
-          // Debugging logs
-          console.log(
-            `Year: ${year}, Found Students:`,
-            studentsInYearAndProgram.map((s) => ({
-              id: s.enrollment_no,
-              package: s.package,
-            }))
-          );
 
           if (studentsInYearAndProgram.length > 0) {
             const maxPackage = Math.max(
@@ -112,10 +103,6 @@ const Charts = ({ allStudentsData, placementData, higherStudiesData }) => {
                 .filter((pkg) => pkg !== null && pkg !== undefined) // Ensure valid package values
             );
 
-            console.log(
-              `Max Package for ${filter1} in ${year}:`,
-              maxPackage / 100000
-            );
             return maxPackage / 100000;
           }
 
@@ -126,13 +113,15 @@ const Charts = ({ allStudentsData, placementData, higherStudiesData }) => {
     ],
   };
 
-  console.log("Final Chart Data:", chartData1);
-
   //chart 2
 
   const countPositions = (data) => {
     const positionCounts = data.reduce((acc, { position }) => {
-      acc[position] = (acc[position] || 0) + 1;
+      // Only count if position is not null or undefined
+      if (position != null) {
+        // This checks for both null and undefined
+        acc[position] = (acc[position] || 0) + 1;
+      }
       return acc;
     }, {});
 
@@ -188,11 +177,11 @@ const Charts = ({ allStudentsData, placementData, higherStudiesData }) => {
     const programCounts = programData.reduce((acc, student) => {
       // Categorizing status
       let higher_studies_status;
-      if (student.higher_studies_status === "admitted") {
+      if (student.higher_studies_status === "Admitted") {
         higher_studies_status = "Admitted";
-      } else if (student.higher_studies_status === "in process") {
+      } else if (student.higher_studies_status === "In Process") {
         higher_studies_status = "In Progress";
-      } else if (student.higher_studies_status === "rejected") {
+      } else if (student.higher_studies_status === "Rejected") {
         higher_studies_status = "Rejected";
       } else {
         higher_studies_status = "Unknown"; // Fallback in case of unexpected values
@@ -517,7 +506,7 @@ const Charts = ({ allStudentsData, placementData, higherStudiesData }) => {
   };
 
   const DepartmentSelector = ({ value, onChange }) => {
-    const departments = ["CE", "CSE", "IT"];
+    const departments = ["DCE", "DCS", "DIT"];
     return (
       <div className="flex space-x-2">
         {departments.map((dept) => (

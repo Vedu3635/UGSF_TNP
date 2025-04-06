@@ -3,21 +3,18 @@ import React, { useState } from "react";
 const UpdateForm = ({ item, type, onStudentUpdate, onClose }) => {
   const [formData, setFormData] = useState({
     // Common fields
-    first_name: item.first_name || "",
-    middle_name: item.middle_name || "",
-    last_name: item.last_name || "",
+    name: item.name || "",
     email: item.email || "",
     enrollment_id: item.enrollment_id || "",
     enrollment_year: item.enrollment_year || "",
+    batch: item.batch || "",
     program: item.program || "",
-    phone_no: item.phone_no || "",
 
     // Placement specific fields
     company_name: item.company_name || "",
     position: item.position || "",
     package: item.package || "",
     placement_status: item.placement_status || "",
-    placement_notes: item.placement_notes || "",
 
     // Higher studies specific fields
     university_name: item.university_name || "",
@@ -27,8 +24,6 @@ const UpdateForm = ({ item, type, onStudentUpdate, onClose }) => {
     // All students specific fields
     career_choice: item.career_choice || "",
     semester: item.semester || "",
-    section: item.section || "",
-    batch: item.batch || "",
   });
 
   const [errors, setErrors] = useState({});
@@ -37,12 +32,14 @@ const UpdateForm = ({ item, type, onStudentUpdate, onClose }) => {
     const newErrors = {};
 
     // Common validations
-    if (!formData.first_name) newErrors.first_name = "First Name is required";
-    if (!formData.last_name) newErrors.last_name = "Last Name is required";
-    if (!formData.email) newErrors.email = "email is required";
+    if (!formData.name) newErrors.name = "Name is required";
+    if (!formData.email) newErrors.email = "Email is required";
     if (!formData.enrollment_id)
-      newErrors.enrollment_id = "enrollment_id is required";
-    if (!formData.program) newErrors.program = "program is required";
+      newErrors.enrollment_id = "Enrollment_id is required";
+    if (!formData.enrollment_year)
+      newErrors.enrollment_year = "Enrollment_year is required";
+    if (!formData.batch) newErrors.batch = "Batch is required";
+    if (!formData.program) newErrors.program = "Program is required";
 
     // email validation
     if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
@@ -68,8 +65,6 @@ const UpdateForm = ({ item, type, onStudentUpdate, onClose }) => {
 
     if (type === "all") {
       if (!formData.semester) newErrors.semester = "Semester is required";
-      if (!formData.section) newErrors.section = "Section is required";
-      if (!formData.batch) newErrors.batch = "Batch is required";
     }
 
     setErrors(newErrors);
@@ -168,11 +163,8 @@ const UpdateForm = ({ item, type, onStudentUpdate, onClose }) => {
             Personal Information
           </h4>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            {renderField("first_name", "First Name")}
-            {renderField("middle_name", "Middle Name")}
-            {renderField("last_name", "Last Name")}
+            {renderField("name", "Name")}
             {renderField("email", "Email", "email")}
-            {renderField("phone_no", "Phone Number", "tel")}
           </div>
         </div>
 
@@ -184,6 +176,7 @@ const UpdateForm = ({ item, type, onStudentUpdate, onClose }) => {
             {renderField("enrollment_id", "Enrollment_Id")}
             {renderField("program", "Program")}
             {renderField("enrollment_year", "Enrollment Year")}
+            {renderField("batch", "Batch")}
           </div>
         </div>
 
@@ -217,19 +210,6 @@ const UpdateForm = ({ item, type, onStudentUpdate, onClose }) => {
                     {errors.placement_status}
                   </p>
                 )}
-              </div>
-
-              <div className="col-span-1 sm:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">
-                  Notes
-                </label>
-                <textarea
-                  name="placement_notes"
-                  value={formData.placement_notes}
-                  onChange={handleChange}
-                  rows={3}
-                  className="w-full rounded-lg border-gray-200 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 p-2 sm:p-3 text-sm"
-                />
               </div>
             </div>
           </div>
@@ -265,7 +245,7 @@ const UpdateForm = ({ item, type, onStudentUpdate, onClose }) => {
                   onChange={handleChange}
                   className="mt-1 block w-full rounded-lg border shadow-sm 
                     transition-all duration-200 ease-in-out
-                    focus:ring-2 focus:ring-offset-0 focus:ring-blue-500 focus:border-transparent
+                    focus:ring-2 focus:ring-offset-0 focus:ring-blue-500 
                     border-gray-200 hover:border-gray-300 focus:border-blue-500
                     p-2 sm:p-3 text-sm"
                 >
@@ -284,8 +264,6 @@ const UpdateForm = ({ item, type, onStudentUpdate, onClose }) => {
                 )}
               </div>
               {renderField("semester", "Semester")}
-              {renderField("section", "Section")}
-              {renderField("batch", "Batch")}
             </div>
           </div>
         )}

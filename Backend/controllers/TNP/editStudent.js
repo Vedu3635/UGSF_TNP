@@ -3,18 +3,14 @@ const pool = require("../../config/pool");
 const updateStudentDetails = async (req, res) => {
   const { student_id } = req.params;
   const {
-    first_name,
-    middle_name,
-    last_name,
+    name,
     email,
     enrollment_id,
     enrollment_year,
-    phone_no,
+    batch,
     program,
     career_choice,
     semester,
-    section,
-    batch,
   } = req.body;
 
   try {
@@ -26,35 +22,27 @@ const updateStudentDetails = async (req, res) => {
     const sql = `
       UPDATE students 
       SET 
-        first_name = ?,
-        middle_name = ?,
-        last_name = ?,
+        name = ?,
         email = ?,
         enrollment_id = ?,
         enrollment_year = ?,
-        phone_no = ?,
+        batch = ?, 
         program = ?,
         career_choice = ?,
         semester = ?,
-        section = ?,
-        batch = ?,
         updated_at = NOW()
       WHERE student_id = ?
     `;
 
     const values = [
-      first_name,
-      middle_name,
-      last_name,
+      name,
       email,
       enrollment_id,
       enrollment_year,
-      phone_no,
+      batch,
       program,
       career_choice,
       semester,
-      section,
-      batch,
       student_id,
     ];
 
@@ -87,14 +75,11 @@ const updatePlacementDetails = async (req, res) => {
     package,
     position,
     placement_status,
-    placement_notes,
-    first_name,
-    middle_name,
-    last_name,
+    name,
     email,
     enrollment_id,
     enrollment_year,
-    phone_no,
+    batch,
     program,
   } = req.body;
 
@@ -105,20 +90,16 @@ const updatePlacementDetails = async (req, res) => {
     const studentSql = `
       UPDATE students 
       SET 
-        first_name = ?, middle_name = ?, last_name = ?, 
-        email = ?, enrollment_id = ?, enrollment_year = ?, 
-        phone_no = ?, program = ?, updated_at = NOW()
+        // name = ?, email = ?, enrollment_id = ?, enrollment_year = ?, batch = , program = ?, updated_at = NOW()
       WHERE student_id = ?
     `;
 
     const studentValues = [
-      first_name,
-      middle_name,
-      last_name,
+      name,
       email,
       enrollment_id,
       enrollment_year,
-      phone_no,
+      batch,
       program,
       student_id,
     ];
@@ -130,8 +111,7 @@ const updatePlacementDetails = async (req, res) => {
       UPDATE placements 
       SET 
         company_name = ?, package = ?, position = ?, 
-        placement_status = ?, placement_notes = ?, placement_year = YEAR(CURRENT_DATE()), 
-        placement_date = CURRENT_DATE()
+        placement_status = ?
       WHERE student_id = ?
     `;
 
@@ -140,7 +120,6 @@ const updatePlacementDetails = async (req, res) => {
       package,
       position,
       placement_status,
-      placement_notes,
       student_id,
     ];
 
@@ -183,13 +162,11 @@ const updateHigherStudiesDetails = async (req, res) => {
     admission_year,
     higher_studies_status,
     // Student details
-    first_name,
-    middle_name,
-    last_name,
+    name,
     email,
     enrollment_id,
     enrollment_year,
-    phone_no,
+    batch,
     program,
   } = req.body;
 
@@ -201,26 +178,22 @@ const updateHigherStudiesDetails = async (req, res) => {
     const studentSql = `
       UPDATE students 
       SET 
-        first_name = ?,
-        middle_name =?,
-        last_name = ?,
+        name = ?,
         email = ?,
         enrollment_id = ?,
         enrollment_year = ?,
-        phone_no = ?,
+        batch = ?,
         program = ?,
         updated_at = NOW()
       WHERE student_id = ?
     `;
 
     const studentValues = [
-      first_name,
-      middle_name,
-      last_name,
+      name,
       email,
       enrollment_id,
       enrollment_year,
-      phone_no,
+      batch,
       program,
       student_id,
     ];

@@ -109,9 +109,20 @@ const Dashboard = () => {
         const higherStudies = await higherStudiesResponse.json();
         const allStudents = await allStudentsResponse.json();
 
-        setPlacementData(placements.data || []);
-        setHigherStudiesData(higherStudies.data || []);
-        setAllStudentsData(allStudents.data || []);
+        // Sort each dataset by enrollmentId
+        const sortedPlacements = (placements.data || []).sort((a, b) =>
+          a.enrollment_id.localeCompare(b.enrollment_id)
+        );
+        const sortedHigherStudies = (higherStudies.data || []).sort((a, b) =>
+          a.enrollment_id.localeCompare(b.enrollment_id)
+        );
+        const sortedAllStudents = (allStudents.data || []).sort((a, b) =>
+          a.enrollment_id.localeCompare(b.enrollment_id)
+        );
+
+        setPlacementData(sortedPlacements);
+        setHigherStudiesData(sortedHigherStudies);
+        setAllStudentsData(sortedAllStudents);
       } else {
         console.error("Error fetching student data");
       }

@@ -216,18 +216,18 @@ const StudentList = ({
       // Add status filtering logic
       let matchesStatus = true;
       if (activeTab === "placements") {
-        if (statusFilter === "placed") {
-          matchesStatus = item.placement_status === "placed";
-        } else if (statusFilter === "notPlaced") {
-          matchesStatus = item.placement_status !== "placed";
+        if (statusFilter === "Placed") {
+          matchesStatus = item.placement_status === "Placed";
+        } else if (statusFilter === "Not Placed") {
+          matchesStatus = item.placement_status !== "Placed";
         }
       } else if (activeTab === "higherStudies") {
-        if (statusFilter === "admitted") {
-          matchesStatus = item.higher_studies_status === "admitted";
-        } else if (statusFilter === "in process") {
-          matchesStatus = item.higher_studies_status === "in process";
-        } else if (statusFilter === "rejected") {
-          matchesStatus = item.higher_studies_status === "rejected";
+        if (statusFilter === "Admitted") {
+          matchesStatus = item.higher_studies_status === "Admitted";
+        } else if (statusFilter === "In Process") {
+          matchesStatus = item.higher_studies_status === "In Process";
+        } else if (statusFilter === "Rejected") {
+          matchesStatus = item.higher_studies_status === "Rejected";
         }
       }
 
@@ -285,9 +285,9 @@ const StudentList = ({
             All
           </button>
           <button
-            onClick={() => setStatusFilter("placed")}
+            onClick={() => setStatusFilter("Placed")}
             className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-full flex items-center text-xs sm:text-sm ${
-              statusFilter === "placed"
+              statusFilter === "Placed"
                 ? "bg-green-500 text-white"
                 : "bg-white text-gray-700 hover:bg-gray-100"
             }`}
@@ -296,9 +296,9 @@ const StudentList = ({
             Placed
           </button>
           <button
-            onClick={() => setStatusFilter("notPlaced")}
+            onClick={() => setStatusFilter("Not Placed")}
             className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-full flex items-center text-xs sm:text-sm ${
-              statusFilter === "notPlaced"
+              statusFilter === "Not Placed"
                 ? "bg-red-500 text-white"
                 : "bg-white text-gray-700 hover:bg-gray-100"
             }`}
@@ -323,9 +323,9 @@ const StudentList = ({
             All
           </button>
           <button
-            onClick={() => setStatusFilter("admitted")}
+            onClick={() => setStatusFilter("Admitted")}
             className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-full flex items-center text-xs sm:text-sm ${
-              statusFilter === "admitted"
+              statusFilter === "Admitted"
                 ? "bg-green-500 text-white"
                 : "bg-white text-gray-700 hover:bg-gray-100"
             }`}
@@ -334,9 +334,9 @@ const StudentList = ({
             Admitted
           </button>
           <button
-            onClick={() => setStatusFilter("in process")}
+            onClick={() => setStatusFilter("In Process")}
             className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-full flex items-center text-xs sm:text-sm ${
-              statusFilter === "in process"
+              statusFilter === "In Process"
                 ? "bg-yellow-500 text-white"
                 : "bg-white text-gray-700 hover:bg-gray-100"
             }`}
@@ -345,9 +345,9 @@ const StudentList = ({
             In Process
           </button>
           <button
-            onClick={() => setStatusFilter("rejected")}
+            onClick={() => setStatusFilter("Rejected")}
             className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-full flex items-center text-xs sm:text-sm ${
-              statusFilter === "rejected"
+              statusFilter === "Rejected"
                 ? "bg-red-500 text-white"
                 : "bg-white text-gray-700 hover:bg-gray-100"
             }`}

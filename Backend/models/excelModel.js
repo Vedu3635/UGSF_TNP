@@ -17,8 +17,8 @@ class ExcelModel {
         case "higher_studies":
           sqlQuery = `
             SELECT 
-              s.first_name, s.middle_name, s.last_name, s.email, s.enrollment_id, s.enrollment_year, s.phone_no, s.program, s.semester,
-              h.university_name, h.course_name, h.country, h.admission_year, h.higher_studies_status, h.higher_studies_notes
+              s.name, s.email, s.enrollment_id, s.enrollment_year, s.program, s.semester,
+              h.university_name, h.course_name, h.country, h.admission_year, h.higher_studies_status
             FROM students s
             JOIN higher_studies h ON s.student_id = h.student_id`;
           break;
@@ -26,15 +26,15 @@ class ExcelModel {
         case "placements":
           sqlQuery = `
             SELECT 
-              s.first_name, s.middle_name, s.last_name, s.email, s.enrollment_id, s.enrollment_year, s.phone_no, s.program, s.semester,
-              p.company_name, p.position, p.placement_year, p.placement_date, p.package, p.placement_status, p.placement_notes
+              s.name, s.email, s.enrollment_id, s.enrollment_year, s.program, s.semester,
+              p.company_name, p.position, p.package, p.placement_status
             FROM students s
             JOIN placements p ON s.student_id = p.student_id`;
           break;
 
         case "students":
         default:
-          sqlQuery = `SELECT first_name, middle_name, last_name, email, enrollment_id, enrollment_year, phone_no, program, career_choice, semester, section, batch FROM students`;
+          sqlQuery = `SELECT name, email, enrollment_id, enrollment_year, program, career_choice, semester FROM students`;
           break;
       }
 
@@ -75,8 +75,8 @@ class ExcelModel {
         case "higher_studies":
           sqlQuery = `
             SELECT 
-              s.first_name, s.middle_name, s.last_name, s.email, s.enrollment_id, s.enrollment_year, s.phone_no, s.program, s.semester,
-              h.university_name, h.course_name, h.country, h.admission_year, h.higher_studies_status, h.higher_studies_notes
+              s.name, s.email, s.enrollment_id, s.enrollment_year s.program, s.semester,
+              h.university_name, h.course_name, h.country, h.admission_year, h.higher_studies_status
             FROM students s
             JOIN higher_studies h ON s.student_id = h.student_id
             WHERE s.enrollment_year = ?`;
@@ -85,8 +85,8 @@ class ExcelModel {
         case "placements":
           sqlQuery = `
             SELECT 
-              s.first_name, s.middle_name, s.last_name, s.email, s.enrollment_id, s.enrollment_year, s.phone_no, s.program, s.semester,
-              p.company_name, p.position, p.placement_year, p.placement_date, p.package, p.placement_status, p.placement_notes
+              s.name, s.email, s.enrollment_id, s.enrollment_year, s.program, s.semester,
+              p.company_name, p.position, p.package, p.placement_status
             FROM students s
             JOIN placements p ON s.student_id = p.student_id
             WHERE s.enrollment_year = ?`;
@@ -95,7 +95,7 @@ class ExcelModel {
         case "students":
         default:
           sqlQuery = `
-            SELECT first_name, middle_name, last_name, email, enrollment_id, enrollment_year, phone_no, program, career_choice, semester, section, batch 
+            SELECT name, email, enrollment_id, enrollment_year, program, career_choice, semester 
             FROM students
             WHERE enrollment_year = ?`;
           break;

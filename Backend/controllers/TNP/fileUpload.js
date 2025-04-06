@@ -59,27 +59,25 @@ function uploadExcel(path, callback) {
       // Basic student data
       .map((row) => {
         const studentData = {
-          first_name: row[headerMap["first_name"]],
-          middle_name: row[headerMap["middle_name"]],
-          last_name: row[headerMap["last_name"]],
+          name: row[headerMap["name"]],
           email: row[headerMap["email"]],
           enrollment_id: row[headerMap["enrollment_id"]],
           enrollment_year: row[headerMap["enrollment_year"]],
-          phone_no: row[headerMap["phoneno"] || headerMap["phone_no"]],
+          batch: row[headerMap["batch"]],
           program: row[headerMap["program"]],
           career_choice: row[headerMap["career_choice"]],
           semester: row[headerMap["semester"]],
-          section: row[headerMap["section"]],
-          batch: row[headerMap["batch"]],
           created_at: new Date(),
           updated_at: new Date(),
         };
 
         // Check if any essential student data is missing
         const requiredFields = [
-          "first_name",
+          "name",
           "email",
           "enrollment_id",
+          "enrollment_year",
+          "batch",
           "career_choice",
         ];
         for (const field of requiredFields) {
@@ -102,11 +100,8 @@ function uploadExcel(path, callback) {
           additionalData.placement = {
             company_name: row[headerMap["company_name"]],
             position: row[headerMap["position"]],
-            placement_year: row[headerMap["placement_year"]],
-            placement_date: row[headerMap["placement_date"]],
             package: row[headerMap["package"]],
             placement_status: row[headerMap["placement_status"]],
-            placement_notes: row[headerMap["placement_notes"]],
           };
         }
 
@@ -121,7 +116,6 @@ function uploadExcel(path, callback) {
             country: row[headerMap["country"]],
             admission_year: row[headerMap["admission_year"]],
             higher_studies_status: row[headerMap["higher_studies_status"]],
-            higher_studies_notes: row[headerMap["higher_studies_notes"]],
           };
         }
 
@@ -153,38 +147,30 @@ function uploadExcel(path, callback) {
         try {
           // Insert all students first
           const studentsData = processedData.map((item) => [
-            item.studentData.first_name,
-            item.studentData.middle_name,
-            item.studentData.last_name,
+            item.studentData.name,
             item.studentData.email,
             item.studentData.enrollment_id,
             item.studentData.enrollment_year,
-            item.studentData.phone_no,
+            item.studentData.batch,
             item.studentData.program,
             item.studentData.career_choice,
             item.studentData.semester,
-            item.studentData.section,
-            item.studentData.batch,
             item.studentData.created_at,
             item.studentData.updated_at,
           ]);
 
           const upsertStudentsQuery = `
             INSERT INTO students 
-            (first_name, middle_name, last_name, email, enrollment_id, enrollment_year, phone_no, program, career_choice, semester, section, batch, created_at, updated_at) 
+            (name, email, enrollment_id, enrollment_year, batch, program, career_choice, semester, created_at, updated_at) 
             VALUES ?
             ON DUPLICATE KEY UPDATE
-            first_name = VALUES(first_name),
-            middle_name = VALUES(middle_name),
-            last_name = VALUES(last_name),
+            name = VALUES(name),
             email = VALUES(email),
-            enrollment_year = VALUES(enrollment_year),
-            phone_no = VALUES(phone_no),
+            enrollment_year = VALUES(enrollment_year), 
+            batch= VALUES(batch), 
             program = VALUES(program),
             career_choice = VALUES(career_choice),
             semester = VALUES(semester),
-            section = VALUES(section),
-            batch = VALUES(batch),
             updated_at = VALUES(updated_at)
           `;
 
@@ -235,11 +221,8 @@ function uploadExcel(path, callback) {
                 studentId,
                 placement.company_name,
                 placement.position,
-                placement.placement_year,
-                placement.placement_date,
                 placement.package,
                 placement.placement_status,
-                placement.placement_notes,
               ]);
             } else if (
               item.careerChoice === "higher studies" ||
@@ -253,7 +236,6 @@ function uploadExcel(path, callback) {
                 higherStudy.country,
                 higherStudy.admission_year,
                 higherStudy.higher_studies_status,
-                higherStudy.higher_studies_notes,
               ]);
             }
           });
@@ -262,16 +244,13 @@ function uploadExcel(path, callback) {
           if (placementStudents.length > 0) {
             const upsertPlacementsQuery = `
               INSERT INTO placements
-              (student_id, company_name, position, placement_year, placement_date, package, placement_status, placement_notes)
+              (student_id, company_name, position, package, placement_status)
               VALUES ?
               ON DUPLICATE KEY UPDATE
               company_name = VALUES(company_name),
               position = VALUES(position),
-              placement_year = VALUES(placement_year),
-              placement_date = VALUES(placement_date),
               package = VALUES(package),
-              placement_status = VALUES(placement_status),
-              placement_notes = VALUES(placement_notes)
+              placement_status = VALUES(placement_status)
             `;
             await new Promise((resolve, reject) => {
               connection.query(
@@ -289,15 +268,14 @@ function uploadExcel(path, callback) {
           if (higherStudiesStudents.length > 0) {
             const upsertHigherStudiesQuery = `
               INSERT INTO higher_studies
-              (student_id, university_name, course_name, country, admission_year, higher_studies_status, higher_studies_notes)
+              (student_id, university_name, course_name, country, admission_year, higher_studies_status)
               VALUES ?
               ON DUPLICATE KEY UPDATE
               university_name = VALUES(university_name),
               course_name = VALUES(course_name),
               country = VALUES(country),
               admission_year = VALUES(admission_year),
-              higher_studies_status = VALUES(higher_studies_status),
-              higher_studies_notes = VALUES(higher_studies_notes)
+              higher_studies_status = VALUES(higher_studies_status)
             `;
             await new Promise((resolve, reject) => {
               connection.query(
