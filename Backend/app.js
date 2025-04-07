@@ -28,9 +28,9 @@ app.use("/api/auth", authRoutes);
 app.use("/api/file", fileUploadRoutes); //file Upload
 app.use("/api/students", studentRoutes);
 app.use("/api", fileDownloadRoutes);
-app.use("/api/edit-student", editStudentRoutes);
+app.use("/api/edit_student", editStudentRoutes);
 app.use("/api", companyRoutes);
-app.use("/api/edit-company", editCompanyRoutes);
+app.use("/api/edit_company", editCompanyRoutes);
 app.use("/api", deleteCompnayRoutes);
 app.use("/api", deleteStudentRoutes);
 app.use("/api/download", companyListDownloadRoutes);

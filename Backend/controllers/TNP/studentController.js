@@ -55,8 +55,11 @@ const getHigherStudiesStudents = (req, res) => {
     s.program, 
     h.university_name, 
     h.course_name, 
-    h.country, 
-    h.admission_year, 
+    h.specialization, 
+    h.admission_year,  
+    h.address_of_institute,
+    h.city_of_institute,
+    h.country_of_institute, 
     h.higher_studies_status
 FROM students s
 INNER JOIN higher_studies h ON s.student_id = h.student_id

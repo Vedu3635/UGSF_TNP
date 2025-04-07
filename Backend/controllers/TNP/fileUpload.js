@@ -113,8 +113,11 @@ function uploadExcel(path, callback) {
           additionalData.higherStudies = {
             university_name: row[headerMap["university_name"]],
             course_name: row[headerMap["course_name"]],
-            country: row[headerMap["country"]],
+            specialization: row[headerMap["specialization"]],
             admission_year: row[headerMap["admission_year"]],
+            address_of_institute: row[headerMap["address_of_institute"]],
+            city_of_institute: row[headerMap["city_of_institute"]],
+            country_of_institute: row[headerMap["country_of_institute"]],
             higher_studies_status: row[headerMap["higher_studies_status"]],
           };
         }
@@ -233,8 +236,11 @@ function uploadExcel(path, callback) {
                 studentId,
                 higherStudy.university_name,
                 higherStudy.course_name,
-                higherStudy.country,
+                higherStudy.specialization,
                 higherStudy.admission_year,
+                higherStudy.address_of_institute,
+                higherStudy.city_of_institute,
+                higherStudy.country_of_institute,
                 higherStudy.higher_studies_status,
               ]);
             }
@@ -268,13 +274,16 @@ function uploadExcel(path, callback) {
           if (higherStudiesStudents.length > 0) {
             const upsertHigherStudiesQuery = `
               INSERT INTO higher_studies
-              (student_id, university_name, course_name, country, admission_year, higher_studies_status)
+              (student_id, university_name, course_name, specialization, admission_year, address_of_institute, city_of_institute, country_of_institute, higher_studies_status)
               VALUES ?
               ON DUPLICATE KEY UPDATE
               university_name = VALUES(university_name),
               course_name = VALUES(course_name),
-              country = VALUES(country),
+              specialization= VALUES(specialization),
               admission_year = VALUES(admission_year),
+              address_of_institute = VALUES(address_of_institute),
+              city_of_institute = VALUES(city_of_institute), 
+              country_of_institute = VALUES(country_of_institute),
               higher_studies_status = VALUES(higher_studies_status)
             `;
             await new Promise((resolve, reject) => {

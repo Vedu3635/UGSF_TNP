@@ -90,7 +90,7 @@ const updatePlacementDetails = async (req, res) => {
     const studentSql = `
       UPDATE students 
       SET 
-        // name = ?, email = ?, enrollment_id = ?, enrollment_year = ?, batch = , program = ?, updated_at = NOW()
+         name = ?, email = ?, enrollment_id = ?, enrollment_year = ?, batch = ?, program = ?, updated_at = NOW()
       WHERE student_id = ?
     `;
 
@@ -159,7 +159,11 @@ const updateHigherStudiesDetails = async (req, res) => {
     // Higher studies details
     university_name,
     course_name,
+    specialization,
     admission_year,
+    address_of_institute,
+    city_of_institute,
+    country_of_institute,
     higher_studies_status,
     // Student details
     name,
@@ -206,7 +210,11 @@ const updateHigherStudiesDetails = async (req, res) => {
       SET 
         university_name = ?,
         course_name = ?,
+        specialization = ?,
         admission_year = ?,
+        address_of_institute = ?,
+        city_of_institute = ?,
+        country_of_institute =?,
         higher_studies_status = ?
       WHERE student_id = ?
     `;
@@ -214,7 +222,11 @@ const updateHigherStudiesDetails = async (req, res) => {
     const higherStudiesValues = [
       university_name,
       course_name,
+      specialization,
       admission_year,
+      address_of_institute,
+      city_of_institute,
+      country_of_institute,
       higher_studies_status,
       student_id,
     ];

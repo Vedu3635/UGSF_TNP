@@ -12,7 +12,7 @@ const Charts = ({ allStudentsData, placementData, higherStudiesData }) => {
     DCS: [],
   });
 
-  console.log(allStudentsData);
+  // console.log(allStudentsData);
   // console.log(placementData);
   // console.log(higherStudiesData);
   // console.log(typeof studentsData);
@@ -43,33 +43,35 @@ const Charts = ({ allStudentsData, placementData, higherStudiesData }) => {
   }, [allStudentsData]);
 
   // Helper function to get student counts by career choice
-  const getStudentCountsByCareerChoice = (careerChoice) => {
-    return allStudentsData.filter(
-      (student) => student.career_choice === careerChoice
-    ).length;
-  };
+  // const getStudentCountsByCareerChoice = (careerChoice) => {
+  //   return allStudentsData.filter(
+  //     (student) => student.career_choice === careerChoice
+  //   ).length;
+  // };
 
   // Helper function to get data for each department
-  const getDepartmentData = (department) => {
-    const departmentStudents = allStudentsData.filter(
-      (student) => student.program === department
-    );
-    const placementCount = departmentStudents.filter(
-      (student) => student.career_choice === "Job Placement"
-    ).length;
-    const higherStudiesCount = departmentStudents.filter(
-      (student) => student.career_choice === "Higher Studies"
-    ).length;
-    const entrepreneurialCount = departmentStudents.filter(
-      (student) => student.career_choice === "Entrepreneurial Venture"
-    ).length;
+  // const getDepartmentData = (department) => {
+  //   const departmentStudents = allStudentsData.filter(
+  //     (student) => student.program === department
+  //   );
+  //   const placementCount = departmentStudents.filter(
+  //     (student) => student.career_choice === "Job Placement"
+  //   ).length;
+  //   const higherStudiesCount = departmentStudents.filter(
+  //     (student) => student.career_choice === "Higher Studies"
+  //   ).length;
+  //   const entrepreneurialCount = departmentStudents.filter(
+  //     (student) => student.career_choice === "Entrepreneurial Venture"
+  //   ).length;
 
-    return {
-      placementCount,
-      higherStudiesCount,
-      entrepreneurialCount,
-    };
-  };
+  //   return {
+  //     placementCount,
+  //     higherStudiesCount,
+  //     entrepreneurialCount,
+  //   };
+  // };
+
+  // chart 1
 
   const years1 = [
     ...new Set(
@@ -78,8 +80,7 @@ const Charts = ({ allStudentsData, placementData, higherStudiesData }) => {
         .filter((year) => year && year !== "0000") // Remove null and "0000"
     ),
   ].sort();
-  // console.log(years1);
-  console.log(students);
+
   // Filter and prepare chart data based on the selected program
   const filteredData1 = placementData.filter(
     (student) => student.program === filter1
@@ -93,7 +94,7 @@ const Charts = ({ allStudentsData, placementData, higherStudiesData }) => {
         label: filter1, // Dynamically change label based on selected program
         data: years1.map((year) => {
           const studentsInYearAndProgram = filteredData1.filter((student) => {
-            return Number(student.enrollment_year) === Number(year);
+            return Number(student.batch) === Number(year);
           });
 
           if (studentsInYearAndProgram.length > 0) {
@@ -165,80 +166,132 @@ const Charts = ({ allStudentsData, placementData, higherStudiesData }) => {
   };
 
   //chart 3
+  // Function to filter data for the latest 4-5 years
+  const latestYears = 5;
+  const currentYear = new Date().getFullYear(); // 2025
+  const startYear = currentYear - latestYears - 1; // 2019
 
-  // Function to get students filtered by a specific program (department)
-
-  const filteredData3 = higherStudiesData.filter((student) => {
-    return student.program === filter3;
+  const filteredDataByYear = placementData.filter((student) => {
+    const batch = Number(student.batch); // Handle string batches
+    const inRange = batch >= startYear && batch <= currentYear;
+    return inRange;
   });
 
-  // Function to group students by their application status (Accepted, In Progress, Rejected)
-  const countStudentsByProgram = (programData) => {
-    const programCounts = programData.reduce((acc, student) => {
-      // Categorizing status
-      let higher_studies_status;
-      if (student.higher_studies_status === "Admitted") {
-        higher_studies_status = "Admitted";
-      } else if (student.higher_studies_status === "In Process") {
-        higher_studies_status = "In Progress";
-      } else if (student.higher_studies_status === "Rejected") {
-        higher_studies_status = "Rejected";
-      } else {
-        higher_studies_status = "Unknown"; // Fallback in case of unexpected values
+  // Function to calculate the average package by batch in LPA
+  const calculateAveragePackageByYear = (yearData) => {
+    const yearGroups = yearData.reduce((acc, student) => {
+      const year = Number(student.batch);
+      if (!acc[year]) {
+        acc[year] = { totalPackage: 0, count: 0 };
       }
-
-      acc[higher_studies_status] = (acc[higher_studies_status] || 0) + 1;
+      acc[year].totalPackage += (student.package || 0) / 100000;
+      acc[year].count += 1;
       return acc;
     }, {});
 
-    return programCounts;
+    const averagesByYear = {};
+    for (const year in yearGroups) {
+      averagesByYear[year] =
+        yearGroups[year].totalPackage / yearGroups[year].count;
+    }
+    return averagesByYear;
   };
 
-  // Get the counts of students in each status (Accepted, In Progress, Rejected)
-  const programCounts = countStudentsByProgram(filteredData3);
+  const averagePackages = calculateAveragePackageByYear(filteredDataByYear);
 
-  // Prepare the chart data based on program counts
+  // Prepare the chart data for average package by year
   const chartData3 = {
-    labels: ["Admitted", "In Progress", "Rejected"], // Updated labels
+    labels: Array.from({ length: latestYears }, (_, i) => startYear + i), // [2021, 2022, 2023, 2024, 2025]
     datasets: [
       {
-        data: [
-          programCounts["Admitted"] || 0, // Number of students Admitted
-          programCounts["In Progress"] || 0, // Number of students still in progress
-          programCounts["Rejected"] || 0, // Number of students rejected
-        ],
-        backgroundColor: [
-          "rgba(75, 192, 192, 0.6)", // Greenish for Accepted
-          "rgba(255, 206, 86, 0.6)", // Yellow for In Progress
-          "rgba(255, 99, 132, 0.6)", // Red for Rejected
-        ],
+        label: "Average Package (LPA)",
+        data: Array.from({ length: latestYears }, (_, i) => {
+          const year = startYear + i;
+          return averagePackages[year] || 0; // Include 0 for missing years
+        }),
+        backgroundColor: "rgba(75, 192, 192, 0.6)",
+        borderColor: "rgba(75, 192, 192, 1)",
+        borderWidth: 1,
       },
     ],
   };
 
   //chart 4
-  const carrerChoice = [
-    ...new Set(
-      allStudentsData
-        .map((student) => student.career_choice)
-        .filter((choice) => choice !== "")
-    ),
-  ];
 
+  // Filter data for the last 5 years
+  // Define the time range
+  const latestYears4 = 5;
+  const currentYear4 = new Date().getFullYear(); // 2025
+  const startYear4 = currentYear4 - latestYears4 - 1; // 2021
+
+  const calculatePlacementPercentageByYear = (data) => {
+    if (!data || data.length === 0) {
+      console.log("No data provided to calculatePlacementPercentageByYear");
+      return {};
+    }
+
+    // Step 1: Aggregate totals and counts per year
+    const yearStats = data.reduce((acc, student) => {
+      const year = student.batch
+        ? Number(String(student.batch).match(/\d{4}/)?.[0])
+        : null;
+      if (year && year >= startYear4 && year <= currentYear4) {
+        if (!acc[year]) {
+          acc[year] = { placed: 0, notPlaced: 0, total: 0 };
+        }
+        acc[year].total += 1; // Count every student
+        if (
+          student.placement_status === "Placed" ||
+          student.placement_status === "placed"
+        ) {
+          acc[year].placed += 1;
+        } else {
+          acc[year].notPlaced += 1;
+        }
+      }
+      return acc;
+    }, {});
+
+    // Step 2: Calculate percentages
+    const yearPercentages = {};
+    for (const year in yearStats) {
+      const { placed, notPlaced, total } = yearStats[year];
+      yearPercentages[year] = {
+        placedPercentage: (placed / total) * 100,
+        notPlacedPercentage: (notPlaced / total) * 100,
+      };
+    }
+
+    return yearPercentages;
+  };
+
+  // Apply filter if needed (e.g., filter by program)
+  const filteredPlacementData4 = filter4
+    ? placementData.filter((student) => student.program === filter4)
+    : placementData;
+  const placementPercentages = calculatePlacementPercentageByYear(
+    filteredPlacementData4
+  );
+
+  // Step 3: Prepare chart data for a stacked percentage bar chart
   const chartData4 = {
-    labels: carrerChoice,
+    labels: Array.from({ length: latestYears4 }, (_, i) => startYear4 + i), // [2021, 2022, 2023, 2024, 2025]
     datasets: [
       {
-        data: [
-          getDepartmentData(filter4).placementCount,
-          getDepartmentData(filter4).higherStudiesCount,
-          getDepartmentData(filter4).entrepreneurialCount,
-        ],
-        backgroundColor: [
-          "rgba(153, 102, 255, 0.6)",
-          "rgba(255, 205, 86, 0.6)",
-          "rgba(75, 192, 192, 0.6)",
-        ],
+        label: "Placed (%)",
+        data: Array.from({ length: latestYears4 }, (_, i) => {
+          const year = startYear4 + i;
+          return placementPercentages[year]?.placedPercentage || 0;
+        }),
+        backgroundColor: "rgba(75, 192, 192, 0.6)", // Teal for placed
+      },
+      {
+        label: "Not Placed (%)",
+        data: Array.from({ length: latestYears }, (_, i) => {
+          const year = startYear4 + i;
+          return placementPercentages[year]?.notPlacedPercentage || 0;
+        }),
+        backgroundColor: "rgba(255, 99, 132, 0.6)", // Red for not placed
       },
     ],
   };
@@ -254,22 +307,21 @@ const Charts = ({ allStudentsData, placementData, higherStudiesData }) => {
   const countStudentsByYearAndChoice = (data, careerChoice, year) => {
     return data.filter(
       (student) =>
-        student.enrollment_year === year &&
-        student.career_choice === careerChoice
+        student.batch === year && student.career_choice === careerChoice
     ).length;
   };
 
   // Calculate unique years from the filtered data
   const years5 = [
-    ...new Set(filteredByProgram.map((student) => student.enrollment_year)),
+    ...new Set(filteredByProgram.map((student) => student.batch)),
   ].sort();
 
   // Function to calculate total students for a specific year
   const countTotalStudentsByYear = (data, year) => {
-    return data.filter((student) => student.enrollment_year === year).length;
+    return data.filter((student) => student.batch === year).length;
   };
 
-  // Create the data arrays in percentages for Placement and Higher Studies
+  // Create the data arrays in percentages for Placement, Higher Studies, and Entrepreneurship
   const placementDataByYear = years5.map((year) => {
     const totalStudents = countTotalStudentsByYear(filteredByProgram, year);
     const placementCount = countStudentsByYearAndChoice(
@@ -294,14 +346,27 @@ const Charts = ({ allStudentsData, placementData, higherStudiesData }) => {
       : 0;
   });
 
-  // Chart Data with percentage values
+  // New: Entrepreneurship/Business percentage calculation
+  const entrepreneurshipDataByYear = years5.map((year) => {
+    const totalStudents = countTotalStudentsByYear(filteredByProgram, year);
+    const entrepreneurshipCount = countStudentsByYearAndChoice(
+      filteredByProgram,
+      "Entrepreneurship", // Adjust this value based on your data (e.g., "Business")
+      year
+    );
+    return totalStudents > 0
+      ? ((entrepreneurshipCount / totalStudents) * 100).toFixed(2)
+      : 0;
+  });
+
+  // Chart Data with percentage values, including Entrepreneurship
   const chartData5 = {
     labels: years5, // The years for the X-axis
     datasets: [
       {
         label: "Placement (%)",
         data: placementDataByYear, // Data in percentages for placement students
-        borderColor: "rgba(75, 192, 192, 1)",
+        borderColor: "rgba(75, 192, 192, 1)", // Teal
         backgroundColor: "rgba(75, 192, 192, 0.2)",
         tension: 0.1,
         pointRadius: 5,
@@ -310,8 +375,17 @@ const Charts = ({ allStudentsData, placementData, higherStudiesData }) => {
       {
         label: "Higher Studies (%)",
         data: higherStudiesDataByYear, // Data in percentages for higher studies students
-        borderColor: "rgba(255, 99, 132, 1)",
+        borderColor: "rgba(255, 99, 132, 1)", // Red
         backgroundColor: "rgba(255, 99, 132, 0.2)",
+        tension: 0.1,
+        pointRadius: 5,
+        pointHoverRadius: 7,
+      },
+      {
+        label: "Entrepreneurship (%)", // New dataset
+        data: entrepreneurshipDataByYear, // Data in percentages for entrepreneurship students
+        borderColor: "rgba(153, 102, 255, 1)", // Purple (adjust as needed)
+        backgroundColor: "rgba(153, 102, 255, 0.2)",
         tension: 0.1,
         pointRadius: 5,
         pointHoverRadius: 7,
@@ -439,20 +513,20 @@ const Charts = ({ allStudentsData, placementData, higherStudiesData }) => {
       setFilter: setFilter2,
     },
     {
-      title: "Higher Studies",
-      type: "pie",
-      data: chartData3,
-      options: pieChartOptions,
-      filter: filter3,
-      setFilter: setFilter3,
+      title: "Average Package by Year", // Updated title to reflect the new chart purpose
+      type: "bar", // Change from "pie" to "bar" (or "line" if preferred)
+      data: chartData3, // The new chartData3 with years and average packages
+      options: barChartOptions, // Replace pieChartOptions with options suited for bar/line chart
+      filter: filter3, // Optional: only if you add a program filter back
+      setFilter: setFilter3, // Optional: only if filter is still relevant
     },
     {
-      title: "Student Carrer Choice",
-      type: "pie",
-      data: chartData4,
-      options: pieChartOptions,
-      filter: filter4,
-      setFilter: setFilter4,
+      title: "Placement Percentage by Year (Last 5 Years)", // Updated title to reflect the new purpose
+      type: "bar", // Change from "pie" to "bar" for a stacked bar chart
+      data: chartData4, // Use chartData8 (from the previous response) instead of chartData4
+      options: barChartOptions,
+      filter: filter4, // Keep if you're using a filter; otherwise, remove
+      setFilter: setFilter4, // Keep if you're using a filter; otherwise, remove
     },
     {
       title: "Placement vs Higher Studies Yearyl",

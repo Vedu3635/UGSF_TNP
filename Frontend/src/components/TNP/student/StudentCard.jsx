@@ -130,45 +130,46 @@ const StudentCard = ({ item, type, onStudentUpdate, onDelete }) => {
   const renderDetailFields = () => {
     if (type === "placement") {
       return [
-        { label: "Company", value: item.company_name },
-        { label: "Email", value: item.email },
-        { label: "Enrollment ID", value: item.enrollment_id },
-        { label: "Enrollment Year", value: item.enrollment_year },
-        { label: "Batch", value: item.batch },
-        { label: "Name", value: item.name },
+        { label: "Company Name", value: item.company_name },
         {
           label: "Package",
           value: item.package
             ? `${(item.package / 100000).toFixed(1)} LPA`
             : "N/A",
         },
-        { label: "Status", value: item.placement_status },
         { label: "Position", value: item.position },
+        { label: "Batch", value: item.batch },
+        { label: "Status", value: item.placement_status },
+        { label: "Enrollment ID", value: item.enrollment_id },
+        { label: "Email", value: item.email },
+        { label: "Enrollment Year", value: item.enrollment_year },
         { label: "Program", value: item.program },
         // { label: "Student ID", value: item.student_id },
       ];
     } else if (type === "higherStudies") {
       return [
-        { label: "Admission Year", value: item.admission_year },
+        { label: "University", value: item.university_name },
         { label: "Course", value: item.course_name },
-        { label: "Email", value: item.email },
-        { label: "Enrollment ID", value: item.enrollment_id },
-        { label: "Enrollment Year", value: item.enrollment_year },
+        { label: "Specialization", value: item.specialization },
+        { label: "Admission Year", value: item.admission_year },
+        { label: "Address of Institute", value: item.address_of_institute },
+        { label: "City of Institute", value: item.city_of_institute },
+        { label: "Country of Institute", value: item.country_of_institute },
         { label: "Batch", value: item.batch },
-        { label: "Name", value: item.name },
         { label: "Status", value: item.higher_studies_status },
+        { label: "Enrollment ID", value: item.enrollment_id },
+        { label: "Email", value: item.email },
+        { label: "Enrollment Year", value: item.enrollment_year },
         { label: "Program", value: item.program },
         // { label: "Student ID", value: item.student_id },
-        { label: "University", value: item.university_name },
       ];
     } else {
       return [
-        { label: "Career Choice", value: item.career_choice },
-        { label: "Email", value: item.email },
         { label: "Enrollment ID", value: item.enrollment_id },
+        { label: "Email", value: item.email },
         { label: "Enrollment Year", value: item.enrollment_year },
+        { label: "Career Choice", value: item.career_choice },
         { label: "Batch", value: item.batch },
-        { label: "Name", value: item.name },
         { label: "Program", value: item.program },
         { label: "Semester", value: item.semester },
         // { label: "Student ID", value: item.student_id },
@@ -199,14 +200,14 @@ const StudentCard = ({ item, type, onStudentUpdate, onDelete }) => {
           </div>
           {type === "placement" && (
             <div>
-              <span className="font-medium text-xs">Placement Status</span>
-              <p className="text-sm">{item.placement_status || "N/A"}</p>
+              <span className="font-medium text-xs">Position</span>
+              <p className="text-sm">{item.position || "N/A"}</p>
             </div>
           )}
           {type === "higherStudies" && (
             <div>
-              <span className="font-medium text-xs">Application Status</span>
-              <p className="text-sm">{item.higher_studies_status || "N/A"}</p>
+              <span className="font-medium text-xs">Admission Year</span>
+              <p className="text-sm">{item.admission_year || "N/A"}</p>
             </div>
           )}
           {type === "all" && (
@@ -239,9 +240,9 @@ const StudentCard = ({ item, type, onStudentUpdate, onDelete }) => {
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mt-4">
           <span className="text-xs bg-white text-gray-700 px-2 py-1 rounded-full mb-2 sm:mb-0 self-start">
             {type === "placement"
-              ? item.position || "N/A"
+              ? item.batch || "N/A"
               : type === "higherStudies"
-              ? item.admission_year || "N/A"
+              ? item.batch || "N/A"
               : item.program || "N/A"}
           </span>
           <div className="space-x-2 self-end sm:self-auto">

@@ -26,10 +26,9 @@ const StudentList = ({
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
 
   const [filters, setFilters] = useState({
-    enrollment_year: "",
+    batch: "",
     career_choice: "",
     semester: "",
-    placement_year: "",
     company_name: "",
     position: "",
     university_name: "",
@@ -40,10 +39,9 @@ const StudentList = ({
 
   const resetFilters = () => {
     setFilters({
-      enrollment_year: "",
+      batch: "",
       career_choice: "",
       semester: "",
-      placement_year: "",
       company_name: "",
       position: "",
       university_name: "",
@@ -100,8 +98,8 @@ const StudentList = ({
 
     const options = {
       all: {
-        enrollment_year: getTopItems(
-          allStudentsData.map((item) => item.enrollment_year || ""),
+        batch: getTopItems(
+          allStudentsData.map((item) => item.batch || ""),
           5
         ),
         career_choice: [
@@ -118,12 +116,19 @@ const StudentList = ({
               .filter((value) => value !== "" && value !== null)
           ),
         ].sort(),
-      },
-      placements: {
-        placement_year: [
+        program: [
           ...new Set(
             placementData
-              .map((item) => item.placement_year || "")
+              .map((item) => item.program || "")
+              .filter((value) => value !== "" && value !== null)
+          ),
+        ].sort(),
+      },
+      placements: {
+        batch: [
+          ...new Set(
+            placementData
+              .map((item) => item.batch || "")
               .filter(
                 (value) => value !== "" && value !== null && value !== "0000"
               )

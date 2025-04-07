@@ -145,7 +145,7 @@ const CompanyList = ({ companiesData }) => {
       }
 
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/edit-company/${
+        `${import.meta.env.VITE_API_URL}/edit_company/${
           selectedCompany.company_id
         }`,
         {
