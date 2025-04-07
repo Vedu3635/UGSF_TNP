@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { LayoutDashboard, Users, Building2, LogOut, Files } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
-import { useAuth } from "../../pages/AuthContext"; // Import useAuth
+// import { useAuth } from "../../pages/AuthContext"; // Import useAuth
 
 const LeftSlider2 = ({
   isExpanded,
@@ -13,7 +13,7 @@ const LeftSlider2 = ({
   const [userRole, setUserRole] = useState(null);
   const [isMounted, setIsMounted] = useState(false);
   const navigate = useNavigate();
-  const { logout } = useAuth(); // Get logout from AuthContext
+  // const { logout } = useAuth(); // Get logout from AuthContext
 
   useEffect(() => {
     setIsMounted(true);
@@ -58,10 +58,10 @@ const LeftSlider2 = ({
     }
   };
 
-  const handleLogout = () => {
-    logout(); // Use AuthContext logout
-    navigate("/login", { replace: true }); // Navigate to login
-  };
+  // const handleLogout = () => {
+  //   logout(); // Use AuthContext logout
+  //   navigate("/login", { replace: true }); // Navigate to login
+  // };
 
   // Navigation items configuration
   const navItems = [
@@ -152,7 +152,7 @@ const LeftSlider2 = ({
           {/* Toggle sidebar on mobile/tablet */}
 
           {/* Logout Button */}
-          <button
+          {/* <button
             className={`w-full flex items-center p-2 rounded transition-all duration-200
             hover:bg-red-500 text-white
             ${isExpanded ? "justify-start space-x-3 px-4" : "justify-center"}`}
@@ -161,7 +161,7 @@ const LeftSlider2 = ({
           >
             <LogOut className="w-5 h-5" />
             {isExpanded && <span>Logout</span>}
-          </button>
+          </button> */}
         </div>
       </div>
     </>

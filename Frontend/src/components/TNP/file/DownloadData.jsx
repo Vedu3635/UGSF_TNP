@@ -9,6 +9,8 @@ const DownloadData = () => {
     year: "", // Optional year filter for students
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [showCustomYear, setShowCustomYear] = useState(false);
+  const [customYearInput, setCustomYearInput] = useState(""); // Local state for typing
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
@@ -16,6 +18,36 @@ const DownloadData = () => {
       ...prev,
       [name]: value,
     }));
+  };
+
+  const handleSelectChange = (e) => {
+    const value = e.target.value;
+    if (value === "other") {
+      setShowCustomYear(true);
+      setCustomYearInput("");
+      handleFilterChange({ target: { name: "year", value: "" } }); // Clear year until custom input
+    } else {
+      setShowCustomYear(false);
+      handleFilterChange(e);
+    }
+  };
+
+  const handleCustomYearChange = (e) => {
+    setCustomYearInput(e.target.value); // Free typing
+  };
+
+  const handleCustomYearBlur = () => {
+    const customYear = customYearInput;
+    if (
+      customYear &&
+      !isNaN(customYear) &&
+      customYear >= 1900 &&
+      customYear <= new Date().getFullYear()
+    ) {
+      handleFilterChange({ target: { name: "year", value: customYear } });
+    } else {
+      setCustomYearInput(filters.year || "");
+    }
   };
 
   // Common download utility function
@@ -155,18 +187,38 @@ const DownloadData = () => {
         ) && (
           <div className="border rounded-lg p-4 mb-6 bg-gray-50">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <select
-                name="year"
-                value={filters.year}
-                onChange={handleFilterChange}
-                className="border px-3 py-2 rounded"
-              >
-                <option value="">Select Enrollment Year</option>
-                <option value="2021">2021</option>
-                <option value="2022">2022</option>
-                <option value="2023">2023</option>
-                <option value="2024">2024</option>
-              </select>
+              <div>
+                <select
+                  name="year"
+                  value={showCustomYear ? "other" : filters.year}
+                  onChange={handleSelectChange}
+                  className="border px-3 py-2 rounded w-full"
+                >
+                  <option value="">Select Enrollment Year</option>
+                  {Array.from({ length: 5 }, (_, i) => {
+                    const year = new Date().getFullYear() - i; // Last 5 years
+                    return (
+                      <option key={year} value={year}>
+                        {year}
+                      </option>
+                    );
+                  })}
+                  <option value="other">Other (Enter Custom Year)</option>
+                </select>
+                {showCustomYear && (
+                  <input
+                    type="text"
+                    name="customYear"
+                    value={customYearInput}
+                    onChange={handleCustomYearChange}
+                    onBlur={handleCustomYearBlur}
+                    placeholder="Enter year (e.g., 2017)"
+                    className="border px-3 py-2 rounded mt-2 w-full"
+                    min="1900"
+                    max={new Date().getFullYear()}
+                  />
+                )}
+              </div>
             </div>
           </div>
         )}

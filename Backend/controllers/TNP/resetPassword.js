@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
 const crypto = require("crypto");
 
-// Store OTPs and reset requests temporarily (use Redis in production)
+// Store OTPs temporarily (use Redis in production)
 const otpStore = new Map();
 
 // Configure nodemailer
@@ -20,6 +20,11 @@ const generateOTP = () => {
   return Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit OTP
 };
 
+// Generate random password
+const generateRandomPassword = () => {
+  return crypto.randomBytes(8).toString("hex"); // Generates a 16-character random password
+};
+
 // Request password reset
 exports.requestPasswordReset = async (req, res) => {
   try {
@@ -32,7 +37,15 @@ exports.requestPasswordReset = async (req, res) => {
       });
     }
 
-    // Check if username exists
+    // Restrict to university email only
+    if (!requester_email.endsWith("@charusat.edu.in")) {
+      return res.status(400).json({
+        success: false,
+        message: "Only university emails are allowed for password reset",
+      });
+    }
+
+    // Check if username exists and email matches
     const users = await pool.query("SELECT * FROM users WHERE username = ?", [
       username,
     ]);
@@ -41,48 +54,22 @@ exports.requestPasswordReset = async (req, res) => {
       return res.status(200).json({
         success: true,
         message:
-          "If your username is registered, a reset process will begin shortly",
+          "If your username is registered, an OTP will be sent to your email",
       });
     }
 
     const user = users[0];
-    const accountEmail = user.email; // e.g., tnp.ce@university.edu
-    const isTnp = user.role === "tnpfaculty"; // Check if it's a TNP account
+    // const accountEmail = user.email; // Commented out initially
 
-    // Generate approval token for TNP (HOD verification)
-    // if (isTnp) {
-    //   const approvalToken = crypto.randomBytes(16).toString("hex");
-    //   const expiryTime = Date.now() + 15 * 60 * 1000; // 15-minute expiry
-
-    //   otpStore.set(username, {
-    //     approvalToken,
-    //     expiryTime,
-    //     requester_email,
-    //     accountEmail,
-    //   });
-
-    //   // Send approval email to HOD
-    //   const hodEmail = "hod@university.edu"; // Replace with env variable in production
-    //   const mailOptions = {
-    //     from: process.env.EMAIL_USER,
-    //     to: hodEmail,
-    //     subject: `Approve Password Reset for ${username}`,
-    //     html: `
-    //       <h1>Password Reset Approval</h1>
-    //       <p>Reset requested for ${username} by ${requester_email}.</p>
-    //       <p><a href="https://careervista.university.edu/approve?token=${approvalToken}">Click here to approve</a></p>
-    //       <p>This link expires in 15 minutes.</p>
-    //     `,
-    //   };
-
-    //   await transporter.sendMail(mailOptions);
-    //   return res.status(200).json({
-    //     success: true,
-    //     message: "Approval request sent to HOD",
+    // Ensure requester email matches account email
+    // if (accountEmail !== requester_email) {
+    //   return res.status(400).json({
+    //     success: false,
+    //     message: "Requester email must match the account email",
     //   });
     // }
 
-    // For non-TNP (general faculty), send OTP directly
+    // Generate OTP
     const otp = generateOTP();
     const expiryTime = Date.now() + 10 * 60 * 1000; // 10-minute expiry
 
@@ -90,13 +77,13 @@ exports.requestPasswordReset = async (req, res) => {
       otp,
       expiryTime,
       requester_email,
-      accountEmail,
+      // accountEmail, // Commented out since accountEmail is not defined
     });
 
-    // Send OTP to account email
+    // Send OTP to requester_email instead of accountEmail
     const mailOptions = {
       from: process.env.EMAIL_USER,
-      to: accountEmail,
+      to: requester_email, // Changed to requester_email
       subject: "Password Reset OTP - CareerVista",
       html: `
         <h1>Password Reset Request</h1>
@@ -109,7 +96,7 @@ exports.requestPasswordReset = async (req, res) => {
     await transporter.sendMail(mailOptions);
     return res.status(200).json({
       success: true,
-      message: "OTP sent to the account email",
+      message: "OTP sent to your university email",
     });
   } catch (error) {
     console.error("Request password reset error:", error);
@@ -120,76 +107,8 @@ exports.requestPasswordReset = async (req, res) => {
   }
 };
 
-// Approve reset (for TNP only)
-exports.approveReset = async (req, res) => {
-  try {
-    const { token } = req.query;
-
-    if (!token) {
-      return res.status(400).json({
-        success: false,
-        message: "Approval token is required",
-      });
-    }
-
-    // Find the request by approval token
-    let username = null;
-    for (const [key, value] of otpStore) {
-      if (value.approvalToken === token) {
-        username = key;
-        break;
-      }
-    }
-
-    const storedData = otpStore.get(username);
-    if (!storedData || Date.now() > storedData.expiryTime) {
-      otpStore.delete(username);
-      return res.status(400).json({
-        success: false,
-        message: "Invalid or expired approval token",
-      });
-    }
-
-    // Generate OTP after HOD approval
-    const otp = generateOTP();
-    const expiryTime = Date.now() + 10 * 60 * 1000;
-
-    otpStore.set(username, {
-      otp,
-      expiryTime,
-      requester_email: storedData.requester_email,
-      accountEmail: storedData.accountEmail,
-    });
-
-    // Send OTP to account email
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to: storedData.accountEmail,
-      subject: "Password Reset OTP - CareerMarg",
-      html: `
-        <h1>Password Reset Approved</h1>
-        <p>Your OTP is: <strong>${otp}</strong></p>
-        <p>This OTP expires in 10 minutes.</p>
-        <p>If you did not request this, contact support.</p>
-      `,
-    };
-
-    await transporter.sendMail(mailOptions);
-    return res.status(200).json({
-      success: true,
-      message: "Reset approved, OTP sent to account email",
-    });
-  } catch (error) {
-    console.error("Approve reset error:", error);
-    return res.status(500).json({
-      success: false,
-      message: "An error occurred while processing your request",
-    });
-  }
-};
-
-// Verify OTP
-exports.verifyOTP = async (req, res) => {
+// Verify OTP and send new password to principal
+exports.verifyOTPAndReset = async (req, res) => {
   try {
     const { username, otp } = req.body;
 
@@ -223,55 +142,8 @@ exports.verifyOTP = async (req, res) => {
       });
     }
 
-    return res.status(200).json({
-      success: true,
-      message: "OTP verified successfully",
-      username,
-    });
-  } catch (error) {
-    console.error("Verify OTP error:", error);
-    return res.status(500).json({
-      success: false,
-      message: "An error occurred while processing your request",
-    });
-  }
-};
-
-// Reset Password
-exports.resetPassword = async (req, res) => {
-  try {
-    const { username, otp, newPassword, requester_email } = req.body;
-
-    if (!username || !otp || !newPassword || !requester_email) {
-      return res.status(400).json({
-        success: false,
-        message:
-          "Username, OTP, new password, and requester email are required",
-      });
-    }
-
-    const storedData = otpStore.get(username);
-    if (
-      !storedData ||
-      storedData.otp !== otp ||
-      Date.now() > storedData.expiryTime
-    ) {
-      otpStore.delete(username);
-      return res.status(400).json({
-        success: false,
-        message: "Invalid or expired OTP",
-      });
-    }
-
-    // Password validation
-    if (newPassword.length < 8) {
-      return res.status(400).json({
-        success: false,
-        message: "Password must be at least 8 characters long",
-      });
-    }
-
-    // Hash the new password
+    // Generate a new random password
+    const newPassword = generateRandomPassword();
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
 
@@ -281,32 +153,19 @@ exports.resetPassword = async (req, res) => {
       username,
     ]);
 
-    // Notify affected users
-    const isTnp = storedData.accountEmail.includes("tnp");
-    const dept = username.split("_")[1]; // e.g., "ce" from "tnp_ce"
-    let notifyEmails = [];
-
-    if (isTnp) {
-      // Notify both TNP faculty for the department
-      const tnpUsers = await pool.query(
-        "SELECT personal_email FROM faculty_mapping WHERE username = ?",
-        [username]
-      );
-      notifyEmails = tnpUsers.map((u) => u.personal_email); // e.g., [faculty1.ce@university.edu, faculty2.ce@university.edu]
-    } else {
-      // Notify all faculty for general account
-      notifyEmails = ["22dce059@charusat.edu.in"]; // Use a mailing list
-    }
-
+    // Send new password to principal's email
+    const principalEmail = process.env.PRINCIPAL_EMAIL; // Stored in .env
     const mailOptions = {
       from: process.env.EMAIL_USER,
-      to: notifyEmails,
-      subject: `${username} Password Changed - CareerVista`,
+      to: principalEmail,
+      subject: `Password Reset for ${username} - CareerVista`,
       html: `
         <h1>Password Reset Notification</h1>
-        <p>The password for ${username} was reset by ${requester_email} on ${new Date().toISOString()}.</p>
+        <p>A password reset was completed for user: <strong>${username}</strong></p>
+        <p>Requested by: <strong>${storedData.requester_email}</strong></p>
         <p>New password: <strong>${newPassword}</strong></p>
-        <p>Please store this securely.</p>
+        <p>Date: ${new Date().toISOString()}</p>
+        <p>Please provide this password to the faculty securely.</p>
       `,
     };
 
@@ -317,10 +176,10 @@ exports.resetPassword = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: "Password reset successfully, affected users notified",
+      message: "OTP verified, new password sent to the principal's email",
     });
   } catch (error) {
-    console.error("Reset password error:", error);
+    console.error("Verify OTP and reset error:", error);
     return res.status(500).json({
       success: false,
       message: "An error occurred while processing your request",

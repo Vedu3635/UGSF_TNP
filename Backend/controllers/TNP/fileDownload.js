@@ -3,12 +3,12 @@ const ExcelJS = require("exceljs");
 // Fix the import path to match your project structure
 const ExcelModel = require("../../models/excelModel");
 
-exports.downloadExcel = async (req, res) => {
+const downloadExcel = async (req, res) => {
   try {
     // Get the table name and year from the query parameter
     const tableName = req.query.table;
     const year = req.query.year;
-
+    // console.log(tableName);
     if (!tableName) {
       return res
         .status(400)
@@ -74,4 +74,8 @@ exports.downloadExcel = async (req, res) => {
       error: error.message,
     });
   }
+};
+
+module.exports = {
+  downloadExcel,
 };

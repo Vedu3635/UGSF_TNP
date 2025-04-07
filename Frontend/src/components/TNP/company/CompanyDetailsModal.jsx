@@ -22,7 +22,7 @@ const CompanyDetailsModal = ({ company, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black/30 backdrop-blur-sm transition-opacity flex items-center justify-center z-50">
       <div className="bg-white rounded-3xl shadow-xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
         <div className="p-6">
           <div className="flex justify-between items-center mb-6">
@@ -51,7 +51,7 @@ const CompanyDetailsModal = ({ company, onClose }) => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-blue-50 p-4 rounded-lg">
+            <div className="bg-blue-100 p-4 rounded-lg">
               <h3 className="font-semibold text-blue-700 mb-3">
                 Company Information
               </h3>
@@ -82,7 +82,7 @@ const CompanyDetailsModal = ({ company, onClose }) => {
               </div>
             </div>
 
-            <div className="bg-purple-50 p-4 rounded-lg">
+            <div className="bg-purple-100 p-4 rounded-lg">
               <h3 className="font-semibold text-purple-700 mb-3">
                 Contact Information
               </h3>
@@ -102,7 +102,7 @@ const CompanyDetailsModal = ({ company, onClose }) => {
               </div>
             </div>
 
-            <div className="bg-green-50 p-4 rounded-lg">
+            <div className="bg-green-100 p-4 rounded-lg">
               <h3 className="font-semibold text-green-700 mb-3">Job Details</h3>
               <div className="space-y-2">
                 <p>
@@ -132,7 +132,7 @@ const CompanyDetailsModal = ({ company, onClose }) => {
               </div>
             </div>
 
-            <div className="bg-amber-50 p-4 rounded-lg">
+            <div className="bg-amber-100 p-4 rounded-lg">
               <h3 className="font-semibold text-amber-700 mb-3">
                 Hiring Process
               </h3>

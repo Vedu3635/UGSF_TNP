@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+import { useAuth } from "../pages/AuthContext"; // Import useAuth
+
 import {
   Home,
   Calendar,
@@ -10,10 +12,13 @@ import {
   Users,
   X,
   Menu,
+  LogOut,
 } from "lucide-react";
 
 const Navbar = ({ userProfile }) => {
   const [open, setOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const { logout } = useAuth();
   const navigate = useNavigate();
 
   // Default profile image in case no image is provided
@@ -48,6 +53,13 @@ const Navbar = ({ userProfile }) => {
     },
   ];
 
+  // Logout handler
+  const handleLogout = () => {
+    logout(); // Use AuthContext logout
+    navigate("/login", { replace: true }); // Navigate to login
+    setProfileOpen(false);
+  };
+
   return (
     <nav className="bg-gradient-to-r from-blue-50 to-blue-100 shadow-lg w-full sticky top-0 left-0 z-50">
       <div className="container mx-auto px-4 py-3">
@@ -72,13 +84,13 @@ const Navbar = ({ userProfile }) => {
                     target="_blank"
                     rel="noopener noreferrer"
                     className={`
-    flex items-center 
-    px-2 py-2 lg:px-3 
-    rounded-lg 
-    transition-all duration-300 
-    relative text-sm lg:text-base
-    text-blue-800 hover:bg-blue-200
-  `}
+                      flex items-center 
+                      px-2 py-2 lg:px-3 
+                      rounded-lg 
+                      transition-all duration-300 
+                      relative text-sm lg:text-base
+                      text-blue-800 hover:bg-blue-200
+                    `}
                   >
                     {item.icon}
                     {item.name}
@@ -93,21 +105,21 @@ const Navbar = ({ userProfile }) => {
             </ul>
           </div>
 
-          {/* Separate Profile Section */}
-          <div className="hidden md:flex">
+          {/* Desktop Profile Section with Dropdown */}
+          <div className="hidden md:flex relative">
             <div
               className="
-      w-10 h-10 lg:w-12 lg:h-12
-      rounded-full 
-      border-2 border-blue-500 
-      overflow-hidden 
-      cursor-pointer 
-      hover:shadow-lg 
-      transition-all 
-      transform hover:scale-110
-      ml-2
-    "
-              onClick={() => navigate("/profile")}
+                w-10 h-10 lg:w-12 lg:h-12
+                rounded-full 
+                border-2 border-blue-500 
+                overflow-hidden 
+                cursor-pointer 
+                hover:shadow-lg 
+                transition-all 
+                transform hover:scale-110
+                ml-2
+              "
+              onClick={() => setProfileOpen(!profileOpen)}
             >
               <img
                 src={userProfile?.profileImage || defaultProfileImage}
@@ -115,27 +127,90 @@ const Navbar = ({ userProfile }) => {
                 className="w-full h-full object-cover"
               />
             </div>
+            {/* Profile Dropdown */}
+            {profileOpen && (
+              <div
+                className="
+                absolute 
+                top-12 
+                right-0 
+                bg-white 
+                shadow-lg 
+                rounded-lg 
+                py-2 
+                w-40 
+                z-50
+              "
+              >
+                <button
+                  onClick={handleLogout}
+                  className="
+                    flex items-center 
+                    w-full 
+                    px-4 py-2 
+                    text-blue-800 
+                    hover:bg-blue-100 
+                    transition-colors
+                  "
+                >
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Logout
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Mobile Menu Toggle */}
           <div className="flex items-center md:hidden">
-            {/* Mobile Profile Icon */}
-            <div
-              className="
-                w-8 h-8
-                rounded-full 
-                border-2 border-blue-500 
-                overflow-hidden 
-                cursor-pointer 
-                mr-4
-              "
-              onClick={() => navigate("/profile")}
-            >
-              <img
-                src={userProfile?.profileImage || defaultProfileImage}
-                alt="Profile"
-                className="w-full h-full object-cover"
-              />
+            {/* Mobile Profile Icon with Dropdown */}
+            <div className="relative mr-4">
+              <div
+                className="
+                  w-8 h-8
+                  rounded-full 
+                  border-2 border-blue-500 
+                  overflow-hidden 
+                  cursor-pointer
+                "
+                onClick={() => setProfileOpen(!profileOpen)}
+              >
+                <img
+                  src={userProfile?.profileImage || defaultProfileImage}
+                  alt="Profile"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              {/* Mobile Profile Dropdown */}
+              {profileOpen && (
+                <div
+                  className="
+                  absolute 
+                  top-10 
+                  right-0 
+                  bg-white 
+                  shadow-lg 
+                  rounded-lg 
+                  py-2 
+                  w-32 
+                  z-50
+                "
+                >
+                  <button
+                    onClick={handleLogout}
+                    className="
+                      flex items-center 
+                      w-full 
+                      px-4 py-2 
+                      text-blue-800 
+                      hover:bg-blue-100 
+                      transition-colors
+                    "
+                  >
+                    <LogOut className="w-4 h-4 mr-2" />
+                    Logout
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Mobile Menu Button */}
@@ -166,13 +241,13 @@ const Navbar = ({ userProfile }) => {
                   target="_blank"
                   rel="noopener noreferrer"
                   className={`
-    flex items-center 
-    px-3 py-2 
-    rounded-lg 
-    transition-all duration-300 
-    relative
-    text-blue-800 hover:bg-blue-200
-  `}
+                    flex items-center 
+                    px-3 py-2 
+                    rounded-lg 
+                    transition-all duration-300 
+                    relative
+                    text-blue-800 hover:bg-blue-200
+                  `}
                   onClick={() => setOpen(false)}
                 >
                   {item.icon}

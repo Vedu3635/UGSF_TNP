@@ -7,7 +7,6 @@ exports.uploadFile = (req, res) => {
     return res.status(400).json({ error: "No file uploaded." });
   }
   const filePath = req.file.path;
-  // console.log(`Starting upload for file: ${filePath}`);
   uploadExcel(filePath, (error) => {
     if (error) {
       console.error("Excel upload error:", error);
@@ -22,7 +21,6 @@ function uploadExcel(path, callback) {
     if (fs.existsSync(path)) {
       try {
         fs.unlinkSync(path);
-        // console.log(`File deleted: ${path}`);
       } catch (deleteError) {
         console.error(`Error deleting file ${path}:`, deleteError);
       }
@@ -35,10 +33,14 @@ function uploadExcel(path, callback) {
     }
 
     const workbook = xlsx.readFile(path);
-    const sheetName = workbook.SheetNames[0];
+    const sheetName = "Data"; // Explicitly target the "Data" sheet
+    if (!workbook.SheetNames.includes(sheetName)) {
+      cleanupFile();
+      return callback(new Error("Data sheet not found in the Excel file"));
+    }
     const sheet = workbook.Sheets[sheetName];
 
-    // Use header: true to get data as objects with column headers as keys
+    // Read data from the "Data" sheet
     const excelData = xlsx.utils.sheet_to_json(sheet, { header: "A" });
 
     if (excelData.length === 0) {
@@ -47,7 +49,7 @@ function uploadExcel(path, callback) {
       return callback(new Error("Excel file is empty"));
     }
 
-    // Create header map for more flexible column handling
+    // Extract headers from the first row
     const headers = excelData.shift();
     const headerMap = {};
     Object.keys(headers).forEach((key) => {
@@ -56,7 +58,6 @@ function uploadExcel(path, callback) {
 
     // Map Excel data to appropriate tables
     const processedData = excelData
-      // Basic student data
       .map((row) => {
         const studentData = {
           name: row[headerMap["name"]],
@@ -71,7 +72,7 @@ function uploadExcel(path, callback) {
           updated_at: new Date(),
         };
 
-        // Check if any essential student data is missing
+        // Check for required fields
         const requiredFields = [
           "name",
           "email",
@@ -87,15 +88,11 @@ function uploadExcel(path, callback) {
           }
         }
 
-        // Get the career choice (normalized to lowercase)
         const careerChoice = (studentData.career_choice || "")
           .toString()
           .toLowerCase();
-
-        // Additional data based on career choice
         const additionalData = {};
 
-        // For Job Placement
         if (careerChoice === "job placement" || careerChoice === "placement") {
           additionalData.placement = {
             company_name: row[headerMap["company_name"]],
@@ -103,10 +100,7 @@ function uploadExcel(path, callback) {
             package: row[headerMap["package"]],
             placement_status: row[headerMap["placement_status"]],
           };
-        }
-
-        // For Higher Studies
-        else if (
+        } else if (
           careerChoice === "higher studies" ||
           careerChoice === "higher_studies"
         ) {
@@ -139,7 +133,6 @@ function uploadExcel(path, callback) {
         return callback(error);
       }
 
-      // Using a transaction to ensure data consistency
       connection.beginTransaction(async (err) => {
         if (err) {
           connection.release();
@@ -148,7 +141,6 @@ function uploadExcel(path, callback) {
         }
 
         try {
-          // Insert all students first
           const studentsData = processedData.map((item) => [
             item.studentData.name,
             item.studentData.email,
@@ -170,14 +162,14 @@ function uploadExcel(path, callback) {
             name = VALUES(name),
             email = VALUES(email),
             enrollment_year = VALUES(enrollment_year), 
-            batch= VALUES(batch), 
+            batch = VALUES(batch), 
             program = VALUES(program),
             career_choice = VALUES(career_choice),
             semester = VALUES(semester),
             updated_at = VALUES(updated_at)
           `;
 
-          const upsertStudentsResult = await new Promise((resolve, reject) => {
+          await new Promise((resolve, reject) => {
             connection.query(
               upsertStudentsQuery,
               [studentsData],
@@ -188,7 +180,6 @@ function uploadExcel(path, callback) {
             );
           });
 
-          // Fetch student_ids based on enrollment_id
           const enrollmentIds = processedData.map(
             (item) => item.studentData.enrollment_id
           );
@@ -203,12 +194,10 @@ function uploadExcel(path, callback) {
             );
           });
 
-          // Get the inserted student IDs
           const studentIdMap = new Map(
             studentIdsResult.map((row) => [row.enrollment_id, row.student_id])
           );
 
-          // Insert data into placements or higher_studies based on career_choice
           const placementStudents = [];
           const higherStudiesStudents = [];
 
@@ -246,7 +235,6 @@ function uploadExcel(path, callback) {
             }
           });
 
-          // Upsert placements (one per student_id)
           if (placementStudents.length > 0) {
             const upsertPlacementsQuery = `
               INSERT INTO placements
@@ -270,7 +258,6 @@ function uploadExcel(path, callback) {
             });
           }
 
-          // Upsert higher studies (one per student_id, adjust if multiple allowed)
           if (higherStudiesStudents.length > 0) {
             const upsertHigherStudiesQuery = `
               INSERT INTO higher_studies
@@ -279,7 +266,7 @@ function uploadExcel(path, callback) {
               ON DUPLICATE KEY UPDATE
               university_name = VALUES(university_name),
               course_name = VALUES(course_name),
-              specialization= VALUES(specialization),
+              specialization = VALUES(specialization),
               admission_year = VALUES(admission_year),
               address_of_institute = VALUES(address_of_institute),
               city_of_institute = VALUES(city_of_institute), 
@@ -298,13 +285,13 @@ function uploadExcel(path, callback) {
             });
           }
 
-          connection.commit((err) => {
-            if (err) {
+          connection.commit((commitErr) => {
+            if (commitErr) {
               console.error("Commit error:", commitErr);
               return connection.rollback(() => {
                 connection.release();
                 cleanupFile();
-                callback(err);
+                callback(commitErr);
               });
             }
             connection.release();

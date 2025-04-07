@@ -57,20 +57,6 @@ const CompanyFilter = ({ onFilterChange }) => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="group/item transition-all duration-300 hover:bg-gray-50 p-4 rounded-xl">
           <label className="block text-base text-gray-500 font-medium mb-2">
-            Industry Domain
-          </label>
-          <input
-            type="text"
-            name="industry"
-            value={filters.industry}
-            onChange={handleInputChange}
-            placeholder="Search by industry..."
-            className="w-full px-4 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          />
-        </div>
-
-        <div className="group/item transition-all duration-300 hover:bg-gray-50 p-4 rounded-xl">
-          <label className="block text-base text-gray-500 font-medium mb-2">
             Company Name
           </label>
           <input
@@ -79,6 +65,20 @@ const CompanyFilter = ({ onFilterChange }) => {
             value={filters.companyName}
             onChange={handleInputChange}
             placeholder="Search by company..."
+            className="w-full px-4 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+        </div>
+
+        <div className="group/item transition-all duration-300 hover:bg-gray-50 p-4 rounded-xl">
+          <label className="block text-base text-gray-500 font-medium mb-2">
+            Industry Domain
+          </label>
+          <input
+            type="text"
+            name="industry"
+            value={filters.industry}
+            onChange={handleInputChange}
+            placeholder="Search by industry..."
             className="w-full px-4 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
         </div>

@@ -3,17 +3,13 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const PasswordResetPage = () => {
-  const [step, setStep] = useState(1); // 1: Request, 2: OTP, 3: Reset, 4: Approval Pending
+  const [step, setStep] = useState(1); // 1: Request, 2: OTP
   const [username, setUsername] = useState("");
   const [requesterEmail, setRequesterEmail] = useState("");
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [isTnpAccount, setIsTnpAccount] = useState(false);
-  const [approvalPending, setApprovalPending] = useState(false);
   const [timer, setTimer] = useState(600); // 10-minute timer for OTP
   const [accountEmail, setAccountEmail] = useState(""); // To show where OTP was sent
   const navigate = useNavigate();
@@ -47,8 +43,10 @@ const PasswordResetPage = () => {
       return;
     }
 
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(requesterEmail)) {
-      setError("Please enter a valid email address for notifications");
+    if (!requesterEmail.endsWith("@charusat.edu.in")) {
+      setError(
+        "Please enter a valid university email (e.g., name@charusat.edu.in)"
+      );
       return;
     }
 
@@ -65,16 +63,8 @@ const PasswordResetPage = () => {
       );
 
       if (response.data.success) {
-        if (response.data.message.includes("HOD")) {
-          // TNP account - show approval pending
-          setIsTnpAccount(true);
-          setApprovalPending(true);
-          setStep(4);
-        } else {
-          // Regular account - proceed to OTP
-          setAccountEmail(response.data.accountEmail || "the account email");
-          setStep(2);
-        }
+        setAccountEmail(requesterEmail); // Since requester_email must match account email
+        setStep(2);
       }
     } catch (err) {
       setError(
@@ -109,7 +99,7 @@ const PasswordResetPage = () => {
     }
   };
 
-  // Verify OTP
+  // Verify OTP and trigger reset
   const handleOtpSubmit = async (e, otpCode = null) => {
     if (e) e.preventDefault();
 
@@ -128,59 +118,17 @@ const PasswordResetPage = () => {
         {
           username,
           otp: codeToVerify,
-          requester_email: requesterEmail, // Include requester email for audit
-        }
-      );
-
-      if (response.data.success) {
-        setStep(3); // Proceed to password reset
-      }
-    } catch (err) {
-      setError(err.response?.data?.message || "Invalid OTP. Please try again.");
-      // Clear OTP on error
-      setOtp(["", "", "", "", "", ""]);
-      document.getElementById("otp-0")?.focus();
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Handle password reset
-  const handlePasswordReset = async (e) => {
-    e.preventDefault();
-    if (password.length < 8) {
-      setError("Password must be at least 8 characters long");
-      return;
-    }
-    if (password !== confirmPassword) {
-      setError("Passwords do not match");
-      return;
-    }
-
-    setLoading(true);
-    setError("");
-
-    try {
-      const response = await axios.post(
-        `${API_BASE_URL}/auth/reset-password/new-password`,
-        {
-          username,
-          otp: otp.join(""),
-          newPassword: password,
-          requester_email: requesterEmail,
         }
       );
 
       if (response.data.success) {
         setSuccess(true);
-
-        // Clear sensitive data
-        setPassword("");
-        setConfirmPassword("");
-        setOtp(["", "", "", "", "", ""]);
+        setOtp(["", "", "", "", "", ""]); // Clear OTP
       }
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to reset password");
+      setError(err.response?.data?.message || "Invalid OTP. Please try again.");
+      setOtp(["", "", "", "", "", ""]);
+      document.getElementById("otp-0")?.focus();
     } finally {
       setLoading(false);
     }
@@ -190,20 +138,16 @@ const PasswordResetPage = () => {
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <div className="max-w-md w-full bg-white rounded-lg shadow-md p-8">
         <div className="text-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-800">
-            {isTnpAccount ? "TNP Account Password Reset" : "Password Reset"}
-          </h2>
+          <h2 className="text-2xl font-bold text-gray-800">Password Reset</h2>
           <p className="text-gray-600 mt-2">
-            {step === 1 && "Enter the username and your email address"}
+            {step === 1 && "Enter your username and university email"}
             {step === 2 && `Enter OTP sent to ${accountEmail}`}
-            {step === 3 && "Set a new password"}
-            {step === 4 && "Approval request sent to HOD"}
           </p>
         </div>
 
         {/* Step indicators */}
         <div className="flex items-center justify-center mb-8">
-          {[1, 2, 3].map((stepNumber) => (
+          {[1, 2].map((stepNumber) => (
             <React.Fragment key={stepNumber}>
               <div
                 className={`w-8 h-8 rounded-full flex items-center justify-center ${
@@ -212,7 +156,7 @@ const PasswordResetPage = () => {
               >
                 {stepNumber}
               </div>
-              {stepNumber < 3 && (
+              {stepNumber < 2 && (
                 <div
                   className={`w-24 h-1 ${
                     step > stepNumber ? "bg-blue-500" : "bg-gray-200"
@@ -234,9 +178,7 @@ const PasswordResetPage = () => {
             <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded mb-4">
               <h3 className="font-medium">Password reset successful!</h3>
               <p className="mt-1 text-sm">
-                {isTnpAccount
-                  ? "All affected faculty have been notified of this change."
-                  : "You can now login with your new password."}
+                The new password has been sent to the principal's email.
               </p>
             </div>
             <div className="bg-blue-50 border border-blue-200 text-blue-700 px-4 py-3 rounded mb-4 text-sm">
@@ -258,12 +200,12 @@ const PasswordResetPage = () => {
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Username to Reset
+                      Username
                     </label>
                     <input
                       type="text"
                       className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      placeholder="e.g., tnp_ce or faculty_john"
+                      placeholder="e.g., faculty_john"
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
                       disabled={loading}
@@ -272,19 +214,19 @@ const PasswordResetPage = () => {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Your Email Address
+                      University Email
                     </label>
                     <input
                       type="email"
                       className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      placeholder="your.email@example.com"
+                      placeholder="e.g., name@charusat.edu.in"
                       value={requesterEmail}
                       onChange={(e) => setRequesterEmail(e.target.value)}
                       disabled={loading}
                       required
                     />
                     <p className="text-xs text-gray-500 mt-1">
-                      This will be recorded as who requested the reset
+                      Must be your university email
                     </p>
                   </div>
                 </div>
@@ -318,7 +260,7 @@ const PasswordResetPage = () => {
                       Processing...
                     </>
                   ) : (
-                    "Request Password Reset"
+                    "Request OTP"
                   )}
                 </button>
                 <div className="text-center mt-4">
@@ -331,37 +273,6 @@ const PasswordResetPage = () => {
                   </button>
                 </div>
               </form>
-            )}
-
-            {/* Step 4: Approval pending (TNP only) */}
-            {step === 4 && (
-              <div className="text-center">
-                <div className="bg-blue-50 border border-blue-200 text-blue-700 px-4 py-3 rounded mb-4">
-                  <h3 className="font-medium">Approval Request Sent</h3>
-                  <p className="mt-1 text-sm">
-                    Your request to reset password for{" "}
-                    <strong>{username}</strong> has been sent to the HOD for
-                    approval.
-                  </p>
-                </div>
-                <div className="bg-gray-50 border border-gray-200 text-gray-700 px-4 py-3 rounded mb-4 text-sm text-left">
-                  <p>
-                    <strong>Requested by:</strong> {requesterEmail}
-                  </p>
-                  <p>
-                    <strong>Account email:</strong> {accountEmail}
-                  </p>
-                  <p className="mt-2">
-                    You will receive an OTP at the account email once approved.
-                  </p>
-                </div>
-                <button
-                  className="text-blue-600 hover:text-blue-800 font-medium"
-                  onClick={() => navigate("/login")}
-                >
-                  Return to Login
-                </button>
-              </div>
             )}
 
             {/* Step 2: OTP verification */}
@@ -407,7 +318,6 @@ const PasswordResetPage = () => {
                   </div>
                 </div>
 
-                {/* Primary action button */}
                 <button
                   type="submit"
                   className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg shadow-sm transition duration-200 disabled:bg-blue-300 disabled:cursor-not-allowed"
@@ -438,11 +348,10 @@ const PasswordResetPage = () => {
                       Verifying...
                     </span>
                   ) : (
-                    "Verify Code"
+                    "Verify OTP"
                   )}
                 </button>
 
-                {/* Navigation buttons */}
                 <div className="mt-6 grid grid-cols-1 gap-3">
                   <button
                     type="button"
@@ -461,79 +370,6 @@ const PasswordResetPage = () => {
                       Remember your password? Login instead
                     </button>
                   </div>
-                </div>
-              </form>
-            )}
-
-            {/* Step 3: Password reset */}
-            {step === 3 && (
-              <form onSubmit={handlePasswordReset}>
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      New Password
-                    </label>
-                    <input
-                      type="password"
-                      className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      placeholder="Minimum 8 characters"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      disabled={loading}
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Confirm New Password
-                    </label>
-                    <input
-                      type="password"
-                      className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      placeholder="Re-enter your password"
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      disabled={loading}
-                      required
-                    />
-                  </div>
-                </div>
-
-                {isTnpAccount && (
-                  <div className="bg-yellow-50 border border-yellow-200 text-yellow-700 px-4 py-3 rounded my-4 text-sm">
-                    <p>
-                      <strong>Note for TNP Accounts:</strong>
-                    </p>
-                    <p className="mt-1">
-                      All faculty members in this department will be notified of
-                      this password change.
-                    </p>
-                  </div>
-                )}
-
-                <div className="bg-gray-50 border border-gray-200 text-gray-700 px-4 py-3 rounded my-4 text-sm">
-                  <p>
-                    <strong>Reset Details:</strong>
-                  </p>
-                  <p className="mt-1">Account: {username}</p>
-                  <p>Requested by: {requesterEmail}</p>
-                </div>
-
-                <div className="text-center mt-4">
-                  <button
-                    type="submit"
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded transition duration-200 disabled:bg-blue-300"
-                    disabled={loading}
-                  >
-                    {loading ? "Updating Password..." : "Reset Password"}
-                  </button>
-                  <button
-                    type="button"
-                    className="text-blue-600 hover:text-blue-800 text-sm mt-3"
-                    onClick={() => navigate("/login")}
-                  >
-                    Remember your password? Login instead
-                  </button>
                 </div>
               </form>
             )}

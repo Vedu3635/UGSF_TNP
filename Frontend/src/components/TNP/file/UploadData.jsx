@@ -57,11 +57,7 @@ const UploadData = ({ onStudentUpload }) => {
     }
   };
 
-  const tabs = [
-    { key: "student", label: "Student Data" },
-    // { key: "placement", label: "Placement Data" },
-    // { key: "higherStudies", label: "Higher Studies" },
-  ];
+  const tabs = [{ key: "student", label: "Student Data" }];
 
   // Heading and description based on tab
   const getTabInfo = () => {
@@ -71,22 +67,7 @@ const UploadData = ({ onStudentUpload }) => {
           heading: "Student Profiles",
           description:
             "Upload student data including enrollment details, contact info, and academic data.",
-          template: "/templates/student-template.xlsx",
         };
-      // case "placement":
-      //   return {
-      //     heading: "Placement Records",
-      //     description:
-      //       "Upload placement data including offers, packages, and recruiter details.",
-      //     template: "/templates/placement-template.xlsx",
-      //   };
-      // case "higherStudies":
-      //   return {
-      //     heading: "Higher Studies Records",
-      //     description:
-      //       "Upload higher studies data including university admissions and scholarships.",
-      //     template: "/templates/higher-studies-template.xlsx",
-      //   };
       default:
         return {};
     }
@@ -94,10 +75,21 @@ const UploadData = ({ onStudentUpload }) => {
 
   const tabInfo = getTabInfo();
 
-  const handleTemplateDownload = () => {
+  const handleTemplateDownload = (templateType) => {
+    const templatePaths = {
+      higher_studies: "/templates/higher_studies_template.xlsx",
+      placement: "/templates/placement_template.xlsx",
+    };
+
+    const templatePath = templatePaths[templateType];
+    if (!templatePath) {
+      alert("Invalid template type!");
+      return;
+    }
+
     const link = document.createElement("a");
-    link.href = tabInfo.template;
-    link.download = `${uploadTab}-template.xlsx`; // Sets the filename for download
+    link.href = templatePath;
+    link.download = `${templateType}_template.xlsx`; // Custom filename
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -128,13 +120,20 @@ const UploadData = ({ onStudentUpload }) => {
       <div>
         <h2 className="text-xl font-semibold mb-2">{tabInfo.heading}</h2>
         <p className="text-gray-500 mb-4">{tabInfo.description}</p>
-
-        <button
-          onClick={handleTemplateDownload}
-          className="flex items-center gap-2 px-4 py-2 mb-4 bg-gray-200 rounded hover:bg-gray-300"
-        >
-          <FileDown size={18} /> Download Template
-        </button>
+        <div className="flex gap-4 mb-4">
+          <button
+            onClick={() => handleTemplateDownload("higher_studies")}
+            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg shadow-md hover:from-blue-600 hover:to-indigo-700 transition-all duration-300"
+          >
+            <FileDown size={18} /> Higher Studies Template
+          </button>
+          <button
+            onClick={() => handleTemplateDownload("placement")}
+            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-500 to-teal-600 text-white rounded-lg shadow-md hover:from-green-600 hover:to-teal-700 transition-all duration-300"
+          >
+            <FileDown size={18} /> Placement Template
+          </button>
+        </div>
 
         {uploadTab === "student" && (
           <p className="text-gray-500 mb-4 text-sm">
@@ -144,23 +143,6 @@ const UploadData = ({ onStudentUpload }) => {
             </span>
           </p>
         )}
-        {/* {uploadTab === "placement" && (
-          <p className="text-gray-500 mb-4 text-sm">
-            Required fields:{" "}
-            <span className="font-medium">
-              Enrollment No, Company, Package, Offer Type, Role, Joining Date
-            </span>
-          </p>
-        )}
-        {uploadTab === "higherStudies" && (
-          <p className="text-gray-500 mb-4 text-sm">
-            Required fields:{" "}
-            <span className="font-medium">
-              Enrollment No, University, Country, Program, Scholarship,
-              Admission Year
-            </span>
-          </p>
-        )} */}
 
         <label htmlFor="fileInput">
           <div className="border-2 border-dashed border-gray-300 p-8 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-gray-50">
