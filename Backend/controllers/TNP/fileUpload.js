@@ -3,53 +3,123 @@ const xlsx = require("xlsx");
 const pool = require("../../config/pool");
 
 exports.uploadFile = (req, res) => {
+  const requestId = Math.random().toString(36).substr(2, 9);
+  // console.log("uploadFile - Entering function, Request ID:", requestId);
+
   if (!req.file) {
+    // console.log("uploadFile - No file uploaded, Request ID:", requestId);
     return res.status(400).json({ error: "No file uploaded." });
   }
+
+  // Extract username from req.user (JWT payload)
+  const username = req.user?.username || "unknown"; // Fallback to "unknown" if not found
+  if (username === "unknown") {
+    console.warn(
+      "uploadFile - No username found in JWT payload. Ensure user is authenticated, Request ID:",
+      requestId
+    );
+  }
+  // console.log(
+  //   "uploadFile - Extracted username:",
+  //   username,
+  //   "Request ID:",
+  //   requestId
+  // );
+
   const filePath = req.file.path;
-  uploadExcel(filePath, (error) => {
+  // console.log(
+  //   "uploadFile - Processing file at:",
+  //   filePath,
+  //   "Request ID:",
+  //   requestId
+  // );
+
+  uploadExcel(filePath, username, requestId, (error) => {
     if (error) {
-      console.error("Excel upload error:", error);
+      console.error(
+        "uploadFile - Excel upload error:",
+        error.message,
+        "Request ID:",
+        requestId
+      );
       return res.status(500).json({ error: "Error processing file." });
     }
+    // console.log(
+    //   "uploadFile - Data stored successfully, Request ID:",
+    //   requestId
+    // );
     res.json({ message: "Data stored successfully" });
   });
 };
 
-function uploadExcel(path, callback) {
+function uploadExcel(path, username, requestId, callback) {
   const cleanupFile = () => {
     if (fs.existsSync(path)) {
       try {
         fs.unlinkSync(path);
+        // console.log(
+        //   "uploadExcel - File deleted successfully:",
+        //   path,
+        //   "Request ID:",
+        //   requestId
+        // );
       } catch (deleteError) {
-        console.error(`Error deleting file ${path}:`, deleteError);
+        console.error(
+          "uploadExcel - Error deleting file:",
+          deleteError.message,
+          "Request ID:",
+          requestId
+        );
       }
     }
   };
 
   try {
+    // console.log(
+    //   "uploadExcel - Checking file existence, Request ID:",
+    //   requestId
+    // );
     if (!fs.existsSync(path)) {
+      console.error(
+        "uploadExcel - File not found:",
+        path,
+        "Request ID:",
+        requestId
+      );
       return callback(new Error("File not found"));
     }
 
+    // console.log("uploadExcel - Reading Excel file, Request ID:", requestId);
     const workbook = xlsx.readFile(path);
     const sheetName = "Data"; // Explicitly target the "Data" sheet
     if (!workbook.SheetNames.includes(sheetName)) {
+      console.error(
+        "uploadExcel - Data sheet not found, Request ID:",
+        requestId
+      );
       cleanupFile();
       return callback(new Error("Data sheet not found in the Excel file"));
     }
     const sheet = workbook.Sheets[sheetName];
 
     // Read data from the "Data" sheet
+    // console.log(
+    //   "uploadExcel - Converting sheet to JSON, Request ID:",
+    //   requestId
+    // );
     const excelData = xlsx.utils.sheet_to_json(sheet, { header: "A" });
 
     if (excelData.length === 0) {
-      console.error("Excel file is empty.");
+      console.error(
+        "uploadExcel - Excel file is empty, Request ID:",
+        requestId
+      );
       cleanupFile();
       return callback(new Error("Excel file is empty"));
     }
 
     // Extract headers from the first row
+    // console.log("uploadExcel - Extracting headers, Request ID:", requestId);
     const headers = excelData.shift();
     const headerMap = {};
     Object.keys(headers).forEach((key) => {
@@ -57,6 +127,7 @@ function uploadExcel(path, callback) {
     });
 
     // Map Excel data to appropriate tables
+    // console.log("uploadExcel - Processing data rows, Request ID:", requestId);
     const processedData = excelData
       .map((row) => {
         const studentData = {
@@ -69,6 +140,7 @@ function uploadExcel(path, callback) {
           career_choice: row[headerMap["career_choice"]],
           semester: row[headerMap["semester"]],
           created_at: new Date(),
+          updated_by: username,
           updated_at: new Date(),
         };
 
@@ -83,7 +155,10 @@ function uploadExcel(path, callback) {
         ];
         for (const field of requiredFields) {
           if (!studentData[field]) {
-            console.warn(`Row missing required field: ${field}`);
+            console.warn(
+              `uploadExcel - Row missing required field: ${field}, Request ID:`,
+              requestId
+            );
             return null;
           }
         }
@@ -97,7 +172,7 @@ function uploadExcel(path, callback) {
           additionalData.placement = {
             company_name: row[headerMap["company_name"]],
             position: row[headerMap["position"]],
-            package: row[headerMap["package"]],
+            salary_package: row[headerMap["salary_package"]],
             placement_status: row[headerMap["placement_status"]],
           };
         } else if (
@@ -121,26 +196,49 @@ function uploadExcel(path, callback) {
       .filter((item) => item !== null);
 
     if (processedData.length === 0) {
-      console.error("No valid data found in the Excel file.");
+      console.error(
+        "uploadExcel - No valid data found, Request ID:",
+        requestId
+      );
       cleanupFile();
       return callback(new Error("No valid data found"));
     }
 
+    // console.log(
+    //   "uploadExcel - Acquiring database connection, Request ID:",
+    //   requestId
+    // );
     pool.getConnection((error, connection) => {
       if (error) {
-        console.error("Database connection error:", error);
+        console.error(
+          "uploadExcel - Database connection error:",
+          error.message,
+          "Request ID:",
+          requestId
+        );
         cleanupFile();
         return callback(error);
       }
 
+      // console.log("uploadExcel - Starting transaction, Request ID:", requestId);
       connection.beginTransaction(async (err) => {
         if (err) {
           connection.release();
+          console.error(
+            "uploadExcel - Transaction begin error:",
+            err.message,
+            "Request ID:",
+            requestId
+          );
           cleanupFile();
           return callback(err);
         }
 
         try {
+          // console.log(
+          //   "uploadExcel - Preparing students upsert query, Request ID:",
+          //   requestId
+          // );
           const studentsData = processedData.map((item) => [
             item.studentData.name,
             item.studentData.email,
@@ -151,12 +249,13 @@ function uploadExcel(path, callback) {
             item.studentData.career_choice,
             item.studentData.semester,
             item.studentData.created_at,
+            item.studentData.updated_by,
             item.studentData.updated_at,
           ]);
 
           const upsertStudentsQuery = `
             INSERT INTO students 
-            (name, email, enrollment_id, enrollment_year, batch, program, career_choice, semester, created_at, updated_at) 
+            (name, email, enrollment_id, enrollment_year, batch, program, career_choice, semester, created_at, updated_by, updated_at) 
             VALUES ?
             ON DUPLICATE KEY UPDATE
             name = VALUES(name),
@@ -165,7 +264,8 @@ function uploadExcel(path, callback) {
             batch = VALUES(batch), 
             program = VALUES(program),
             career_choice = VALUES(career_choice),
-            semester = VALUES(semester),
+            semester = VALUES(semester), 
+            updated_by = VALUES(updated_by),  
             updated_at = VALUES(updated_at)
           `;
 
@@ -175,11 +275,21 @@ function uploadExcel(path, callback) {
               [studentsData],
               (error, result) => {
                 if (error) return reject(error);
+                // console.log(
+                //   "uploadExcel - Students upsert result:",
+                //   result,
+                //   "Request ID:",
+                //   requestId
+                // );
                 resolve(result);
               }
             );
           });
 
+          // console.log(
+          //   "uploadExcel - Fetching student IDs, Request ID:",
+          //   requestId
+          // );
           const enrollmentIds = processedData.map(
             (item) => item.studentData.enrollment_id
           );
@@ -189,6 +299,12 @@ function uploadExcel(path, callback) {
               [enrollmentIds],
               (error, results) => {
                 if (error) return reject(error);
+                // console.log(
+                //   "uploadExcel - Student IDs result:",
+                //   results,
+                //   "Request ID:",
+                //   requestId
+                // );
                 resolve(results);
               }
             );
@@ -201,6 +317,10 @@ function uploadExcel(path, callback) {
           const placementStudents = [];
           const higherStudiesStudents = [];
 
+          // console.log(
+          //   "uploadExcel - Mapping additional data, Request ID:",
+          //   requestId
+          // );
           processedData.forEach((item) => {
             const studentId = studentIdMap.get(item.studentData.enrollment_id);
 
@@ -213,7 +333,7 @@ function uploadExcel(path, callback) {
                 studentId,
                 placement.company_name,
                 placement.position,
-                placement.package,
+                placement.salary_package,
                 placement.placement_status,
               ]);
             } else if (
@@ -236,14 +356,18 @@ function uploadExcel(path, callback) {
           });
 
           if (placementStudents.length > 0) {
+            // console.log(
+            //   "uploadExcel - Preparing placements upsert, Request ID:",
+            //   requestId
+            // );
             const upsertPlacementsQuery = `
               INSERT INTO placements
-              (student_id, company_name, position, package, placement_status)
+              (student_id, company_name, position, salary_package, placement_status)
               VALUES ?
               ON DUPLICATE KEY UPDATE
               company_name = VALUES(company_name),
               position = VALUES(position),
-              package = VALUES(package),
+              salary_package = VALUES(salary_package),
               placement_status = VALUES(placement_status)
             `;
             await new Promise((resolve, reject) => {
@@ -252,6 +376,12 @@ function uploadExcel(path, callback) {
                 [placementStudents],
                 (error, result) => {
                   if (error) return reject(error);
+                  // console.log(
+                  //   "uploadExcel - Placements upsert result:",
+                  //   result,
+                  //   "Request ID:",
+                  //   requestId
+                  // );
                   resolve(result);
                 }
               );
@@ -259,6 +389,10 @@ function uploadExcel(path, callback) {
           }
 
           if (higherStudiesStudents.length > 0) {
+            // console.log(
+            //   "uploadExcel - Preparing higher studies upsert, Request ID:",
+            //   requestId
+            // );
             const upsertHigherStudiesQuery = `
               INSERT INTO higher_studies
               (student_id, university_name, course_name, specialization, admission_year, address_of_institute, city_of_institute, country_of_institute, higher_studies_status)
@@ -279,26 +413,51 @@ function uploadExcel(path, callback) {
                 [higherStudiesStudents],
                 (error, result) => {
                   if (error) return reject(error);
+                  // console.log(
+                  //   "uploadExcel - Higher studies upsert result:",
+                  //   result,
+                  //   "Request ID:",
+                  //   requestId
+                  // );
                   resolve(result);
                 }
               );
             });
           }
 
+          // console.log(
+          //   "uploadExcel - Committing transaction, Request ID:",
+          //   requestId
+          // );
           connection.commit((commitErr) => {
             if (commitErr) {
-              console.error("Commit error:", commitErr);
+              console.error(
+                "uploadExcel - Commit error:",
+                commitErr.message,
+                "Request ID:",
+                requestId
+              );
               return connection.rollback(() => {
                 connection.release();
                 cleanupFile();
                 callback(commitErr);
               });
             }
+            // console.log(
+            //   "uploadExcel - Transaction committed, Request ID:",
+            //   requestId
+            // );
             connection.release();
             cleanupFile();
             callback(null);
           });
         } catch (error) {
+          console.error(
+            "uploadExcel - Transaction error:",
+            error.message,
+            "Request ID:",
+            requestId
+          );
           connection.rollback(() => {
             connection.release();
             cleanupFile();
@@ -308,7 +467,12 @@ function uploadExcel(path, callback) {
       });
     });
   } catch (error) {
-    console.error("Excel Processing Error:", error);
+    console.error(
+      "uploadExcel - Excel processing error:",
+      error.message,
+      "Request ID:",
+      requestId
+    );
     cleanupFile();
     callback(error);
   }

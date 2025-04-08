@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from "axios";
 
 const UpdateForm = ({ item, type, onStudentUpdate, onClose }) => {
   const [formData, setFormData] = useState({
@@ -13,7 +14,7 @@ const UpdateForm = ({ item, type, onStudentUpdate, onClose }) => {
     // Placement specific fields
     company_name: item.company_name || "",
     position: item.position || "",
-    package: item.package || "",
+    salary_package: item.salary_package || "",
     placement_status: item.placement_status || "",
 
     // Higher studies specific fields
@@ -55,7 +56,8 @@ const UpdateForm = ({ item, type, onStudentUpdate, onClose }) => {
       if (!formData.company_name)
         newErrors.company_name = "Company name is required";
       if (!formData.position) newErrors.position = "Position is required";
-      if (!formData.package) newErrors.package = "Package is required";
+      if (!formData.salary_package)
+        newErrors.salary_package = "Salary Package is required";
     }
 
     if (type === "higherStudies") {
@@ -93,7 +95,6 @@ const UpdateForm = ({ item, type, onStudentUpdate, onClose }) => {
     if (!validateForm()) return;
 
     let endpoint = "";
-
     // Determine the API endpoint based on the type of data
     if (type === "placement") {
       endpoint = `${
@@ -109,24 +110,32 @@ const UpdateForm = ({ item, type, onStudentUpdate, onClose }) => {
       }`; // API for all students
     }
 
+    // Retrieve the token from storage (e.g., localStorage)
+    const token = localStorage.getItem("token"); // Adjust based on where you store the token
+
+    if (!token) {
+      console.error("No token found. User may not be logged in.");
+      alert("Please log in to update student information.");
+      return;
+    }
+
     try {
-      const response = await fetch(endpoint, {
-        method: "PUT",
+      const response = await axios.put(endpoint, formData, {
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Add the token to the Authorization header
         },
-        body: JSON.stringify(formData), // Send form data
       });
 
-      if (!response.ok) {
-        throw new Error("Failed to update");
-      }
-
+      // Axios automatically throws an error for non-2xx responses, so no need to check response.ok
       onClose();
       onStudentUpdate();
     } catch (error) {
       console.error("Error updating student:", error);
-      alert("Failed to update student information");
+      // Handle error response from the server if available
+      const errorMessage =
+        error.response?.data?.message || error.message || "Failed to update";
+      alert(`Failed to update student information: ${errorMessage}`);
     }
   };
 
@@ -196,7 +205,7 @@ const UpdateForm = ({ item, type, onStudentUpdate, onClose }) => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
             {renderField("company_name", "Company Name")}
             {renderField("position", "Position")}
-            {renderField("package", "Package (₹)", "number")}
+            {renderField("salary_package", "Salary Package (₹)", "number")}
             <div className="space-y-2">
               <label className="block text-sm font-medium text-gray-700">
                 Status

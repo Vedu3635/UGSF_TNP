@@ -100,7 +100,7 @@ const Charts = ({ allStudentsData, placementData, higherStudiesData }) => {
           if (studentsInYearAndProgram.length > 0) {
             const maxPackage = Math.max(
               ...studentsInYearAndProgram
-                .map((student) => student.package)
+                .map((student) => student.salary_package)
                 .filter((pkg) => pkg !== null && pkg !== undefined) // Ensure valid package values
             );
 
@@ -184,7 +184,7 @@ const Charts = ({ allStudentsData, placementData, higherStudiesData }) => {
       if (!acc[year]) {
         acc[year] = { totalPackage: 0, count: 0 };
       }
-      acc[year].totalPackage += (student.package || 0) / 100000;
+      acc[year].totalPackage += (student.salary_package || 0) / 100000;
       acc[year].count += 1;
       return acc;
     }, {});
@@ -226,7 +226,7 @@ const Charts = ({ allStudentsData, placementData, higherStudiesData }) => {
 
   const calculatePlacementPercentageByYear = (data) => {
     if (!data || data.length === 0) {
-      console.log("No data provided to calculatePlacementPercentageByYear");
+      // console.log("No data provided to calculatePlacementPercentageByYear");
       return {};
     }
 

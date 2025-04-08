@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const fileUpload = require("../../controllers/TNP/fileUpload");
+const authMiddleware = require("../../middleware/authMiddleware");
 const multer = require("multer");
 const path = require("path");
 
@@ -33,6 +34,11 @@ const upload = multer({
 });
 
 // Update the route to handle Excel files
-router.post("/import-excel", upload.single("file"), fileUpload.uploadFile);
+router.post(
+  "/import-excel",
+  upload.single("file"),
+  authMiddleware,
+  fileUpload.uploadFile
+);
 
 module.exports = router;

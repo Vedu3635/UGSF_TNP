@@ -102,7 +102,9 @@ const StudentCard = ({ item, type, onStudentUpdate, onDelete }) => {
         return item.career_choice || "N/A";
       case "placement":
         return `${
-          item.package ? (item.package / 100000).toFixed(1) + " LPA" : "N/A"
+          item.salary_package
+            ? (item.salary_package / 100000).toFixed(1) + " LPA"
+            : "N/A"
         }`;
       case "higherStudies":
         return item.university_name || "N/A";
@@ -132,9 +134,9 @@ const StudentCard = ({ item, type, onStudentUpdate, onDelete }) => {
       return [
         { label: "Company Name", value: item.company_name },
         {
-          label: "Package",
-          value: item.package
-            ? `${(item.package / 100000).toFixed(1)} LPA`
+          label: "Salary Package",
+          value: item.salary_package
+            ? `${(item.salary_package / 100000).toFixed(1)} LPA`
             : "N/A",
         },
         { label: "Position", value: item.position },

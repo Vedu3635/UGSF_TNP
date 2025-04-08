@@ -14,7 +14,7 @@ const getJobPlacementStudents = (req, res) => {
     s.program, 
     p.company_name, 
     p.position, 
-    p.package,  
+    p.salary_package,  
     p.placement_status  
 FROM students s  
 JOIN placements p ON s.student_id = p.student_id  

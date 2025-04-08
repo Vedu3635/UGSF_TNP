@@ -156,9 +156,9 @@ const Dashboard = () => {
     data?.length
       ? Math.round(
           data
-            .filter((student) => student?.package > 0)
-            .reduce((sum, student) => sum + student.package, 0) /
-            data.filter((student) => student?.package > 0).length /
+            .filter((student) => student?.salary_package > 0)
+            .reduce((sum, student) => sum + student.salary_package, 0) /
+            data.filter((student) => student?.salary_package > 0).length /
             100000
         ) || 0
       : 0;
@@ -166,8 +166,9 @@ const Dashboard = () => {
   const averagePackage = calculateAveragePackage(placementData);
 
   const getPlacedStudentsCount = (data) =>
-    data?.filter((student) => student?.package > 0 && student.company_name)
-      .length || 0;
+    data?.filter(
+      (student) => student?.salary_package > 0 && student.company_name
+    ).length || 0;
 
   const placedStudentsCount = getPlacedStudentsCount(placementData);
 

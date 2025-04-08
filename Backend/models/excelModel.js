@@ -27,7 +27,7 @@ class ExcelModel {
           sqlQuery = `
             SELECT 
               s.name, s.email, s.enrollment_id, s.enrollment_year, s.program, s.semester,
-              p.company_name, p.position, p.package, p.placement_status
+              p.company_name, p.position, p.salary_package, p.placement_status
             FROM students s
             JOIN placements p ON s.student_id = p.student_id`;
           break;
@@ -86,7 +86,7 @@ class ExcelModel {
           sqlQuery = `
             SELECT 
               s.name, s.email, s.enrollment_id, s.enrollment_year,s.batch, s.program, s.semester,
-              p.company_name, p.position, p.package, p.placement_status
+              p.company_name, p.position, p.salary_package, p.placement_status
             FROM students s
             JOIN placements p ON s.student_id = p.student_id
             WHERE s.batch = ?`;

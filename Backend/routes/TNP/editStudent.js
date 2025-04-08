@@ -15,20 +15,24 @@
 const express = require("express");
 const router = express.Router();
 const studentController = require("../../controllers/TNP/editStudent");
+const authMiddleware = require("../../middleware/authMiddleware");
 
 // Student update routes
 router.put(
   "/updateStudent/:student_id",
+  authMiddleware,
   studentController.updateStudentDetails
 );
 
 router.put(
   "/updatePlacement/:student_id",
+  authMiddleware,
   studentController.updatePlacementDetails
 );
 
 router.put(
   "/updateHigherStudies/:student_id",
+  authMiddleware,
   studentController.updateHigherStudiesDetails
 );
 
