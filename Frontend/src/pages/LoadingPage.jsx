@@ -60,7 +60,6 @@ const LoadingPage = ({ onLoadComplete, minDisplayTime = 2500 }) => {
     transform: progress > 0 ? "translateY(0)" : "translateY(20px)",
     transition: "opacity 0.6s, transform 0.6s",
   };
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-background">
       <div className="w-full max-w-lg px-8">

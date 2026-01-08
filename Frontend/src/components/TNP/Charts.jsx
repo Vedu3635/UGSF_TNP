@@ -171,12 +171,14 @@ const Charts = ({ allStudentsData, placementData, higherStudiesData }) => {
   const currentYear = new Date().getFullYear(); // 2025
   const startYear = currentYear - latestYears - 1; // 2019
 
-  const filteredDataByYear = placementData.filter((student) => {
-    const batch = Number(student.batch); // Handle string batches
-    const inRange = batch >= startYear && batch <= currentYear;
-    return inRange;
-  });
-
+  const filteredDataByYear = useMemo(() => {
+    return placementData.filter((student) => {
+      const batch = Number(student.batch); // Handle string batches
+      const inRange = batch >= startYear && batch <= currentYear;
+      const matchesProgram = student.program === filter3; // Apply program filter
+      return inRange && matchesProgram;
+    });
+  }, [filter3, placementData]); // Add filter3 as dependency
   // Function to calculate the average package by batch in LPA
   const calculateAveragePackageByYear = (yearData) => {
     const yearGroups = yearData.reduce((acc, student) => {
@@ -196,9 +198,11 @@ const Charts = ({ allStudentsData, placementData, higherStudiesData }) => {
     }
     return averagesByYear;
   };
-
-  const averagePackages = calculateAveragePackageByYear(filteredDataByYear);
-
+  // Calculate average packages using memoized filtered data
+  const averagePackages = useMemo(
+    () => calculateAveragePackageByYear(filteredDataByYear),
+    [filteredDataByYear]
+  );
   // Prepare the chart data for average package by year
   const chartData3 = {
     labels: Array.from({ length: latestYears }, (_, i) => startYear + i), // [2021, 2022, 2023, 2024, 2025]

@@ -89,7 +89,7 @@ const Dashboard = () => {
           fetch(`${import.meta.env.VITE_API_URL}/students/higher-studies`, {
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
+               Authorization: `Bearer ${token}`,
             },
           }),
           fetch(`${import.meta.env.VITE_API_URL}/students/all`, {
@@ -150,7 +150,9 @@ const Dashboard = () => {
 
   const handleStudentUpdate = () => fetchStudentData();
   const onStudentUpload = () => fetchStudentData();
+  const onCompanyAdd = () => fetchCompaniesData();
   const onDeleteStudent = () => fetchStudentData();
+  const onDeleteCompany = () => fetchCompaniesData();
 
   const calculateAveragePackage = (data) =>
     data?.length
@@ -260,9 +262,7 @@ const Dashboard = () => {
                   )}
 
                   {activeSection === "companiesReg" && (
-                    <CompanyRegistrationForm
-                      onSubmitSuccess={fetchCompaniesData}
-                    />
+                    <CompanyRegistrationForm onCompanyAdd={onCompanyAdd} />
                   )}
 
                   {activeSection === "upload" && (

@@ -11,18 +11,15 @@ import {
   Users,
   GraduationCap,
   Calendar,
-  Building,
-  CheckCircle2,
   DollarSign,
+  CheckCircle2,
 } from "lucide-react";
 
 const FormInput = ({ label, icon: Icon, type = "text", ...props }) => (
   <div className="relative">
-    {/* Icon */}
     <div className="absolute left-3 top-3 text-purple-600">
       <Icon size={20} />
     </div>
-    {/* Input Field */}
     <input
       type={type}
       id={props.name}
@@ -30,7 +27,6 @@ const FormInput = ({ label, icon: Icon, type = "text", ...props }) => (
       className="w-full pl-11 pr-4 py-3 text-gray-700 bg-white border-2 border-purple-200 rounded-lg focus:outline-none focus:border-purple-500 transition-colors peer placeholder:text-transparent"
       placeholder={label}
     />
-    {/* Label */}
     <label
       htmlFor={props.name}
       className="absolute left-2 -top-2.5 bg-white px-2 text-sm text-gray-600 transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-placeholder-shown:top-3 peer-placeholder-shown:left-11 peer-focus:-top-2.5 peer-focus:left-2 peer-focus:text-sm peer-focus:text-purple-500"
@@ -91,7 +87,7 @@ const Select = ({ label, icon: Icon, options, ...props }) => (
   </div>
 );
 
-const CompanyRegistrationForm = (onSubmitSuccess) => {
+const CompanyRegistrationForm = ({ onCompanyAdd }) => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     company_name: "",
@@ -111,6 +107,7 @@ const CompanyRegistrationForm = (onSubmitSuccess) => {
     hiring_date: "",
     mode_hiring: "",
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -119,14 +116,15 @@ const CompanyRegistrationForm = (onSubmitSuccess) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
 
     const token = localStorage.getItem("token");
     if (!token) {
       alert("User not authenticated. Please log in.");
+      setIsSubmitting(false);
       return;
     }
 
-    // Map form fields to match backend expectations
     const mappedData = {
       company_name: formData.company_name,
       industry_domain: formData.industry_domain,
@@ -160,31 +158,35 @@ const CompanyRegistrationForm = (onSubmitSuccess) => {
       );
 
       if (response.ok) {
-        // After successful registration
         alert("Company registration successful!");
-
-        // Fetch updated company list to ensure data is fresh
-        const companiesResponse = await fetch(
-          `${import.meta.env.VITE_API_URL}/companies`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        if (companiesResponse.ok) {
-          // Navigate to the company list page
-          navigate("/");
-        } else {
-          console.error("Failed to fetch updated companies");
-        }
+        onCompanyAdd(); // Trigger refresh of companies list
+        // Reset form
+        setFormData({
+          company_name: "",
+          industry_domain: "",
+          website_url: "",
+          contact_name: "",
+          contact_email: "",
+          contact_phone: "",
+          job_roles: "",
+          positions: "",
+          package_min: "",
+          package_max: "",
+          job_location: "",
+          employment_type: "",
+          eligibility_criteria: "",
+          selection_rounds: "",
+          hiring_date: "",
+          mode_hiring: "",
+        });
       } else {
         alert("Failed to register the company. Please try again.");
       }
     } catch (error) {
       console.error("Error:", error);
       alert("An error occurred while submitting the form.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -200,7 +202,7 @@ const CompanyRegistrationForm = (onSubmitSuccess) => {
         </h1>
       </div>
 
-      <FormSection title="General Information" icon={Building}>
+      <FormSection title="General Information" icon={Building2}>
         <FormInput
           label="Company Name"
           icon={Building2}
@@ -209,7 +211,6 @@ const CompanyRegistrationForm = (onSubmitSuccess) => {
           onChange={handleInputChange}
           required
         />
-
         <FormInput
           label="Industry Domain"
           icon={Briefcase}
@@ -253,30 +254,6 @@ const CompanyRegistrationForm = (onSubmitSuccess) => {
           onChange={handleInputChange}
           required
         />
-        {/* <div className="relative">
-          <label className="absolute left-2 -top-2.5 bg-white px-2 text-sm text-gray-600 z-10">
-            Company Logo
-          </label>
-          <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-purple-200 border-dashed rounded-lg hover:border-purple-500 transition-colors bg-white">
-            <div className="space-y-1 text-center">
-              <Upload className="mx-auto h-12 w-12 text-purple-500" />
-              <div className="flex text-sm text-gray-600">
-                <label className="relative cursor-pointer rounded-md font-medium text-purple-600 hover:text-purple-500 focus-within:outline-none">
-                  <span>Upload a file</span>
-                  <input
-                    type="file"
-                    className="sr-only"
-                    name="logo"
-                    onChange={handleInputChange}
-                    accept="image/*"
-                  />
-                </label>
-                <p className="pl-1">or drag and drop</p>
-              </div>
-              <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
-            </div>
-          </div>
-        </div> */}
       </FormSection>
 
       <FormSection title="Placement Details" icon={Briefcase}>
@@ -385,9 +362,12 @@ const CompanyRegistrationForm = (onSubmitSuccess) => {
       <div className="flex justify-end mt-8">
         <button
           type="submit"
-          className="group px-8 py-3 bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-lg hover:from-purple-700 hover:to-purple-800 focus:outline-none focus:ring-4 focus:ring-purple-500 focus:ring-opacity-50 transform transition-all hover:scale-105 flex items-center gap-2"
+          disabled={isSubmitting}
+          className={`group px-8 py-3 bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-lg hover:from-purple-700 hover:to-purple-800 focus:outline-none focus:ring-4 focus:ring-purple-500 focus:ring-opacity-50 transform transition-all hover:scale-105 flex items-center gap-2 ${
+            isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+          }`}
         >
-          Submit Registration
+          {isSubmitting ? "Submitting..." : "Submit Registration"}
           <CheckCircle2
             size={20}
             className="transform group-hover:rotate-12 transition-transform"
